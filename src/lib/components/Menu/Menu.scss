@@ -1,0 +1,19 @@
+@import './variables';
+
+.s-menu__wrapper {
+  position: relative;
+}
+
+.s-menu {
+  background-color: var(--theme-surface);
+  backface-visibility: hidden;
+  position: fixed;
+  contain: content;
+  max-height: $menu-max-height;
+  overflow: auto;
+  @include elevation($menu-content-elevation);
+
+  &:not(.tile) {
+    border-radius: $menu-content-border-radius;
+  }
+}

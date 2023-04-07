@@ -1,0 +1,10 @@
+@import './variables';
+
+.s-table-row {
+
+
+  &:hover .s-table-cell:not(th)
+  {
+    background-color: $tbl-background-hover;
+  }
+}

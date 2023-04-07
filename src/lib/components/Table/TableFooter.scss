@@ -1,0 +1,15 @@
+@import './variables';
+.s-table-footer {
+  position:sticky;
+  bottom:0;
+    .s-table-row {
+      border-top-color: $tbl-border-color;
+      border-top-style: solid;
+      border-top-width: $tbl-border-width;
+  
+      &:hover {
+        background-color: $tbl-background-hover;
+      }
+    }
+  }
+  

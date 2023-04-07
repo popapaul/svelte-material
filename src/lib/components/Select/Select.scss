@@ -1,0 +1,39 @@
+@import './variables';
+
+
+
+.s-select {
+  max-width: 100%;
+  position: relative;
+  .s-menu__wrapper{
+    width:100%;
+  }
+
+
+
+  &:not(.disabled) {
+    input,
+    .s-menu__wrapper {
+      cursor: pointer;
+    }
+  }
+
+  &.chips {
+    .s-text-field__wrapper.filled .s-text-field__input {
+      padding-top: 24px;
+    }
+    .s-select-input input{
+      margin: 0;
+      opacity: 0;
+      width: 0px;
+    }
+    .s-chip {
+      margin: $select-chip-margin;
+    }
+  }
+}
+
+.s-select__filter {
+  margin: 10px;
+  margin-top: 16px;
+}

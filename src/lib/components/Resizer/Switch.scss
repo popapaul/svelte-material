@@ -1,0 +1,34 @@
+@import './variables';
+
+.s-resizer{
+  position: relative;
+
+  .s-resize-handle{
+    position: absolute;
+    top:0;
+    bottom: 0;
+    width:5px;
+    border-radius: 5px;
+    opacity: 0;
+    transition: 0.3s;
+    background: rgb(182, 181, 181);
+    cursor: w-resize;
+
+    &.resize-left{
+      left:0;
+    }
+    &.resize-right{
+      right:0;
+    }
+
+    &:hover{
+      opacity: 1 !important;
+    }
+  }
+
+  &:hover .s-resize-handle{
+    opacity: 0.5;
+  }
+ 
+}
+

@@ -1,0 +1,52 @@
+@import './variables';
+
+.s-combo {
+  max-width: 100%;
+  position: relative;
+
+  .s-combo_empty{
+    padding:10px;
+    }
+  .s-combo__multi{
+    display: flex;
+    width:100%;
+    gap:4px;
+    color: var(--theme-text-primary);
+    align-items: center;
+    .s-combo_value:not(:last-of-type)::after{
+        content:",";
+    }
+  }
+
+  .s-select__filter {
+    margin: 10px;
+    margin-top: 16px;
+  }
+  .s-menu__wrapper,
+  .s-menu {
+    width: 100%;
+  }
+
+  &:not(.disabled) {
+    input,
+    .s-menu__wrapper {
+      cursor: pointer;
+    }
+  }
+
+  &.noinput {
+    .s-text-field__wrapper.filled .s-text-field__input {
+      padding-top: 24px;
+    }
+
+    .s-text-field__input > input {
+      margin: 0;
+      visibility: hidden;
+      width: 0px;
+    }
+
+    .s-chip {
+      margin: $select-chip-margin;
+    }
+  }
+}
