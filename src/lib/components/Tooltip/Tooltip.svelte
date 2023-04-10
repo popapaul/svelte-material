@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { createPopperActions } from 'svelte-popperjs';
-  import type { Placement, PositioningStrategy } from '@popperjs/core';
+  import { createPopperActions, type NanoPopPosition } from '../../actions/Popper';
   import BackgroundColor from '../../internal/BackgroundColor';
 	import { fade } from 'svelte/transition';
 
@@ -9,8 +8,7 @@
   export { klass as class };
   export let color = 'default';
   export let active = false;
-  export let placement:Placement = 'bottom';
-  export let strategy: PositioningStrategy = "fixed";
+  export let placement:NanoPopPosition = 'bottom';
   export let wrapperClass = "";
    /** The transition function for the tooltip. */
    export let transition = fade;
@@ -41,11 +39,7 @@
     in:transition={inOpts}
     out:transition={outOpts}
     use:popperContent={{
-      placement, 
-      strategy, 
-      modifiers :[
-        { name: 'offset', options: { offset: [0, 8] } }
-      ]
+      position:placement
     }}
     class="s-tooltip {klass}"
     class:active

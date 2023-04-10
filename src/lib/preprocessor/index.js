@@ -1,11 +1,11 @@
+// @ts-nocheck
 import { parse, walk } from "svelte/compiler";
-
 import fs from "fs";
-// @ts-ignore
-const loc = import.meta.url.replace("preprocessor/index.js","index.ts").replace("file:///","");
+
+const loc = import.meta.url.replace("preprocessor/index.js","index.js").replace("file:///","");
 
 const api = fs.readFileSync(loc , "utf-8");
-const components = api.split("export").map(x=>({
+const components = api.split("export").map((x)=>({
   source: x,
   name: x.match(/(?<={)(.*)(?=})/s)?.[0],
   path: x.match(/(?<=\/)(.*)(?=')/)?.[0]
@@ -58,7 +58,6 @@ function walkAndReplace(options, replaceWith) {
   function getContent(node) {
     return content.slice(node.start + cursor, node.end + cursor);
   }
-
   walk(getAst(options.type, ast), {
     enter(node, parentNode) {
       replaceWith.apply(this, [
@@ -94,7 +93,7 @@ function Optimize(){
                       const comp = components.find(x=>x.name?.includes(imported.name));
 
                       if (comp) {
-                        return `import { ${local.name} } from "@paulpopa/svelte-material/${comp.path}/index.ts";`;
+                        return `import { ${local.name} } from "@paulpopa/svelte-material/${comp.path}/index.js";`;
                       }
 
                       console.warn(

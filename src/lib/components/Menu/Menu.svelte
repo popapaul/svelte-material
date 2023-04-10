@@ -1,8 +1,6 @@
 <script lang="ts">
   import { clickOutside } from '../../actions/ClickOutside';
   import { createPopperActions, type NanoPopPosition } from '../../actions/Popper';
-  //import { createPopperActions } from 'svelte-popperjs';
-  //import type { Placement, PositioningStrategy } from '@popperjs/core';
   import { setContext, createEventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
 
