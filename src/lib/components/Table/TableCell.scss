@@ -1,5 +1,12 @@
 @import './variables';
 
+.s-table-row:last-of-type{
+  .s-table-cell{
+    border-bottom-color: $tbl-border-color;
+    border-bottom-style: solid;
+    border-bottom-width: $tbl-border-width;
+  }
+}
 .s-table-cell {
   padding: 8px;
   vertical-align: middle;
@@ -12,16 +19,14 @@
   }
 
   &:last-of-type{
-    position: sticky !important;
-    right: 0;
-    background-color: $tbl-background;
-    padding: 2px;
+    --position: sticky !important;
+    --right: 0;
+    --background-color: $tbl-background;
+    --padding: 2px;
   }
   &.s-table-header{
     position: relative;
     min-width: 60px;
-
-
   }
     &.cell-edit{
       padding-top:0px;
@@ -32,21 +37,7 @@
   }
 }
 
-.s-table-sort{
-  opacity: 0;
-  transition: 0.4s;
-  position:absolute;
-}
 th.s-table-cell {
   height: 56px;
   text-align: left;
-
-  &:hover .s-table-sort, .s-table-sort.sort-active
-  {
-    opacity: 1;
-  }
-}
-
-.s-table-cell.sorter{
-   cursor: pointer;
 }

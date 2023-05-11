@@ -13,7 +13,7 @@
     export let locale: string = "ro";
     export let isAllowed: (date: Date) => boolean = () => true;
     export let header: boolean = true;
-    export let value: Date;
+    export let value: Date = null;
     export let noDateText: string = "No Date"
     export let mode:DateMode = "days";
     

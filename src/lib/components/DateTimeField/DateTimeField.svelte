@@ -7,15 +7,17 @@
     let klass:string = '';
     export { klass as class };
 
-    export let value:Date;
+    export let value:Date=null;
     export let readonly = false;
     export let noDateText = "No Date"
     export let locale:string = "ro";
 
-
-    interface $$Props extends ComponentProps<DateTimePicker>, Omit<typeof TextField.prototype.$$prop_def,"value"> {
-      readonly?: boolean,
-      class?: string,
+  
+    type $$Props = ComponentProps<TextField> & {
+        value?:Date,
+        readonly?:boolean,
+        noDateText?:string,
+        locale?:string
     }   
 
     const dispatch = createEventDispatcher();

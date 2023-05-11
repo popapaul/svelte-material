@@ -40,6 +40,9 @@
   export let rightClick = false;
   export let width:string = null;
 
+  export let nudgeX:number = 0;
+  export let nudgeY:number = 0;
+
   let activatorWidth:number;
   let menu:HTMLElement;
   let clicked=false;
@@ -97,6 +100,8 @@
     <div bind:this={menu} 
       class="s-menu {klass}"  
       style="z-index:{index};"
+      style:margin-right="{nudgeX}px"
+      style:margin-top="{nudgeY}px"
       style:min-width={width ? width : activatorWidth+"px"}
       role="menu"
       tabindex="0"

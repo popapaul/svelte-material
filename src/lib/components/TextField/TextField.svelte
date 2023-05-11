@@ -18,74 +18,11 @@
 		clear: CustomEvent;
 	};
 
-	// type $$Props = {
-	// 	value?: string | number;
-	// 	/** Color class of the text field when active. */
-	// 	color?: string;
-	// 	/** Whether text field is the `filled` material design variant. */
-	// 	filled?: boolean;
-	// 	/** Whether text field is outlined by elevation. */
-	// 	solo?: boolean;
-	// 	/** Whether text field is the `outlined` material design variant. */
-	// 	outlined?: boolean;
-	// 	/** Whether text field do not have elevation. */
-	// 	flat?: boolean;
-	// 	/** Whether text field height is reduced. */
-	// 	dense?: boolean;
-	// 	/** Whether text field has rounded corners. */
-	// 	rounded?: boolean;
-	// 	/** Whether text field has a clear button. */
-	// 	clearable?: boolean;
-	// 	/** Whether text field is read-only. */
-	// 	readonly?: boolean;
-	// 	/** Whether text field is disabled. */
-	// 	disabled?: boolean;
-	// 	/** Placeholder content for text field. */
-	// 	placeholder?: string;
-	// 	/** Hint text. */
-	// 	hint?: string;
-	// 	/** Display a counter set to a desired input length. */
-	// 	counter?: boolean;
-	// 	/** Error messages to display. */
-	// 	messages?: string[];
-	// 	/**
-	// 	 * A list of validator functions that take the text field value and return an error
-	// 	 * message, or `true` otherwise.
-	// 	 */
-	// 	rules?: ((value: string) => string)[];
-	// 	/** Number of error messages to display. Defaults to one. */
-	// 	errorCount?: number;
-	// 	/** Whether to delay validation until blur. */
-	// 	validateOnBlur?: boolean;
-	// 	/** Whether text field has error. */
-	// 	error?: boolean;
-	// 	/** Whether text field has `success` class. */
-	// 	success?: boolean;
-	// 	/** Id of the text field. Defaults to a random uid. */
-	// 	id?: string;
-	// 	/** Styles to add to text field wrapper. */
-	// 	style?: string;
-
-	// 	name?: string;
-	// 	/** Reference to text field element in the DOM. */
-
-	// 	inputElement?: HTMLInputElement;
-
-	// 	type?: string;
-
-  //   /** Classes to add to text field wrapper. */
-	// 	class?: string;
-
-	// 	underline?: boolean;
-
-	// 	autogrow?: boolean;
-	// };
-
 	let klass = '';
 	/** Classes to add to text field wrapper. */
 	export { klass as class };
 	/** Value of the text field. */
-	export let value: string | number = '';
+	export let value: string|number|Date = '';
 	/** Color class of the text field when active. */
 	export let color = 'primary';
 	/** Whether text field is the `filled` material design variant. */
@@ -148,7 +85,6 @@
 
 	$: touched && (value || !value) && validate();
 	$: labelActive = !!placeholder || value || value?.toString?.() || focused;
-
 	export function validate() {
 		errorMessages = rules.map((r) => r(value?.toString())).filter((r) => typeof r === 'string');
 		error = !!errorMessages.length;
@@ -211,7 +147,7 @@
 					<svelte:element
 						this={textarea ? 'textarea' : 'input'}
 						bind:this={inputElement}
-						{value}
+						value={value??""}
 						on:input={handleChange}
 						{type}
 						{placeholder}

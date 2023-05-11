@@ -6,3 +6,4 @@ $tbl-border-width: 1px;
 $tbl-background: var(--theme-surface);
 $tbl-background-hover: var(--theme-datatables-row-hover);
 $tbl-head-font-weight: map-get($font-weights, 'medium');
+$tbl-background-odd: var(--theme-datatables-row-even);

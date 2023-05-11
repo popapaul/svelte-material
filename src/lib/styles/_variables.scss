@@ -312,6 +312,7 @@ $material-light-theme: map-deep-merge(
     ),
     'datatables': (
       'row-hover': rgba(material-color('shades', 'black'), 0.04),
+      'row-even': rgba(material-color('shades', 'black'), 0.02),
     ),
     'dividers': rgba(material-color('shades', 'black'), 0.12),
     'chips': #e0e0e0,
@@ -384,6 +385,7 @@ $material-dark-theme: map-deep-merge(
     ),
     'datatables': (
       'row-hover': rgba(material-color('shades', 'white'), 0.04),
+      'row-even': rgba(material-color('shades', 'white'), 0.02),
     ),
     'dividers': rgba(material-color('shades', 'white'), 0.12),
     'chips': #555555,

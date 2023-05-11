@@ -2,7 +2,9 @@
 
 .s-table-row {
 
-
+  &:nth-of-type(even){
+    background-color: $tbl-background-odd;
+  }
   &:hover .s-table-cell:not(th)
   {
     background-color: $tbl-background-hover;

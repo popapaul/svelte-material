@@ -1,0 +1,21 @@
+{
+	"name": "@paulpopa/svelte-material",
+    "author": "Paul Popa",
+	"version": "0.3.0",
+	"peerDependencies": {
+		"sass": "^1.61.0",
+		"svelte": "^3.54.0"
+	},
+	"devDependencies": {
+		"sass": "^1.61.0",
+		"svelte": "^3.58.0"
+	},
+	"main": "./index.ts",
+	"exports": {
+		".": "./index.ts",
+		"./components/*":  "./components/*",
+		"./actions/*":  "./actions/*",
+		"./preprocessor": "./preprocessor/index.js"
+	},
+	"type": "module"
+}

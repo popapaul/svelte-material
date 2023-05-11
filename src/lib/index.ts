@@ -77,9 +77,15 @@ export {
 } from './components/Toast';
 
 export {
+	SimpleTable,
 	Table,
 	TableHeader,
 	TableRow,
 	TableCell,
 	TableFooter,
 } from './components/Table';
+
+export {
+	DataGrid,
+	Column,
+} from './components/DataGrid';

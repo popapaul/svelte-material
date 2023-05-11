@@ -9,7 +9,7 @@
   }
 </script>
 
-<script>
+<script lang="ts">
   import { setContext, createEventDispatcher, onDestroy } from 'svelte';
   import { writable } from 'svelte/store';
 
@@ -27,9 +27,9 @@
   /** max number of selection */
   export let max = Infinity;
   /** roles of item */
-  export let role = null;
+  export let role:string = null;
   /** styles added to item group */
-  export let style = null;
+  export let style:string = null;
 
 
   const dispatch = createEventDispatcher();

@@ -14,14 +14,13 @@
   z-index: $tooltip-z-index;
   display: inline-block;
   padding: $tooltip-padding;
- 
+  position:fixed;
   text-transform: initial;
   text-align: center;
   width: auto;
   opacity: 0;
 
   &.active {
-    opacity: 0.9;
-
+    opacity: 1;
   }
 }

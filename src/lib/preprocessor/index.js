@@ -2,7 +2,7 @@
 import { parse, walk } from "svelte/compiler";
 import fs from "fs";
 
-const loc = import.meta.url.replace("preprocessor/index.js","index.js").replace("file:///","");
+const loc = import.meta.url.replace("preprocessor/index.js",import.meta.url.includes("src")  ? "index.ts" : "index.js").replace("file:///","");
 
 const api = fs.readFileSync(loc , "utf-8");
 const components = api.split("export").map((x)=>({

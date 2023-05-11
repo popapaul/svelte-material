@@ -32,7 +32,10 @@
 
 <style lang="scss" src="./Badge.scss" global></style>
 
-<span class="s-badge {wrapperClass}">
+<span class="s-badge {wrapperClass}"         
+  on:click
+  on:dblclick
+  on:keydown>
   <slot />
   <span class="s-badge__wrapper ">
     {#if active && mounted}
@@ -47,8 +50,6 @@
         class:dot
         class:tile
         class:bottom
-        on:click
-        on:keydown
         class:left
         role="status"
         aria-label={label}

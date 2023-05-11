@@ -1,4 +1,11 @@
 <script lang="ts">
+  import TextField from "../TextField/TextField.svelte";
+  import ColorPicker from "../ColorPicker/ColorPicker.svelte";
+	import Menu from "../Menu/Menu.svelte";
+	import type { ComponentProps } from "svelte";
+  export let value: string = "#FFF";
+  export let colors: string[] = [];
+
   interface $$Events {
     focus: CustomEvent;
     blur: CustomEvent;
@@ -7,19 +14,12 @@
           rgba: { r:number, g:number, b:number, a:number}
       }>;
   }
-  import TextField from "../TextField/TextField.svelte";
-  import ColorPicker from "../ColorPicker/ColorPicker.svelte";
-	import Menu from "../Menu/Menu.svelte";
-  export let value: string = "#FFF";
 
-  export let colors: string[] = [];
-
-  interface $$Props extends Omit<typeof TextField.prototype.$$prop_def,"value"> 
-  {
-    value?:string,
-    colors?: string[]
-  }   
-
+  type $$Props = ComponentProps<TextField> & {
+      value?:string,
+      colors?:string[]
+  }  
+    
   let active = false;
 
   const open = () => {

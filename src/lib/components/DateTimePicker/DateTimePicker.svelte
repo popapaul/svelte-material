@@ -13,7 +13,7 @@
 
   type Mode = "days" | "month" | "year" | "hour" | "minute";
 
-  interface $$Props extends Omit<ComponentProps<DatePicker>, "mode">, Omit<ComponentProps<TimePicker>, "mode"> {
+  type $$Props = Omit<ComponentProps<DatePicker>, "mode"> & Omit<ComponentProps<TimePicker>, "mode"> & {
     mode?:Mode
   }   
 

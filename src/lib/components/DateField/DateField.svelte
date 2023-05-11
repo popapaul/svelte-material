@@ -3,17 +3,21 @@
   import TextField from "../TextField/TextField.svelte";
 	import DatePicker from "../DatePicker/DatePicker.svelte";
 	import Menu from "../Menu/Menu.svelte";
-
-  type TextField = typeof TextField.prototype.$$prop_def;
-  interface $$Props extends ComponentProps<DatePicker>, Omit<TextField,'value'> 
-  {
- 
-  }
-
-  export let value:Date;
+  export let value:Date = null;
   export let locale:string = "ro";
   export let readonly = false;
 
+
+
+  type $$Props =  ComponentProps<TextField>  & ComponentProps<DatePicker> & {
+    locale?:string,
+    readonly?:boolean
+  }
+ 
+  const ceva:$$Props = {
+
+  }
+ceva.value;
   const dispatch = createEventDispatcher();
   let elm;
   let active = false;

@@ -1,6 +1,7 @@
 {
-	"name": "svelte-material",
-	"version": "0.0.2",
+	"name": "@paulpopa/svelte-material",
+    "author": "Paul Popa",
+	"version": "0.3.8",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -17,12 +18,9 @@
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
 		},
-		"./components/":  "./dist/components/",
-		"./actions/":  "./dist/actions/",
-		"./preprocessor": {
-			"types": "./dist/preprocessor/index.d.ts",
-			"default": "./dist/preprocessor/index.js"
-		}
+		"./components/*":  "./dist/components/*",
+		"./actions/*":  "./dist/actions/*",
+		"./preprocessor": "./dist/preprocessor/index.js"
 	},
 	"files": [
 		"dist",

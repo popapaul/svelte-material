@@ -1,0 +1,21 @@
+@import './variables';
+
+
+.s-table-cell:nth-of-type(2) {
+  padding-left: calc($tbl-expand-width * var(--tbl-level));
+}
+
+.s-table-expand{
+  position: relative;
+  left: calc($tbl-expand-width * var(--tbl-level));
+}
+.s-table-sorter{
+  cursor: pointer;
+  .s-table-sorter-icon{
+    transition: 300ms;
+    opacity:0;
+  }
+}
+.s-table-sorter:hover .s-table-sorter-icon, .s-table-sorter[sorted] .s-table-sorter-icon{
+  opacity:1;
+}

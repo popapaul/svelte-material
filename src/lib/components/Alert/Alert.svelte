@@ -12,7 +12,7 @@
     /** the transition for the alert */
     export let transition:(node: Element, options: any) => TransitionConfig = fade;
     /** transition options */
-    export let transitionOpts:any = { duration: 0 };
+    export let transitionOpts:any = { duration: 300 };
     /** makes the alert dense */
     export let dense = false;
     /** adds a thin outline */

@@ -27,7 +27,6 @@
   use:popperRef
   on:mouseenter={()=>active=true}
   on:mouseleave={()=>active=false}
-  
   class="s-tooltip__wrapper {wrapperClass}">
   <!-- Slot for the element that display the tooltip -->
   <slot />
