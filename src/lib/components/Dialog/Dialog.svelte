@@ -1,3 +1,15 @@
+<script context="module" lang="ts">
+  const dialogs= new Set<()=>void>();
+
+  typeof window !== "undefined" && window.addEventListener("keydown", handleEsc);
+
+  function handleEsc(event:KeyboardEvent) {
+		if (event.key === 'Escape' || event.keyCode===27) {;
+      [...dialogs][dialogs.size-1]?.();
+		}
+	}
+</script>
+
 <script lang="ts">
   import Overlay from '../Overlay/Overlay.svelte';
   import {format} from '../../internal/Style';
@@ -17,7 +29,7 @@
   /** sets the width for the dialog */
   export let width:number|string = 500;
   /** sets the width for the dialog */
-  export let height:number|string = 500;
+  export let height:number|string = "auto";
   /** changes dialog for fullscreen display */
   export let fullscreen:boolean = false;
   /** transition of the dialog */
@@ -27,45 +39,44 @@
 
   export let zindex:number = 100;
 
-  let hovererd=false;
-
   const dispatch = createEventDispatcher();
 
   function close() {
-    if (!persistent) active = false;
-    dispatch("close")
+    if (!persistent) 
+    active = false;
+    dispatch("close");
+    dialogs.delete(close);
   }
 
   $: visible = active && !disabled;
-
-  function handleEsc(event) {
-		if (hovererd && (event.key === 'Escape' || event.keyCode===27)) {
-      event.stopPropagation();
-			active = false;	
-      close();
-		}
-	}
+  $: visible && dialogs.add(close);
 </script>
 
 <style lang="scss" src="./Dialog.scss" global>
 </style>
 
-<svelte:window on:keydown={handleEsc} />
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+{#if $$slots.activator}
+  <div on:click={() => active = true} style="display:contents;">
+    <slot name="activator"/>
+  </div>
+{/if}
+
 {#if visible}
-<div use:portal={".s-app"}>
-    <div role="document" on:mouseleave={()=>hovererd=false} on:mouseenter={()=>hovererd=true} class:visible class="s-dialog" style="--s-index:{zindex}; --s-dialog-width:{width};--s-dialog-height:{format(height)};">
-      <div
-        class="s-dialog__content {klass}"
-        class:fullscreen
-        transition:transition={{ duration: 300, start: 0.1 }}
-        on:introstart
-        on:outrostart
-        on:introend
-        on:outroend>
-        <slot />
+  <div use:portal={".s-app"}>
+      <div role="document" class:visible class="s-dialog" style="--s-index:{zindex}; --s-dialog-width:{width};--s-dialog-height:{format(height)};">
+        <div
+          class="s-dialog__content {klass}"
+          class:fullscreen
+          transition:transition={{ duration: 300, start: 0.1 }}
+          on:introstart
+          on:outrostart
+          on:introend
+          on:outroend>
+          <slot />
+        </div>
+        <Overlay index={zindex-1} {...overlay} active={visible} on:click={close}/> 
       </div>
-      <Overlay index={zindex-1} {...overlay} active={visible} on:click={close}> </Overlay>
-    </div>
-   
-</div>
+  </div>
 {/if}

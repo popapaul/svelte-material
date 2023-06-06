@@ -3,6 +3,8 @@
 	"compilerOptions": {
 		"allowJs": false,
 		"checkJs": false,
+		"lib": ["dom", "dom.iterable", "es2021"],
+		"target": "ES2021",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,

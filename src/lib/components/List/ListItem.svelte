@@ -30,7 +30,7 @@
   export let multiline = false;
   /** transforms listitem into anchor */
   export let href:string="";
-  
+
   export let link = role;
   /** makes text selectable if true */
   export let selectable = !link;
@@ -69,7 +69,7 @@
   {...$$restProps}
   {style}>
   <slot name="prepend" />
-  <div class="s-list-item__content"   
+  <div class="s-list-item__content" {role}   
     on:click
     on:keydown
     on:dblclick>

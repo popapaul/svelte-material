@@ -5,9 +5,7 @@
 </script>
 
 <thead class="s-table-head">
-    <tr class="s-table-row">
-        <slot />
-    </tr>
+    <slot />
 </thead>
 
 <style lang="scss" src="./TableHead.scss" global></style>

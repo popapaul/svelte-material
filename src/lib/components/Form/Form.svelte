@@ -42,7 +42,7 @@
 	});
 
 	const onSubmit = () => {
-		const errorFields = validate();
+		const errorFields = [];
 
 		if (errorFields.length) 
         {
@@ -57,10 +57,7 @@
 
 	export function validate() {
 		const errorFields = Array.from(formFields)
-			.map(({id,validate}) => ({ 
-                errors: validate(),
-                id,
-            }))
+			.map(({id,validate}) => ({  errors: validate(), id }))
 			.filter((x) => x.errors.length);
 		if (errorFields.length) 
             return errorFields;
