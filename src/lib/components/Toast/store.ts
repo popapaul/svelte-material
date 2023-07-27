@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import type { FlyParams } from 'svelte/types/runtime/transition/index'
+import type { FlyParams } from 'svelte/transition'
 
 /**
  * Default Toast Options

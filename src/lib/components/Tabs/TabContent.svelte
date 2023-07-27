@@ -4,10 +4,11 @@
   let klass = '';
   export { klass as class };
   export let style = '';
+  export let windowClass = '';
 </script>
 
 <div class="s-tab-content {klass}" role="tabpanel" {style}>
-  <WindowItem>
+  <WindowItem class={windowClass}>
     <slot />
   </WindowItem>
 </div>

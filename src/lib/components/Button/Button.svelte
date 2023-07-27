@@ -48,6 +48,7 @@
 </style>
 
 <!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <svelte:element this={tag}
 	bind:this={button}
 	{...notypecheck({type, href, disabled})}

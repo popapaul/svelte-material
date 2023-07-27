@@ -78,6 +78,7 @@
   {mandatory}
   {max}>
   {#if arrowsVisible}
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="s-slide-group__prev"
       class:disabled={x === 0}
@@ -102,6 +103,7 @@
     </div>
   </div>
   {#if arrowsVisible}
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
       class="s-slide-group__next"
       class:disabled={x === contentWidth - wrapperWidth}

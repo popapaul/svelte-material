@@ -151,6 +151,7 @@
           in:fly|local={{ x: direction * 50, duration: 200, delay: 80 }}
           out:fade|local={{ duration: direction === 0 ? 0 : 160 }}
         >
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
           <div class="title"  on:keydown={onKeydown} on:click={onMonth}>
             {new Intl.DateTimeFormat(locale, { month: "long" }).format(new Date(year, month, 1))} {("000" + year).slice(-4)}
           </div>

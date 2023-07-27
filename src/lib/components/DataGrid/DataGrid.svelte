@@ -104,7 +104,7 @@
   <TableBody>
     <Columns data={$context.data} {expand} {sorting} let:context let:index>
       <slot {context} {index}/>
-      <slot name="expand" slot="expand" {context} {index}/>
+      <slot name="expand" slot="expand" {context}/>
     </Columns>
     <slot name="aggregate" slot="aggregate"/>
   </TableBody>

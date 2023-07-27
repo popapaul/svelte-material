@@ -15,11 +15,11 @@
     )
 {
   .#{$color}-color {
-    background-color: $value !important;
-    border-color: $value !important;
+    background-color: var(--theme-#{$color}-color) !important;
+    border-color: var(--theme-#{$color}-color) !important;
   }
   .#{$color}-text {
-    color: $value !important;
-    caret-color: $value !important;
+    color:  var(--theme-#{$color}-color) !important;
+    caret-color: var(--theme-#{$color}-color) !important;
   }
 }

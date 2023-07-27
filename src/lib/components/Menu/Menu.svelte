@@ -79,12 +79,14 @@
 <style lang="scss" src="./Menu.scss" global>
 </style>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="s-menu__wrapper {classWrapper}"  {style}
     use:clickOutside={{include:[menu]}}
     on:clickOutside={()=>closeOnClickOutside && close()}
     on:mouseenter={()=>!active && hover && open()}
     on:mouseleave={()=>!clicked && hover && close()}
 >
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div 
     use:popperRef
     on:click={activatorClick}  

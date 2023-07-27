@@ -144,6 +144,7 @@
 					<slot name="content" />
 					<!-- keypress Event is deprecated. Use keydown or keyup instead -->
 
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<svelte:element
 						this={textarea ? 'textarea' : 'input'}
 						bind:this={inputElement}
@@ -171,6 +172,7 @@
 
 				{#if clearable && value !== ''}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div on:click={clear} style="cursor:pointer">
 						<!-- Slot for the icon when `clearable` is true. -->
 						<slot name="clear-icon">

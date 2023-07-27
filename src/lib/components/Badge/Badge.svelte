@@ -31,7 +31,7 @@
 </script>
 
 <style lang="scss" src="./Badge.scss" global></style>
-
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <span class="s-badge {wrapperClass}"         
   on:click
   on:dblclick

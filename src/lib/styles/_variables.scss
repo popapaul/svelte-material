@@ -270,6 +270,14 @@ $material-light-theme: map-deep-merge(
   (
     'background': $light-background,
     'surface': $light-surface,
+
+    'primary-color': $primary-color,
+    'secondary-color':  $secondary-color,
+    'success-color': $success-color,
+    'warning-color': $warning-color,
+    'info-color': $info-color,
+    'error-color': $error-color,
+
     'text': (
       'primary': rgba(material-color('shades', 'black'), 0.87),
       'secondary': rgba(material-color('shades', 'black'), 0.6),
@@ -339,10 +347,20 @@ $material-dark-elevation-colors: map-merge(
   $material-dark-elevation-colors
 );
 
+
+
 $material-dark-theme: map-deep-merge(
   (
     'background': $dark-background,
-    'surface': $dark-surface ,
+    'surface': $dark-surface,
+
+    'primary-color': scale-color($primary-color, $lightness: 40%),
+    'secondary-color':  $secondary-color,
+    'success-color': $success-color,
+    'info-color': $info-color,
+    'warning-color':scale-color($warning-color, $lightness: 25%),
+    'error-color': $error-color,
+
     'icons': (
       'active': material-color('shades', 'white'),
       'inactive': rgba(material-color('shades', 'white'), 0.5),

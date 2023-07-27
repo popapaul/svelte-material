@@ -30,6 +30,8 @@
   export let sliderClass = '';
   export let ripple = {};
   export let vertical = false;
+  export let windowClass = '';
+  export let wrapperClass = '';
 
   setContext(TABS, {
     ripple,
@@ -59,7 +61,7 @@
 <style lang="scss" src="./Tabs.scss" global>
 </style>
 
-<div class="s-tabs" role="tablist" class:vertical  bind:clientWidth={tabWidth}>
+<div class="s-tabs {wrapperClass}" role="tablist" class:vertical  bind:clientWidth={tabWidth}>
   <div
     class="s-tabs-bar {klass}"
     role="tablist"
@@ -81,7 +83,7 @@
       {/if}
     </SlideGroup>
   </div>
-  <Window bind:this={windowComponent}>
+  <Window class={windowClass} bind:this={windowComponent}>
     <slot />
   </Window>
 </div>

@@ -7,7 +7,7 @@
   export let style:string=null;
 </script>
 
-<style type="scss" src="./MaterialApp.scss" global> </style>
+<style type="scss" src="./MaterialApp.scss" global></style>
 
 <div class="s-app {klass} theme--{theme}" {style}>
   <slot />

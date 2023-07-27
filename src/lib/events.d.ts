@@ -1,7 +1,7 @@
-declare namespace svelte.JSX {
+declare namespace svelteHTML {
     interface HTMLAttributes<T> {
-        onclickOutside?: (event: CustomEvent<void> & { target: EventTarget & T }) => any;
-        onintersect?: (event: CustomEvent<IntersectionObserverEntry>) => any;
+        'on:clickOutside'?: (event: CustomEvent<void> & { target: EventTarget & T }) => void;
+        'on:intersect'?: (event: CustomEvent<IntersectionObserverEntry>) => void;
     }
 }
 

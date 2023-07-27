@@ -8,6 +8,7 @@
     const isHead = getContext("tbl-header")===true;
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <svelte:element
     this={isHead ? "th" : "td"}
     class="s-table-cell {klass}"
@@ -16,7 +17,7 @@
     on:click
     {...$$restProps}>
     {#if isHead}
-        <slot name="header"/>
+        <slot name="header"><slot/></slot>
     {:else}
         <slot/>
     {/if}

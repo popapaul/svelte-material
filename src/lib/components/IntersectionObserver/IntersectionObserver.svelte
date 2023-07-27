@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { intersect, type IntersectOptions } from '../../actions/Intersect';
-  export let options:IntersectOptions;
+  export let options:IntersectOptions = { once: true };
   let intersecting = false;
   let klass = '';
 	/** Classes to add to wrapper. */

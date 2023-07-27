@@ -7,7 +7,6 @@
     export let data:T[];
     export let hasChildren:(item:T)=>boolean = null;
     export let getChildren:(item:T)=>Promise<T[]> = null;
-    export let level = 0;
     export let sorting = false;
     export let expand=false;
 

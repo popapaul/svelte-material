@@ -23,6 +23,7 @@
 <style lang="scss" src="./Tooltip.scss" global>
 </style>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   use:popperRef
   on:mouseenter={()=>active=true}
@@ -32,6 +33,7 @@
   <slot />
 </div>
 {#if active}
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <span
     on:mouseenter={()=>active=true}
     on:mouseleave={()=>active=false}

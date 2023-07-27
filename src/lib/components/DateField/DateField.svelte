@@ -7,17 +7,12 @@
   export let locale:string = "ro";
   export let readonly = false;
 
-
-
-  type $$Props =  ComponentProps<TextField>  & ComponentProps<DatePicker> & {
+  type $$Props =  ComponentProps<TextField>  & ComponentProps<DatePicker>  & ComponentProps<Menu> & {
     locale?:string,
     readonly?:boolean
   }
- 
-  const ceva:$$Props = {
 
-  }
-ceva.value;
+
   const dispatch = createEventDispatcher();
   let elm;
   let active = false;
@@ -58,7 +53,7 @@ ceva.value;
 
 </script>
 
-<Menu closeOnClick={false} bind:active width="auto" placement="bottom-start">
+<Menu closeOnClick={false} {...$$restProps} bind:active width="auto" placement="bottom-start">
   <TextField
     slot="activator"
     value={value instanceof Date && !isNaN(value.getTime()) ? new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", year:"numeric", weekday: "long" }).format(value) : ""}

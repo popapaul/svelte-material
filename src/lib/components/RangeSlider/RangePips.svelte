@@ -165,6 +165,7 @@
   class:focus 
 >
   {#if ( all && first !== false ) || first }
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <span
       class="pip first"
       class:selected={isSelected(min)}
@@ -185,6 +186,7 @@
   {#if ( all && rest !== false ) || rest}
     {#each Array(pipCount + 1) as _, i}
       {#if pipVal(i) !== min && pipVal(i) !== max}
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <span
           class="pip"
           class:selected={isSelected(pipVal(i))}
@@ -205,6 +207,7 @@
   {/if}
 
   {#if ( all && last !== false ) || last}
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <span
       class="pip last"
       class:selected={isSelected(max)}

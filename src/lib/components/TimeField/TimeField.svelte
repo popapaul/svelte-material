@@ -1,16 +1,17 @@
 <script lang="ts">
     import { createEventDispatcher, type ComponentProps } from "svelte";
-    import Textfield from "../TextField/TextField.svelte";
+    import TextField from "../TextField/TextField.svelte";
 	import { isDate } from "../../internal/Date/date";
 	import TimePicker from "../TimePicker/TimePicker.svelte";
 	import Menu from "../Menu/Menu.svelte";
 
 
-  interface $$Props extends ComponentProps<TimePicker> {
-    class?:string
+  type $$Props =  ComponentProps<TextField>  & ComponentProps<TimePicker>  & ComponentProps<Menu> & {
     locale?:string,
     readonly?:boolean
-  }   
+  }
+
+
 
     let klass:string = '';
     export { klass as class };
@@ -63,8 +64,8 @@
 
   </script>
   
-  <Menu closeOnClick={false} bind:active width="auto" placement="bottom-start">
-    <Textfield
+  <Menu closeOnClick={false} {...$$restProps} bind:active width="auto" placement="bottom-start">
+    <TextField
       slot="activator"
       value={value && new Intl.DateTimeFormat(locale, { hour:"2-digit", minute:"2-digit" }).format(value)}
       {...$$restProps}
@@ -82,7 +83,7 @@
       <slot slot="prepend-outer" name="prepend-outer"></slot>
       <slot slot="append-outer" name="append-outer"></slot>
       <slot slot="prepend" name="prepend"></slot>
-    </Textfield>
+    </TextField>
     <TimePicker {hourOnly} on:hour={handleHour} {...$$restProps} bind:value />
 </Menu>
 

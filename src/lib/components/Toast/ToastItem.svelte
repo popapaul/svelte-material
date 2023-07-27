@@ -57,6 +57,7 @@
     </script>
 
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
     transition:transition 
     on:mouseenter={pause} 
@@ -71,9 +72,7 @@
     class:rounded
     class:tile>
     <ProgressLinear reversed striped backgroundColor="s-snackbar-progress" class="progress" value={Math.trunc($progress)}/>
-    <Icon style="color:white;" path={icons[item.type]} />
-    {@html item.message}
-    <Button style="margin-left:auto;color:black;" on:click={remove} fab depressed size="x-small" >
+    <Icon style="color:white;" path={icons[item.type]} />{@html item.message}<Button style="margin-left:auto;color:black;" on:click={remove} fab depressed size="x-small" >
         <Icon path={close} />
     </Button>
 </div>

@@ -42,7 +42,7 @@
 	});
 
 	const onSubmit = () => {
-		const errorFields = [];
+		const errorFields = validate();
 
 		if (errorFields.length) 
         {
@@ -52,7 +52,7 @@
             return dispatch('error', errorFields);
         }
 
-        return dispatch('submit');
+        dispatch('submit');
 	};
 
 	export function validate() {

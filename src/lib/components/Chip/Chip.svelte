@@ -4,10 +4,6 @@
   import closeIcon from '../../internal/Icons/close';
   import { createEventDispatcher } from 'svelte';
 
-  interface $$Events {
-    close: CustomEvent;
-  }
-
   let klass:string = '';
   /** Classes to add to chip. */
   export { klass as class };
@@ -43,6 +39,7 @@
 </style>
 
 {#if active}
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <span
     class="s-chip {klass} size-{size}"
     {style}
@@ -57,6 +54,7 @@
     <slot />
     {#if close}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div class="s-chip__close" on:click|stopPropagation={onClose}>
         <slot name="close-icon">
           <Icon path={closeIcon} />

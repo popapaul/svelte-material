@@ -56,7 +56,7 @@
 </style>
 
 <svelte:window on:mouseup={stopExpand} on:mousemove={expand}/>
-
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div bind:clientWidth={width} class="s-resizer {klass}"  {style} >
      <div  class="s-resize-handle resize-left" on:mousedown={event=>startExpand('left',event)}></div>
     <slot />

@@ -36,7 +36,7 @@ export function RippleStart(e:TouchEvent&PointerEvent, options:RippleOptions = {
 
 	const isTouchEvent = e.touches ? !!e.touches[0] : false;
 	// Parent element
-	const target = (isTouchEvent ? e.touches[0].target : e.currentTarget) as HTMLElement;
+	const target = (isTouchEvent ? e.touches[0].target : e.target) as HTMLElement;
 
 	// Create ripple
 	const ripple = document.createElement('div');

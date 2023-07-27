@@ -1,7 +1,7 @@
 {
 	"name": "@paulpopa/svelte-material",
-    "author": "Paul Popa",
-	"version": "0.3.8",
+	"author": "Paul Popa",
+	"version": "0.3.29",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -18,8 +18,8 @@
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
 		},
-		"./components/*":  "./dist/components/*",
-		"./actions/*":  "./dist/actions/*",
+		"./components/*": "./dist/components/*",
+		"./actions/*": "./dist/actions/*",
 		"./preprocessor": "./dist/preprocessor/index.js"
 	},
 	"files": [
@@ -29,27 +29,27 @@
 	],
 	"peerDependencies": {
 		"sass": "^1.61.0",
-		"svelte": "^3.54.0"
+		"svelte": "^4.0.0"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^2.0.0",
-		"@sveltejs/kit": "^1.15.2",
-		"@sveltejs/package": "^2.0.2",
-		"@types/estree": "^1.0.0",
-		"@typescript-eslint/eslint-plugin": "^5.57.1",
-		"@typescript-eslint/parser": "^5.57.1",
-		"eslint": "^8.38.0",
+		"@sveltejs/adapter-auto": "^2.1.0",
+		"@sveltejs/kit": "^1.20.5",
+		"@sveltejs/package": "^2.1.0",
+		"@types/estree": "^1.0.1",
+		"@typescript-eslint/eslint-plugin": "^5.60.1",
+		"@typescript-eslint/parser": "^5.60.1",
+		"eslint": "^8.43.0",
 		"eslint-config-prettier": "^8.8.0",
-		"eslint-plugin-svelte": "^2.30.0",
-		"prettier": "^2.8.7",
-		"prettier-plugin-svelte": "^2.10.0",
-		"publint": "^0.1.11",
-		"sass": "^1.61.0",
-		"svelte": "^4.0.0-next.0",
-		"svelte-check": "^3.2.0",
-		"tslib": "^2.5.0",
-		"typescript": "^5.0.4",
-		"vite": "^4.2.1"
+		"eslint-plugin-svelte": "^2.32.0",
+		"prettier": "^2.8.8",
+		"prettier-plugin-svelte": "^2.10.1",
+		"publint": "^0.1.12",
+		"sass": "^1.63.6",
+		"svelte": "^4.0.0",
+		"svelte-check": "^3.4.4",
+		"tslib": "^2.6.0",
+		"typescript": "^5.1.5",
+		"vite": "^4.3.9"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",

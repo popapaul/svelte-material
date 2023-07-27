@@ -27,7 +27,7 @@
 
 <style lang="scss" src="./Overlay.scss" global>
 </style>
-
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if active}
   <div
     in:transition={inOpts}

@@ -2,7 +2,7 @@ import { tick } from "svelte";
 /**
  * Usage: <div use:portal={'css selector'}> or <div use:portal={document.body}>
  */
-export const portal = (el:HTMLElement, target:HTMLElement|string = "body") => {
+export const portal = (el:HTMLElement, target:HTMLElement|string = ".s-app") => {
   let targetEl;
   async function update(newTarget) {
     target = newTarget;

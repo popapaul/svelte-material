@@ -1,18 +1,16 @@
-import { RippleStart, RippleStop, type RippleOptions } from './material-ripple';
+import type {RippleOptions}  from './material-ripple';
 export {type RippleOptions} from './material-ripple'
 
 export const ripple = (node:Element, _options:RippleOptions|boolean = {}) => {
 	let options = _options as RippleOptions;
 	let destroyed = false;
-	let ripple;
+	let ripple: HTMLDivElement;
 	let keyboardActive = false;
-	const handleStart = e => {
-		ripple = RippleStart(e, options);
-	};
-	const handleStop = () => RippleStop(ripple);
-	const handleKeyboardStart = e => {
+	const handleStart =  e => import("./material-ripple").then(x=> ripple = x.RippleStart(e, options));
+	const handleStop = () => import("./material-ripple").then(x=>x.RippleStop(ripple));
+	const handleKeyboardStart = async e => {
 		if (!keyboardActive && (e.keyCode === 13 || e.keyCode === 32)) {
-			ripple = RippleStart(e, { ...options, centered: true });
+			ripple = await import("./material-ripple").then(x=>x.RippleStart(e, { ...options, centered: true }));
 			keyboardActive = true;
 		}
 	};

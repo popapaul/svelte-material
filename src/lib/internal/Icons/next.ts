@@ -1,1 +1,1 @@
-export default 'M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z';
+export default `<svg viewBox="0 0 24 24"><path d="M10.02 6 8.61 7.41 13.19 12l-4.58 4.59L10.02 18l6-6-6-6z"></path></svg>`

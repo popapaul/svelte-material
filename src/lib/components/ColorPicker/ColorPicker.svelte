@@ -206,7 +206,7 @@
 
   <style lang="scss" src="./ColorPicker.scss" global></style>
   <div class="main-container">
-  
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div  class="colorsquare size" style="background-color:rgba({hsvToRgb(h, 1, 1).join(",")});">
         <div class="saturation-gradient">
             <div class="value-gradient">

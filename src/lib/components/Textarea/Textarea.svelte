@@ -3,6 +3,7 @@
   import Icon from '../Icon/Icon.svelte';
   import uid from '../../internal/uid';
   import clearIcon from '../../internal/Icons/close';
+	import { onMount } from 'svelte';
 
   interface $$Events {
     input: KeyboardEvent & { target: EventTarget & HTMLInputElement},
@@ -36,7 +37,7 @@
   /** Whether textarea is read-only. */
   export let readonly = false;
   /** Number of initial textarea lines. Defaults to 5. */
-  export let rows = 5;
+  export let rows = 1;
   /** Whether textarea is allowed to grow with the text. */
   export let autogrow = false;
   /** Whether textarea is not allowed to grow with the text. */
@@ -97,17 +98,23 @@
     if (!placeholder) labelActive = false;
   }
 
-  function onInput() {
-    if (!validateOnBlur) checkRules();
-    if (autogrow) {
+  function handleHeight(){
+    if (autogrow && textarea) {
       textarea.style.height = 'auto';
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   }
+  onMount(handleHeight)
+
+  $: value && handleHeight()
+
+  function onInput() {
+    if (!validateOnBlur) checkRules();
+  }
 </script>
 
 <Input
-  class="s-text-field s-textarea {klass}"
+  class="s-text-field {klass}"
   {color}
   {readonly}
   {disabled}
@@ -152,6 +159,7 @@
     </div>
 
     {#if clearable && value !== ''}
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div on:click={clear} on:keydown={clear} style="cursor:pointer">
         <!-- Slot for the icon when `clearable` is true. -->
         <slot name="clear-icon">
