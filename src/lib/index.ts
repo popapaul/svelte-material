@@ -5,6 +5,7 @@ export { intersect } from './actions/Intersect';
 export { jump } from './actions/Jump';
 export { touch } from './actions/Touch';
 export { swipe } from './actions/Swipe';
+export { createPopperActions, createPopper, reposition  } from './actions/Popper';
 
 export { AppBar } from './components/AppBar';
 export { Alert } from './components/Alert';

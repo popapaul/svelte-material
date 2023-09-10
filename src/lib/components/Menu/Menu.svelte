@@ -38,12 +38,12 @@
   export let style = '';
   
   export let rightClick = false;
-  export let width:string = null;
+  export let fullWidth:boolean = false;
 
   export let nudgeX:number = 0;
   export let nudgeY:number = 0;
 
-  let activatorWidth:number;
+  let activatorWidth:number=300;
   let menu:HTMLElement;
   let clicked=false;
   const dispatch = createEventDispatcher();
@@ -88,11 +88,11 @@
 >
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div 
+    bind:clientWidth={activatorWidth}
     use:popperRef
     on:click={activatorClick}  
     on:keydown={activatorClick}  
     on:contextmenu|preventDefault={()=>rightClick && open()}
-    bind:clientWidth={activatorWidth}
     >
     <slot name="activator" />
   </div>
@@ -101,10 +101,9 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div bind:this={menu} 
       class="s-menu {klass}"  
-      style="z-index:{index};"
+      style="z-index:{index};{fullWidth ? `width: ${activatorWidth}px` : ""}"
       style:margin-right="{nudgeX}px"
       style:margin-top="{nudgeY}px"
-      style:min-width={width ? width : activatorWidth+"px"}
       role="menu"
       tabindex="0"
       class:tile

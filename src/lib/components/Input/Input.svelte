@@ -18,7 +18,6 @@
   export let success:boolean = false;
 
   export let style:string = null;
-  
 </script>
 
 <style lang="scss" src="./Input.scss" global></style>

@@ -13,15 +13,6 @@
   import MAGNIFY_ICON from '../../internal/Icons/magnify';
 
 
-  interface $$Slots {
-      item: { item: TItem };
-      "prepend-outer",
-      "append-outer",
-      items,
-      filter,
-      default
-  }
-
   interface $$Events{
     change: CustomEvent<TValue>
   }
@@ -130,7 +121,7 @@
 </script>
 
 <div class="s-select {klass}" {style} class:disabled class:chips {...$$restProps}>
-  <Menu closeOnClick={filterable ? false : closeOnClick} bind:active {disabled} {...$$restProps}>
+  <Menu {closeOnClick} {disabled} bind:active fullWidth  {...$$restProps}>
       <TextField 
         slot="activator"
         class="s-select-input"

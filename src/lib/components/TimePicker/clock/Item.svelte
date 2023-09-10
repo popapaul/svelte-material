@@ -22,4 +22,4 @@
     </div>
 </div>
 
-<style>._tp-item{font-size:1rem;font-weight:400;line-height:1.5;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}._tp-item._tp-selected{color:#fff}._tp-item-am{margin-top:-.7rem}._tp-item-pm{font-size:.85rem;line-height:1.4;margin-top:-.58rem}._tp-item-container{left:50%;margin-left:-1rem;position:absolute;text-align:center;top:50%;width:2rem}</style>
+<style>._tp-item{color:black;font-size:1rem;font-weight:400;line-height:1.5;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}._tp-item._tp-selected{color:#fff}._tp-item-am{margin-top:-.7rem}._tp-item-pm{font-size:.85rem;line-height:1.4;margin-top:-.58rem}._tp-item-container{left:50%;margin-left:-1rem;position:absolute;text-align:center;top:50%;width:2rem}</style>

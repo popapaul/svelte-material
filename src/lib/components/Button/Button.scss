@@ -18,7 +18,8 @@
   transition-duration: $btn-transition-duration;
   transition-property: box-shadow, transform, opacity;
   background-color: var(--theme-app-bar);
-
+  border: none;
+  
   align-items: center;
   color: inherit;
   line-height: normal;

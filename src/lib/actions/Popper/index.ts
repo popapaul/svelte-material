@@ -1,5 +1,5 @@
 import { createPopper, type NanoPopOptions, type NanoPop } from './popper';
-
+export * from "./popper";
 export type {NanoPopPosition} from './popper';
 export type PopperOptions =| Partial<NanoPopOptions> | undefined;
 

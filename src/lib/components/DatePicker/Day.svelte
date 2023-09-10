@@ -282,6 +282,7 @@
       height: 34px;
       line-height: 34px;
       border-radius: 50%;
+      border: none;
     }
     .day-control.disabled{
       opacity: 0.6;
