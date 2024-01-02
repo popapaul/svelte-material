@@ -1,1 +1,1 @@
-export { default as ColorField} from './ColorField.svelte';
+export { default as ColorField } from './ColorField.svelte';

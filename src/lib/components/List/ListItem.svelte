@@ -66,13 +66,15 @@
   class:selectable
   use:Ripple={ripple}
   on:click={click}
+  on:click
+  on:keydown
+  on:dblclick
   {...$$restProps}
   {style}>
   <slot name="prepend" />
   <div class="s-list-item__content" {role}   
-    on:click
-    on:keydown
-    on:dblclick>
+   
+   >
     <div class="s-list-item__title">
       <slot />
     </div>

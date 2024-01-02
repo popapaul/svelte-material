@@ -1,4 +1,4 @@
-export const touch = (node:Element) => {
+export const touch = (node: Element) => {
 	let x = null;
 	let y = null;
 	function handleTouchStart(e) {

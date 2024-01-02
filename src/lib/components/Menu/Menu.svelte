@@ -14,9 +14,9 @@
   /** The transition function for the menu. */
   export let transition = fade;
   /** Options for the transition when menu opens. */
-  export let inOpts = { duration: 250 };
+  export let inOpts = { duration: 300 };
   /** Options for the transition when menu closes. */
-  export let outOpts = { duration: 250 };
+  export let outOpts = { duration: 300 };
   /** Designates whether menu should open on activator click. */
   export let openOnClick = true;
   /** Designates whether menu should open and close on activator hover. */
@@ -43,7 +43,7 @@
   export let nudgeX:number = 0;
   export let nudgeY:number = 0;
 
-  let activatorWidth:number=300;
+  let activatorWidth:number=null;
   let menu:HTMLElement;
   let clicked=false;
   const dispatch = createEventDispatcher();
@@ -52,7 +52,7 @@
   setContext('S_ListItemRipple', true);
 
   const [popperRef, popperContent] = createPopperActions();
-
+  
   const close = ()=>{
     if(!active) return;
     clicked=false;
@@ -68,7 +68,9 @@
 
   const activatorClick = ()=>{
     clicked = true;
-    openOnClick && open();
+    if(!openOnClick) return;
+
+    open();
   }
 
   const menuClick = ()=>{
@@ -101,7 +103,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div bind:this={menu} 
       class="s-menu {klass}"  
-      style="z-index:{index};{fullWidth ? `width: ${activatorWidth}px` : ""}"
+      style="z-index:{index};{fullWidth ? `width: ${activatorWidth}px` : "width:auto"}"
       style:margin-right="{nudgeX}px"
       style:margin-top="{nudgeY}px"
       role="menu"

@@ -1,4 +1,4 @@
-import  SvelteComponent  from '../../shared';
+import SvelteComponent from '../../shared';
 
 export interface TabProps {
 	class?: string;

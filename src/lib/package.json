@@ -1,7 +1,7 @@
 {
 	"name": "@paulpopa/svelte-material",
 	"type": "module",
-    "author": "Paul Popa",
+	"author": "Paul Popa",
 	"version": "0.3.0",
 	"peerDependencies": {
 		"sass": "^1.61.0",

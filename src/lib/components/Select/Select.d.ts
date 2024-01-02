@@ -1,4 +1,4 @@
-import  SvelteComponent  from '../../shared';
+import SvelteComponent from '../../shared';
 
 interface SelectItem {
 	name: string | number;
@@ -43,8 +43,8 @@ interface SelectProps {
 	filterable?: boolean;
 	/** Style to add to filter of the select list. */
 	filterStyle?: string;
-	/** Function to apply for filtering the select list: allowed values are 
-	 * 'startsWith', 'endsWith', 'contains' and 'exact'. Default to `null` when 
+	/** Function to apply for filtering the select list: allowed values are
+	 * 'startsWith', 'endsWith', 'contains' and 'exact'. Default to `null` when
 	 * select is not filterable. */
 	filterMode?: string | null;
 	/** Value of the filter input. */
@@ -60,7 +60,7 @@ interface SelectProps {
 	format?: (value: string | number | string[] | number[]) => string | number;
 }
 
-export default  class Select extends SvelteComponent<SelectProps> {
+export default class Select extends SvelteComponent<SelectProps> {
 	$$slot_def: {
 		item?: SelectItem;
 	};

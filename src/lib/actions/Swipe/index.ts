@@ -1,12 +1,12 @@
 import { cubicOut } from 'svelte/easing';
 
 interface SwipeOptions {
-	delay?:number, 
-	duration?:number, 
-	easing?: any
+	delay?: number;
+	duration?: number;
+	easing?: any;
 }
 
-export const swipe = (node,{ delay = 0, duration = 400, easing = cubicOut }:SwipeOptions) => {
+export const swipe = (node, { delay = 0, duration = 400, easing = cubicOut }: SwipeOptions) => {
 	const style = getComputedStyle(node);
 	const opacity = +style.opacity;
 	const width = parseFloat(style.width);
@@ -21,7 +21,7 @@ export const swipe = (node,{ delay = 0, duration = 400, easing = cubicOut }:Swip
 		delay,
 		duration,
 		easing,
-		css: t =>
+		css: (t) =>
 			`overflow: hidden;` +
 			`opacity: ${Math.min(t * 20, 1) * opacity};` +
 			`width: ${t * width}px;` +
@@ -32,4 +32,4 @@ export const swipe = (node,{ delay = 0, duration = 400, easing = cubicOut }:Swip
 			`border-left-width: ${t * borderLeftWidth}px;` +
 			`border-right-width: ${t * borderRightWidth}px;`
 	};
-}
+};

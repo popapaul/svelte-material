@@ -1,16 +1,19 @@
-import type {RippleOptions}  from './material-ripple';
-export {type RippleOptions} from './material-ripple'
+import type { RippleOptions } from './material-ripple';
+export { type RippleOptions } from './material-ripple';
 
-export const ripple = (node:Element, _options:RippleOptions|boolean = {}) => {
+export const ripple = (node: Element, _options: RippleOptions | boolean = {}) => {
 	let options = _options as RippleOptions;
 	let destroyed = false;
 	let ripple: HTMLDivElement;
 	let keyboardActive = false;
-	const handleStart =  e => import("./material-ripple").then(x=> ripple = x.RippleStart(e, options));
-	const handleStop = () => import("./material-ripple").then(x=>x.RippleStop(ripple));
-	const handleKeyboardStart = async e => {
+	const handleStart = (e) =>
+		import('./material-ripple').then((x) => (ripple = x.RippleStart(e, options)));
+	const handleStop = () => import('./material-ripple').then((x) => x.RippleStop(ripple));
+	const handleKeyboardStart = async (e) => {
 		if (!keyboardActive && (e.keyCode === 13 || e.keyCode === 32)) {
-			ripple = await import("./material-ripple").then(x=>x.RippleStart(e, { ...options, centered: true }));
+			ripple = await import('./material-ripple').then((x) =>
+				x.RippleStart(e, { ...options, centered: true })
+			);
 			keyboardActive = true;
 		}
 	};
@@ -30,7 +33,6 @@ export const ripple = (node:Element, _options:RippleOptions|boolean = {}) => {
 	}
 
 	function destroy() {
-
 		node.classList.remove('s-ripple-container');
 		node.removeEventListener('pointerdown', handleStart);
 		node.removeEventListener('pointerup', handleStop);
@@ -44,7 +46,6 @@ export const ripple = (node:Element, _options:RippleOptions|boolean = {}) => {
 
 	return {
 		update(newOptions) {
-			
 			options = newOptions;
 			if (options && destroyed) setup();
 			else if (!(options || destroyed)) destroy();

@@ -13,16 +13,18 @@
 	background-color: #a7a7a7;
 }
 
-.hideScroll::-webkit-scrollbar { display: none; }
+.hideScroll::-webkit-scrollbar {
+	display: none;
+}
 .hideScroll {
 	overflow: hidden;
-	-ms-overflow-style: none;  /* IE and Edge */
-	scrollbar-width: none;     /* Firefox */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
 }
 
 .s-ripple-container {
-  position: relative;
-  overflow: hidden;
+	position: relative;
+	overflow: hidden;
 }
 
 svg:not([fill]) {

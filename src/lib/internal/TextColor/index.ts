@@ -3,8 +3,8 @@
 /**
  * @param {string} klass
  */
-function formatClass(klass:string) {
-	return klass.split(' ').map(i => {
+function formatClass(klass: string) {
+	return klass.split(' ').map((i) => {
 		if (/^(lighten|darken|accent)-/.test(i)) {
 			return `text-${i}`;
 		}
@@ -12,7 +12,7 @@ function formatClass(klass:string) {
 	});
 }
 
-function setTextColor(node:HTMLElement, text:string) {
+function setTextColor(node: HTMLElement, text: string) {
 	if (/^(#|rgb|hsl|currentColor)/.test(text)) {
 		// This is a CSS hex.
 		node.style.color = text;
@@ -32,18 +32,18 @@ function setTextColor(node:HTMLElement, text:string) {
  * @param node {Element}
  * @param text {string|boolean}
  */
-export default (node:HTMLElement, text:string|boolean) => {
-	let klass:false | string[];
+export default (node: HTMLElement, text: string | boolean) => {
+	let klass: false | string[];
 	if (typeof text === 'string') {
 		klass = setTextColor(node, text);
 	}
 
 	return {
-		update(newText:string|boolean) {
+		update(newText: string | boolean) {
 			if (klass) {
 				node.classList.remove(...klass);
 			} else {
-				node.style.color = "";
+				node.style.color = '';
 			}
 
 			if (typeof newText === 'string') {

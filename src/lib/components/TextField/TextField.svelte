@@ -4,9 +4,7 @@
 	import clearIcon from '../../internal/Icons/close';
 	import { getContext, createEventDispatcher } from 'svelte';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
-	import TextColor from '../../internal/TextColor';
 	import { Input } from '../Input';
-	type TValue = $$Generic;
 
 	const context = getContext<FormContext>(FORM_FIELDS);
 
@@ -24,7 +22,7 @@
 	/** Classes to add to text field wrapper. */
 	export { klass as class };
 	/** Value of the text field. */
-	export let value: TValue = null;
+	export let value: number | string = "";
 	/** Color class of the text field when active. */
 	export let color = 'primary';
 	/** Whether text field is the `filled` material design variant. */
@@ -71,11 +69,11 @@
 	/** Styles to add to text field wrapper. */
 	export let style = null;
 	/** Reference to text field element in the DOM. */
-	export let autogrow = false;
-	export let textarea = autogrow;
-	export let inputElement: HTMLInputElement | HTMLTextAreaElement = null;
+	export let inputElement: HTMLInputElement = null;
 	export let underline = true;
 	export let type: string = 'text';
+
+	export let labelActive = false;
 
 	const dispatch = createEventDispatcher();
 	let touched = false;
@@ -86,7 +84,6 @@
 	let focused = false;
 
 	$: touched && (value || !value) && validate();
-	$: labelActive = !!placeholder || value || value?.toString?.() || focused;
 	export function validate() {
 		const text = value ?? inputElement.value;
 		errorMessages = rules.map((r) => r(text?.toString())).filter((r) => typeof r === 'string');
@@ -104,7 +101,9 @@
 		if (validateOnBlur) validate();
 	}
 
-	function clear() {
+	function clear(event:Event) {
+		event.preventDefault();
+		event.stopPropagation()
 		value = null;
 		dispatch('clear');
 	}
@@ -142,14 +141,14 @@
     <slot name="prepend" />
 
     <div class="s-text-field__input">
-      <label for={id} class:active={labelActive}>
+      <label for={id} class:active={labelActive || value || value?.toString?.() || focused}>
         <slot />
       </label>
       <slot name="content" />
       <!-- keypress Event is deprecated. Use keydown or keyup instead -->
       <input
 		bind:this={inputElement}
-		value={value}
+		value={value??""}
 		on:input={handleChange}
 		{type}
 		{placeholder}
@@ -172,13 +171,13 @@
 		 />
     </div>
 
-    {#if clearable && value !== ''}
+    {#if clearable && value?.toString().length > 0}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div on:click={clear} style="cursor:pointer">
         <!-- Slot for the icon when `clearable` is true. -->
         <slot name="clear-icon">
-          <Icon path={clearIcon} />
+          <Icon size={20} path={clearIcon} />
         </slot>
       </div>
     {/if}

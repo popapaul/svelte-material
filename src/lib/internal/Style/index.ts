@@ -1,9 +1,9 @@
-export function format(input:number|string) {
+export function format(input: number | string) {
 	if (!isNaN(Number(input))) return `${input}px`;
 	return input?.toString?.();
 }
 
-export const getStyle = (_styles:Record<string,string|number>) => {
+export const getStyle = (_styles: Record<string, string | number>) => {
 	let styles = _styles;
 
 	return Object.entries(styles).reduce((acumulator, [key, value]) => {
@@ -15,14 +15,14 @@ export const getStyle = (_styles:Record<string,string|number>) => {
  * @param node {Element}
  * @param styles {Object}
  */
-export default (node:HTMLElement, _styles:Record<string,string|number>) => {
+export default (node: HTMLElement, _styles: Record<string, string | number>) => {
 	let styles = _styles;
 	Object.entries(styles).forEach(([key, value]) => {
 		if (value) node.style.setProperty(`--s-${key}`, format(value));
 	});
 
 	return {
-		update(newStyles:Record<string,string|number>) {
+		update(newStyles: Record<string, string | number>) {
 			Object.entries(newStyles).forEach(([key, value]) => {
 				if (value) {
 					node.style.setProperty(`--s-${key}`, format(value));
@@ -30,7 +30,7 @@ export default (node:HTMLElement, _styles:Record<string,string|number>) => {
 				}
 			});
 
-			Object.keys(styles).forEach(name => node.style.removeProperty(`--s-${name}`));
+			Object.keys(styles).forEach((name) => node.style.removeProperty(`--s-${name}`));
 			styles = newStyles;
 		}
 	};

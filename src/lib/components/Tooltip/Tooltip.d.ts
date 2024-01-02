@@ -1,4 +1,4 @@
-import  SvelteComponent  from '../../shared';
+import SvelteComponent from '../../shared';
 
 interface TooltipProps {
 	/** classes added to the tooltip */

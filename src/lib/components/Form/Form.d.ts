@@ -1,4 +1,4 @@
-import  SvelteComponent  from '../../shared';
+import SvelteComponent from '../../shared';
 
 interface FormProps {
 	/** classes added to the appbar */

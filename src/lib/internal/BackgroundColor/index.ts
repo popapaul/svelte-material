@@ -2,15 +2,14 @@
 
 const themeColors = ['primary', 'secondary', 'success', 'info', 'warning', 'error'];
 
-
-function formatClass(klass:string) {
-	return klass.split(' ').map(i => {
+function formatClass(klass: string) {
+	return klass.split(' ').map((i) => {
 		if (themeColors.includes(i)) return `${i}-color`;
 		return i;
 	});
 }
 
-function setBackgroundColor(node:HTMLElement, text:string) {
+function setBackgroundColor(node: HTMLElement, text: string) {
 	if (/^(#|rgb|hsl|currentColor)/.test(text)) {
 		// This is a CSS hex.
 		node.style.backgroundColor = text;
@@ -32,18 +31,18 @@ function setBackgroundColor(node:HTMLElement, text:string) {
  * @param node {Element}
  * @param text {string|boolean}
  */
-export default (node:HTMLElement, text:string|boolean) => {
-	let klass:string[];
+export default (node: HTMLElement, text: string | boolean) => {
+	let klass: string[];
 	if (typeof text === 'string') {
 		klass = setBackgroundColor(node, text);
 	}
 
 	return {
-		update(newText:string) {
+		update(newText: string) {
 			if (klass) {
 				node.classList.remove(...klass);
 			} else {
-				node.style.backgroundColor = "";
+				node.style.backgroundColor = '';
 			}
 
 			if (typeof newText === 'string') {

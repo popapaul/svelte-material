@@ -5,7 +5,7 @@ export { intersect } from './actions/Intersect';
 export { jump } from './actions/Jump';
 export { touch } from './actions/Touch';
 export { swipe } from './actions/Swipe';
-export { createPopperActions, createPopper, reposition  } from './actions/Popper';
+export { createPopperActions, createPopper, reposition } from './actions/Popper';
 
 export { AppBar } from './components/AppBar';
 export { Alert } from './components/Alert';
@@ -27,13 +27,7 @@ export { Radio } from './components/Radio';
 export { Chip } from './components/Chip';
 export { ComboBox } from './components/ComboBox';
 
-export {
-	Card,
-	CardActions,
-	CardSubtitle,
-	CardText,
-	CardTitle,
-} from './components/Card';
+export { Card, CardActions, CardSubtitle, CardText, CardTitle } from './components/Card';
 export { Pagination } from './components/Pagination';
 export { Dialog } from './components/Dialog';
 export { Divider } from './components/Divider';
@@ -65,17 +59,11 @@ export { TimeField } from './components/TimeField';
 export { DateTimePicker } from './components/DateTimePicker';
 export { DateTimeField } from './components/DateTimeField';
 
-export {
-	Window,
-	WindowItem
-} from './components/Window';
+export { Window, WindowItem } from './components/Window';
 
 export { PasswordField } from './components/PasswordField';
 
-export {
-	Toasts,
-	toast,
-} from './components/Toast';
+export { Toasts, toast } from './components/Toast';
 
 export {
 	SimpleTable,
@@ -83,10 +71,7 @@ export {
 	TableHeader,
 	TableRow,
 	TableCell,
-	TableFooter,
+	TableFooter
 } from './components/Table';
 
-export {
-	DataGrid,
-	Column,
-} from './components/DataGrid';
+export { DataGrid, Column } from './components/DataGrid';

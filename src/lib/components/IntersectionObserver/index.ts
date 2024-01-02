@@ -1,1 +1,1 @@
-export { default as IntersectionObserver} from './IntersectionObserver.svelte';
+export { default as IntersectionObserver } from './IntersectionObserver.svelte';

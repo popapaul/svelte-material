@@ -1,4 +1,4 @@
-import  SvelteComponent  from '../../shared';
+import SvelteComponent from '../../shared';
 import type { TransitionConfig } from 'svelte/transition';
 
 interface BadgeProps {

@@ -1,7 +1,7 @@
 import { createPopper, type NanoPopOptions, type NanoPop } from './popper';
-export * from "./popper";
-export type {NanoPopPosition} from './popper';
-export type PopperOptions =| Partial<NanoPopOptions> | undefined;
+export * from './popper';
+export type { NanoPopPosition } from './popper';
+export type PopperOptions = Partial<NanoPopOptions> | undefined;
 
 export type ReferenceAction = (node: HTMLElement) => {
 	destroy?(): void;
@@ -15,9 +15,11 @@ export type ContentAction = (
 	destroy(): void;
 };
 
-export function createPopperActions(initOptions?: PopperOptions): [ReferenceAction, ContentAction, () => NanoPop | null] {
+export function createPopperActions(
+	initOptions?: PopperOptions
+): [ReferenceAction, ContentAction, () => NanoPop | null] {
 	let popperInstance: NanoPop | null = null;
-	let referenceNode:  HTMLElement | undefined;
+	let referenceNode: HTMLElement | undefined;
 	let contentNode: HTMLElement | undefined;
 	let options: PopperOptions | undefined = initOptions;
 
@@ -36,20 +38,26 @@ export function createPopperActions(initOptions?: PopperOptions): [ReferenceActi
 	};
 
 	const referenceAction: ReferenceAction = (node) => {
-			referenceNode = node;
-			initPopper();
-			return {
-				destroy() {
-					deinitPopper();
-				},
-			};
+		referenceNode = node;
+		initPopper();
+		return {
+			destroy() {
+				deinitPopper();
+			}
+		};
 	};
-
 
 	const contentAction: ContentAction = (node, contentOptions?) => {
 		contentNode = node;
 		options = { ...initOptions, ...contentOptions };
 		initPopper();
+
+		const resizeObserver = new ResizeObserver(() => {
+			popperInstance?.update();
+		});
+
+		resizeObserver.observe(node);
+
 		return {
 			update(newContentOptions: PopperOptions) {
 				options = { ...initOptions, ...newContentOptions };
@@ -57,7 +65,7 @@ export function createPopperActions(initOptions?: PopperOptions): [ReferenceActi
 			},
 			destroy() {
 				deinitPopper();
-			},
+			}
 		};
 	};
 

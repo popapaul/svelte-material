@@ -16,21 +16,21 @@ const defaults = {
 	clearingTimingFunction: 'ease-in-out'
 };
 export interface RippleOptions {
-	color?: string,
-	class?: string,
-	opacity?: number|string,
-	centered?: boolean,
-	spreadingDuration?: string,
-	spreadingDelay?: string,
-	spreadingTimingFunction?: string,
-	clearingDuration?: string,
-	clearingDelay?: string,
-	clearingTimingFunction?: string
+	color?: string;
+	class?: string;
+	opacity?: number | string;
+	centered?: boolean;
+	spreadingDuration?: string;
+	spreadingDelay?: string;
+	spreadingTimingFunction?: string;
+	clearingDuration?: string;
+	clearingDelay?: string;
+	clearingTimingFunction?: string;
 }
 
 //Creates a ripple element but does not destroy it (use RippleStop for that)
- 
-export function RippleStart(e:TouchEvent&PointerEvent, options:RippleOptions = {}) {
+
+export function RippleStart(e: TouchEvent & PointerEvent, options: RippleOptions = {}) {
 	e.stopImmediatePropagation();
 	const opts = { ...defaults, ...options };
 
@@ -80,11 +80,11 @@ export function RippleStart(e:TouchEvent&PointerEvent, options:RippleOptions = {
 /**
  * Destroys the ripple, slowly fading it out.
  */
-export function RippleStop(ripple:HTMLElement) {
+export function RippleStop(ripple: HTMLElement) {
 	if (ripple) {
-		ripple.addEventListener('transitionend', e => {
+		ripple.addEventListener('transitionend', (e) => {
 			if (e.propertyName === 'opacity') ripple.remove();
 		});
-		ripple.style.opacity = "0";
+		ripple.style.opacity = '0';
 	}
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import {createEventDispatcher} from "svelte";
   type TValue = $$Generic;
   type T = TValue extends Array<infer U> ? U : TValue;
   type TItem = $$Generic<TItem extends object ? { name:string, value:T } : T>;
@@ -10,16 +11,17 @@
   import Checkbox from "../Checkbox/Checkbox.svelte";
   import Icon from "../Icon/Icon.svelte";
   import DOWN_ICON from "../../internal/Icons/down";
-  import MAGNIFY_ICON from '../../internal/Icons/magnify';
-
 
   interface $$Events{
     change: CustomEvent<TValue>
+    keydown: KeyboardEvent,
+    search: CustomEvent<string>
   }
+  const dispatch = createEventDispatcher();
 
-  export let getValue = (item: TItem):T =>  typeof item === "object" ? (item as any).value : item;
+  export let getValue = (item: TItem):T =>  ((item as any)?.value  ?? item);
 
-  export let getName = (item: TItem):string =>   (typeof item === "object" ?  'name' in item ? item.name : item : item)?.toString?.();
+  export let getName = (item: TItem):string =>   ((item as any)?.name  ?? item);
 
   let klass:string = "";
   /** Classes to add to select wrapper. */
@@ -59,8 +61,6 @@
 	export let disabled: boolean = false;;
 	/** Class to add to the select list div. */
 	export let itemsPanelClass: string = "";
-
-  export let filterable:boolean = null;
 	/**
 	 * Whether select closes on selection. Defaults to `true` on single select and `false`
 	 * on multiple select or when select is filterable.
@@ -69,51 +69,48 @@
 	/** Convert the selected value for the underlying text field. */
 
   export let emptyString = "";
-  export let inputElement = null;
+  export let inputElement = null; 
+  export let menuClass = "";
 
-
-  export let filterStyle = "";
-  export let filterValue:string = null;
+  export let filterValue:string = "";
   export let validateOnBlur =false;
-  export let checkValue = (val:TValue)=>val;
-  export let isActive = (value:TValue,item:TItem)=> value && Array.isArray(value) ? value.includes(getValue(item)) : value?.toString().includes(getValue(item)?.toString())
-  let searchInput;
-  export let getSelectString = (v:TValue) => {
+
+  export let isActive = (value:TValue,item:TItem)=> value && Array.isArray(value) ? value.includes(getValue(item)) : typeof value === "string" ? value?.toString().includes(getValue(item)?.toString()) : value == getValue(item)
+
+  export function getSelectString (v:TValue){
     // We could also use `return items[0].value ? find.. : v` or provide a `basic` prop
-    const item = items.find((i) =>  getValue(i) == checkValue(v) );
+    const item = items.find((i) =>  getValue(i) == v);
    
     return  item && getName(item) || emptyString;
   };
-  export let format = (val:TValue) =>{
+  export function format(val:TValue) {
+ 
     if(!val && val!==0) return null;
 
     if(Array.isArray(val))
-    {
-      if(!(val?.length > 0)) return null;
       return val.map((v) => getSelectString(v)).filter(Boolean).join(", ");
-    }
-
+    
     return getSelectString(val);
   }
    
 
   const getFilteredItems = (items:TItem[], search:string) => {
-      if(!filterable || !search) return [...items];
+      if(!search) return [...items];
 
       return items.filter((item) =>  (getName(item) || getValue(item).toString()).toLowerCase().includes(search.toLowerCase()));
   };
 
-  $: filteredItems = getFilteredItems(items, filterValue);
-  //$: active && filterable && searchInput?.focus?.();
+ $:filteredItems = getFilteredItems(items, filterValue)
 
-  const removeItem = (item:T)=>{
+  const removeItem = (itemValue:T)=>{
     if(Array.isArray(value))
-      value=value.filter(x=>x!=item) as TValue;
+      value = value.filter(x=>x!=itemValue) as TValue;
     else 
       value = null;
   }
 
   const handleChange = ()=>{
+
     if(multiple) return;
     if(closeOnClick)
       active=false;
@@ -121,79 +118,71 @@
 </script>
 
 <div class="s-select {klass}" {style} class:disabled class:chips {...$$restProps}>
-  <Menu {closeOnClick} {disabled} bind:active fullWidth  {...$$restProps}>
+  <Menu {closeOnClick} {disabled} bind:active on:open={()=>inputElement?.focus()} class={menuClass}  {...$$restProps} >
       <TextField 
         slot="activator"
         class="s-select-input"
         {...$$restProps}
         {filled}
+        labelActive={active || !!value}
         {outlined}
         {solo}
         {validateOnBlur}
+        on:keydown
+        on:clear={()=>value=null}
         {dense}
         bind:inputElement
         {disabled}
-        value={items ? format(value) : ""}
+        on:input={(event)=>{filterValue = event.target.value; dispatch("search", filterValue) }}
+        value={(active || (chips)) ? filterValue : items ? format(value) : ""}
         {placeholder}
         {hint}
-        readonly
       >
         <slot slot="prepend-outer" name="prepend-outer" />
         <slot />
         <div slot="content">
-          {#if chips && value}
-              {#each Array.isArray(value) ? value : [value] as val}
-                <Chip active={true} size="small" close on:close={()=> removeItem(val)}>{getSelectString(val)}</Chip>
+          {#if chips && !!value}
+              {#each (Array.isArray(value) ? value : [value]).filter(Boolean) as val}
+                <Chip  size="small" close on:close={()=> removeItem(val)}>
+                  <span style="flex-basis: 0; flex-grow: 1;">
+                    {getSelectString(val)}
+                  </span>
+                </Chip>
               {/each}
           {/if}
         </div>
-        <span slot="append">
+        <span slot="append" on:click={()=> active && setTimeout(()=>active=false,2) }>
           <Icon path={DOWN_ICON} rotate={active ? 180 : 0} />
         </span>
         <slot slot="append-outer" name="append-outer" />
       </TextField>
  
     <ListItemGroup bind:value on:change on:change={handleChange} {mandatory} {multiple} {max}>
-      {#if filterable}
-        <slot name="filter">
-          <TextField
-            {filled}
-            {outlined}
-            {solo}
-            {dense}
-            {disabled}
-            style={filterStyle}
-            bind:inputElement={searchInput}
-            class="s-select__filter"
-            bind:value={filterValue}
-          >
-          Cautare
-            <span slot="append">
-              <Icon path={MAGNIFY_ICON} />
-            </span>
-          </TextField>
-        </slot>
-      {/if}
       <slot name="items">
         <div class={itemsPanelClass}>
-          {#each !filterable ? items : filteredItems as item}
-            {@const active = isActive(value,item)}
-            <slot name="item" {item}>
-              <ListItem
-                {dense}
-                value={getValue(item)}
-                {active}
-              >
-                <span slot="prepend">
-                  {#if multiple}
-                    <Checkbox checked={active}/>
-                  {/if}
-                </span>
-                {getName(item)}
-              </ListItem>
-            </slot>
-          {/each}
+          {#if filteredItems.length}
+            {#each filteredItems as item}
+              {@const active = isActive(value,item)}
+              <slot name="item" {item} {active}>
+                <ListItem
+                  {dense}
+                  value={getValue(item)}
+                  {active}
+                >
+                  <span slot="prepend">
+                    {#if multiple}
+                      <Checkbox checked={active}/>
+                    {/if}
+                  </span>
+                  {getName(item)}
+                </ListItem>
+              </slot>
+            {/each}
+          {:else}
+          No items
+          {/if}
         </div>
+
       </slot>
     </ListItemGroup>
   </Menu>

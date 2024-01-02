@@ -34,7 +34,7 @@
   }
 </script>
 
-  <Menu closeOnClick={false} bind:active width="auto" placement="bottom-start">
+  <Menu closeOnClick={false} bind:active placement="bottom-start">
     <TextField
       {value}
       slot="activator"

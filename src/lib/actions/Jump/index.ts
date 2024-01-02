@@ -1,14 +1,14 @@
 import jumpAnimate from './jump';
 
 interface JumpOptions {
-    target?: HTMLElement;
-    duration?: number;
-    offset?: number;
-    callback?(): void;
-    easing?(): number;
+	target?: HTMLElement;
+	duration?: number;
+	offset?: number;
+	callback?(): void;
+	easing?(): number;
 }
 
-export const jump = (node:HTMLElement&{href?:string}, _options:JumpOptions = {}) => {
+export const jump = (node: HTMLElement & { href?: string }, _options: JumpOptions = {}) => {
 	let options = _options;
 	let target = options.target || node.getAttribute('data-target') || node.href;
 	const Jump = () => {

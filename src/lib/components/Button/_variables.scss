@@ -18,45 +18,45 @@ $fab-sizes: () !default;
 $fab-icon-sizes: () !default;
 
 $btn-sizes: map-merge(
-  (
-    'x-small': 20,
-    'small': 28,
-    'default': 36,
-    'large': 44,
-    'x-large': 52,
-  ),
-  $btn-sizes
+	(
+		'x-small': 20,
+		'small': 28,
+		'default': 36,
+		'large': 44,
+		'x-large': 52
+	),
+	$btn-sizes
 );
 
 $btn-font-sizes: map-merge(
-  (
-    'x-small': 0.625rem,
-    'small': 0.75rem,
-    'default': 0.875rem,
-    'large': 0.875rem,
-    'x-large': 1rem,
-  ),
-  $btn-font-sizes
+	(
+		'x-small': 0.625rem,
+		'small': 0.75rem,
+		'default': 0.875rem,
+		'large': 0.875rem,
+		'x-large': 1rem
+	),
+	$btn-font-sizes
 );
 
 $fab-sizes: map-merge(
-  (
-    'x-small': 32,
-    'small': 40,
-    'default': 56,
-    'large': 64,
-    'x-large': 72,
-  ),
-  $fab-sizes
+	(
+		'x-small': 32,
+		'small': 40,
+		'default': 56,
+		'large': 64,
+		'x-large': 72
+	),
+	$fab-sizes
 );
 
 $fab-icon-sizes: map-merge(
-  (
-    'x-small': 18,
-    'small': 24,
-    'default': 24,
-    'large': 28,
-    'x-large': 32,
-  ),
-  $fab-icon-sizes
+	(
+		'x-small': 18,
+		'small': 24,
+		'default': 24,
+		'large': 28,
+		'x-large': 32
+	),
+	$fab-icon-sizes
 );

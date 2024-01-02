@@ -1,25 +1,23 @@
 @use '../tools/colors';
 @use '../variables' as *;
 
-
-
 @each $color,
-  $value
-    in (
-      'primary': $primary-color,
-      'secondary': $secondary-color,
-      'success': $success-color,
-      'info': $info-color,
-      'warning': $warning-color,
-      'error': $error-color
-    )
+	$value
+		in (
+			'primary': $primary-color,
+			'secondary': $secondary-color,
+			'success': $success-color,
+			'info': $info-color,
+			'warning': $warning-color,
+			'error': $error-color
+		)
 {
-  .#{$color}-color {
-    background-color: var(--theme-#{$color}-color) !important;
-    border-color: var(--theme-#{$color}-color) !important;
-  }
-  .#{$color}-text {
-    color:  var(--theme-#{$color}-color) !important;
-    caret-color: var(--theme-#{$color}-color) !important;
-  }
+	.#{$color}-color {
+		background-color: var(--theme-#{$color}-color) !important;
+		border-color: var(--theme-#{$color}-color) !important;
+	}
+	.#{$color}-text {
+		color: var(--theme-#{$color}-color) !important;
+		caret-color: var(--theme-#{$color}-color) !important;
+	}
 }
