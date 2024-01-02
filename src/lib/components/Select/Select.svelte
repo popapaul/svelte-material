@@ -151,9 +151,7 @@
               {/each}
           {/if}
         </div>
-        <span slot="append" on:click={()=> active && setTimeout(()=>active=false,2) }>
-          <Icon path={DOWN_ICON} rotate={active ? 180 : 0} />
-        </span>
+        <Icon slot="append"  on:click={()=> active && setTimeout(()=>active=false,2) } path={DOWN_ICON} rotate={active ? 180 : 0} />
         <slot slot="append-outer" name="append-outer" />
       </TextField>
  
