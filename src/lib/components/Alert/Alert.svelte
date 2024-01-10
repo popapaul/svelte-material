@@ -7,6 +7,8 @@
     let klass = '';
     /** classes added to the alert */
     export { klass as class };
+     /** styles added to the alert */
+    export let style = null;
     /** is the alert active/dismissed. */
     export let visible = true;
     /** the transition for the alert */
@@ -22,9 +24,9 @@
     /** removes the border radius */
     export let tile = false;
     /** adds a close icon that can hide the alert */
-    export let dismissible = false;
+    export let dismissible:boolean | "top" = false;
     /** location of the border */
-    export let border = false;
+    export let border: "top" | "bottom" | "right" | "left" = null;
     /** applies the defined color to the alert's border */
     export let coloredBorder = false;
     
@@ -54,6 +56,7 @@
   
   {#if visible}
     <div
+      {style}
       role="alert"
       class="s-alert {klass}"
       transition:transition={transitionOpts}
@@ -73,7 +76,7 @@
           <slot />
         </div>
         {#if dismissible}
-          <Button icon on:click={dismiss}>
+          <Button icon class={dismissible} on:click={dismiss}>
             <!-- Slot for close button icon. -->
             <slot name="close">✖</slot>
           </Button>

@@ -94,7 +94,15 @@
   const handleHueChange = (value)=>{
       h=value / 100;
       colorChange();
-  
+      rgbToHSV
+  }
+
+  const handleRGBchange = ()=>{
+    r = Math.max(Math.min(r,255),0);
+    g = Math.max(Math.min(g,255),0);
+    b = Math.max(Math.min(b,255),0);
+    ({h, s, v} = rgbToHSV(r,g,b));
+    colorChange();
   }
 
   function colorChange() {
@@ -195,14 +203,15 @@
       return {h:hnew,s:snew,v:vnew};
   }
 
-  const changeHex=(color)=>{
-    setStartColor(color);
-    value = RGBAToHex();
+  const changeHex=( color:string = null )=>{
+    value = color ? color : RGBAToHex();
     colorChangeCallback();
   }
-  setStartColor(value);
+  $:setStartColor(value);
+
+
   </script>
-  <svelte:window  on:touchmove|passive={handleMove}   on:mousemove|passive={handleMove}    on:touchend= {()=>tracked = null}/>
+  <svelte:window  on:touchmove|passive={handleMove}   on:mousemove|passive={handleMove}    on:touchend= {()=>tracked = null} on:mouseup={()=>tracked = null} />
 
   <style lang="scss" src="./ColorPicker.scss" global></style>
   <div class="main-container">
@@ -212,7 +221,7 @@
             <div class="value-gradient">
                 <div id="colorsquare-picker" style="top:{top};left:{left};" />
                 <div  id="colorsquare-event" use:clickOutside
-                  on:mouseup={()=>tracked = null}
+                  
                   on:clickOutside={()=>tracked = null} 
                   on:mousedown={handleDown} 
                   on:touchstart={handleDown}>
@@ -239,13 +248,11 @@
   
       <TextField dense value={value} on:input={event=>changeHex(event.target.value)}  style="width:100px;"/>
 
-      <TextField readonly disabled dense type="number" bind:value={r}  style="width:50px;">red</TextField>
+      <TextField dense bind:value={r}  type="number" style="width:50px;" on:input={handleRGBchange}>red</TextField>
 
-      <TextField readonly disabled dense value={g}  style="width:50px;">green</TextField>
+      <TextField dense bind:value={g} type="number"  style="width:50px;" on:input={handleRGBchange}>green</TextField>
 
-      <TextField readonly disabled dense value={b}  style="width:50px;">blue</TextField>
-  
-      
+      <TextField dense bind:value={b} type="number" style="width:50px;" on:input={handleRGBchange}>blue</TextField>
     </div>
     <div>
       <Swatches bind:color={value} bind:colors on:select={({detail})=>changeHex(detail)}/>

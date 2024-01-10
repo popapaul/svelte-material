@@ -1,5 +1,6 @@
 .s-icon {
 	color: inherit;
+	flex-shrink: 0;
 	font-size: var(--s-icon-size);
 	transform: rotate(var(--s-icon-rotate));
 	width: var(--s-icon-size);

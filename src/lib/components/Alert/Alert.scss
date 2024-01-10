@@ -12,17 +12,10 @@
 		color: map-deep-get($material-dark-theme, 'text', 'primary');
 	}
 
-	.s-icon,
-	.s-btn {
-		color: inherit !important;
-	}
-
-	.s-icon {
-		align-self: flex-start;
-	}
-
-	[slot='icon'] {
-		margin-right: $spacer * 4;
+	& .s-btn.top{
+		position: absolute;
+		top:4px;
+		right:4px;
 	}
 
 	.s-alert__border {

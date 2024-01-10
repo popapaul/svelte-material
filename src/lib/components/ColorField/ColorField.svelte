@@ -40,6 +40,7 @@
       slot="activator"
       {...$$restProps}
       on:keydown={onkeydown}
+      on:clear={()=>value=""}
       readonly
     >
         <slot />
