@@ -4,6 +4,7 @@
     import { slide } from 'svelte/transition';
     const dispatch = createEventDispatcher();
     import Button from '../Button/Button.svelte';
+    
     let klass = '';
     /** classes added to the alert */
     export { klass as class };
