@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { TransitionConfig } from 'svelte/transition';
     import { createEventDispatcher } from 'svelte';
-    import { fade } from 'svelte/transition';
+    import { slide } from 'svelte/transition';
     const dispatch = createEventDispatcher();
     import Button from '../Button/Button.svelte';
     let klass = '';
@@ -10,7 +10,7 @@
     /** is the alert active/dismissed. */
     export let visible = true;
     /** the transition for the alert */
-    export let transition:(node: Element, options: any) => TransitionConfig = fade;
+    export let transition:(node: Element, options: any) => TransitionConfig = fadeSlide;
     /** transition options */
     export let transitionOpts:any = { duration: 300 };
     /** makes the alert dense */
@@ -36,6 +36,17 @@
        */
       dispatch('dismiss');
     }
+
+    function fadeSlide(node: Element, options: any) {
+      const slideTrans = slide(node, options)
+      return {
+          duration: options.duration,
+          css: t => `
+              ${slideTrans.css(t, 0)}
+              opacity: ${t};
+          `
+      };
+  }
   </script>
   
   <style lang="scss" src="./Alert.scss" global>
