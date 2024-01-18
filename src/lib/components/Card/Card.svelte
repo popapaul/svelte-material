@@ -1,6 +1,7 @@
 <script lang="ts">
+  import "./Card.scss"
   import ProgressLinear from '../ProgressLinear/ProgressLinear.svelte';
-
+  
   let klass:string = '';
   /** classes added to the card */
   export { klass as class };
@@ -27,8 +28,6 @@
 
 </script>
 
-<style lang="scss" src="./Card.scss" global>
-</style>
 
 <div
   class="s-card {klass}"

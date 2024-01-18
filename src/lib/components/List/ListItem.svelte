@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./ListItem.scss";
   import { getContext } from 'svelte';
   import { ripple as Ripple, type RippleOptions } from '../../actions/Ripple';
   import type { ItemGroupContext } from '../ItemGroup/ItemGroup.svelte';
@@ -48,10 +49,6 @@
   }
 
 </script>
-
-
-<style lang="scss" src="./ListItem.scss" global>
-</style>
 
 
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->

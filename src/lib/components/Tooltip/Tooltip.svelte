@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./Tooltip.scss";
   import { createPopperActions, type NanoPopPosition } from '../../actions/Popper';
   import BackgroundColor from '../../internal/BackgroundColor';
 	import { fade } from 'svelte/transition';
@@ -20,8 +21,6 @@
   const [popperRef, popperContent] = createPopperActions();
 </script>
 
-<style lang="scss" src="./Tooltip.scss" global>
-</style>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div

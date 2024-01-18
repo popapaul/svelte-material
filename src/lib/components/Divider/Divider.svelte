@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./Divider.scss";
   let klass:string = '';
   /** classes added to the divider */
   export { klass as class };
@@ -11,8 +12,6 @@
 
 </script>
 
-<style lang="scss" src="./Divider.scss" global>
-</style>
 
 <hr
   class="s-divider {klass}"

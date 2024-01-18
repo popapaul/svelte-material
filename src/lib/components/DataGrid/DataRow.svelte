@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "./DataRows.scss";
 	import Button from "../Button/Button.svelte";
 	import { Icon } from "../Icon";
 	import { TableRow } from "../Table";
@@ -42,4 +43,3 @@
             </DataRows>
         </slot>
     {/if}
-<style lang="scss" src="./DataRows.scss" global></style>

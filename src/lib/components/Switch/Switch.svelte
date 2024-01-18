@@ -3,6 +3,7 @@
 </script>
 
 <script>
+  import "./Switch.scss";
   import TextColor from '../../internal/TextColor';
 
   // Add class to switch wrapper.
@@ -58,9 +59,6 @@
     }
   }
 </script>
-
-<style lang="scss" src="./Switch.scss" global>
-</style>
 
 <div class="s-switch {klass}" {style}>
   <div

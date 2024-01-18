@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./Badge.scss";
   import { scale, type TransitionConfig } from 'svelte/transition';
   import {onMount} from "svelte";
   let klass:string = '';
@@ -30,7 +31,6 @@
   onMount(() => setTimeout(() =>mounted = true,0));
 </script>
 
-<style lang="scss" src="./Badge.scss" global></style>
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <span class="s-badge {wrapperClass}"         
   on:click

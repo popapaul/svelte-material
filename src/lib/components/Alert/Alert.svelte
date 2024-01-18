@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "./Alert.scss";
     import type { TransitionConfig } from 'svelte/transition';
     import { createEventDispatcher } from 'svelte';
     import { slide } from 'svelte/transition';
@@ -52,8 +53,6 @@
   }
   </script>
   
-  <style lang="scss" src="./Alert.scss" global>
-  </style>
   
   {#if visible}
     <div
@@ -77,7 +76,7 @@
           <slot />
         </div>
         {#if dismissible}
-          <Button icon class={dismissible} on:click={dismiss}>
+          <Button icon class={dismissible=="top" ? "top" : ""} on:click={dismiss}>
             <!-- Slot for close button icon. -->
             <slot name="close">✖</slot>
           </Button>

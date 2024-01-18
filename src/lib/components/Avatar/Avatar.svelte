@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "./Avatar.scss"
     import {format} from '../../internal/Style';
     let klass:string = '';
     /** classes to add to avatar */
@@ -11,8 +12,6 @@
     export let style:string = '';
   </script>
   
-  <style lang="scss" src="./Avatar.scss" global>
-  </style>
   
   <div class="s-avatar {klass}" class:tile style="--s-avatar-size:{format(size)};{style}">
     <slot />

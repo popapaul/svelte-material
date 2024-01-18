@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./ExpansionPanel.scss";
   import { getContext } from 'svelte';
   import { EXPANSION_PANELS, type EXPANSION_PANELS_Context } from './ExpansionPanels.svelte';
   import { slide } from 'svelte/transition';
@@ -38,9 +39,6 @@
   // Checking if panel is active everytime the value has changed.
   $: active = $values.includes(value);
 </script>
-
-<style lang="scss" src="./ExpansionPanel.scss" global>
-</style>
 
 <div
   class="s-expansion-panel {klass}"

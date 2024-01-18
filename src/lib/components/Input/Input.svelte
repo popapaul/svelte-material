@@ -1,5 +1,6 @@
 <script lang="ts">
   import TextColor from '../../internal/TextColor';
+  import "./Input.scss";
 
   let klass = '';
   /** classes added to the input */
@@ -19,8 +20,6 @@
 
   export let style:string = null;
 </script>
-
-<style lang="scss" src="./Input.scss" global></style>
 
 <div
   class="s-input {klass}"

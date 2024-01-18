@@ -1,6 +1,7 @@
 <script lang="ts">
   import Style from '../../internal/Style';
-
+  import "./AppBar.scss";
+  
   let klass:string = '';
   /** classes added to the appbar */
   export { klass as class } ;
@@ -24,9 +25,6 @@
 	export let style: string = "";
   
 </script>
-
-<style lang="scss" src="./AppBar.scss" global>
-</style>
 
 <header
   class="s-app-bar {klass}"

@@ -25,7 +25,6 @@ export { Checkbox } from './components/Checkbox';
 export { Switch } from './components/Switch';
 export { Radio } from './components/Radio';
 export { Chip } from './components/Chip';
-export { ComboBox } from './components/ComboBox';
 
 export { Card, CardActions, CardSubtitle, CardText, CardTitle } from './components/Card';
 export { Pagination } from './components/Pagination';

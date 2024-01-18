@@ -10,6 +10,7 @@
 </script>
 
 <script lang="ts">
+  import "./ItemGroup.scss";
   import { setContext, createEventDispatcher, onDestroy } from 'svelte';
   import { writable } from 'svelte/store';
 
@@ -64,9 +65,6 @@
     activeClass,
   });
 </script>
-
-<style lang="scss" src="./ItemGroup.scss" global>
-</style>
 
 <div class="s-item-group {klass}" {role} {style}>
   <slot />

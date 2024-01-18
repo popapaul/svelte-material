@@ -1,7 +1,8 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import BackgroundColor from '../../internal/BackgroundColor';
-
+  import "./Overlay.scss";
+  
   let klass = '';
   /** classes added to overlay */
   export { klass as class };
@@ -25,8 +26,6 @@
   export let style = '';
 </script>
 
-<style lang="scss" src="./Overlay.scss" global>
-</style>
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if active}
   <div

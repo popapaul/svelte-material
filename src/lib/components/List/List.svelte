@@ -1,6 +1,7 @@
 <script lang="ts">
   import { setContext, getContext } from 'svelte';
-
+  import "./List.scss";
+  
   let klass = '';
   /** classes added to the list */
   export { klass as class };
@@ -25,9 +26,6 @@
     role = 'list';
   }
 </script>
-
-<style lang="scss" src="./List.scss" global>
-</style>
 
 <div
   {role}

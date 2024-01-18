@@ -7,6 +7,7 @@
 </script>
 
 <script lang="ts">
+  import "./Tabs.scss";
   import SlideGroup from '../SlideGroup/SlideGroup.svelte';
   import Window from '../Window/Window.svelte';
   import { setContext } from 'svelte';
@@ -57,9 +58,6 @@
   }
   $:tabWidth && moveSlider({ detail: value });
 </script>
-
-<style lang="scss" src="./Tabs.scss" global>
-</style>
 
 <div class="s-tabs {wrapperClass}" role="tablist" class:vertical  bind:clientWidth={tabWidth}>
   <div

@@ -1,4 +1,5 @@
 <script>
+  import "./WindowItem.scss";
   import { getContext, onMount } from 'svelte';
   import { WINDOW } from './Window.svelte';
 
@@ -13,9 +14,6 @@
     registerWindow(window);
   });
 </script>
-
-<style lang="scss" src="./WindowItem.scss" global>
-</style>
 
 <div bind:this={window} class="s-window-item {klass}" {style}>
   <slot />

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "./TableCell.scss";
     import { getContext } from "svelte";
     let klass="";
     export {klass as class};
@@ -23,4 +24,3 @@
     {/if}
 </svelte:element>
 
-<style lang="scss" src="./TableCell.scss" global></style>

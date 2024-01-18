@@ -65,7 +65,7 @@
 
   </script>
   
-  <Menu closeOnClick={false} bind:active width="auto" placement="bottom-start" class={klass}>
+  <Menu closeOnClick={false} bind:active placement="bottom-start" class={klass}>
     <TextField
       slot="activator"
       value={format(value)}

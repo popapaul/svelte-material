@@ -4,7 +4,7 @@
 
 <script>
   import { onMount, setContext } from 'svelte';
-
+  import "./Window.scss";
   let klass = '';
   export { klass as class };
   export let activeClass = 'active';
@@ -84,9 +84,6 @@
     if (activeItem) activeItem.classList.add(activeClass);
   });
 </script>
-
-<style lang="scss" src="./Window.scss" global>
-</style>
 
 <div
   bind:this={container}

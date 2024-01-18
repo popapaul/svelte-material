@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./Chip.scss";
   import { ripple as Ripple } from '../../actions/Ripple';
   import Icon from '../Icon/Icon.svelte';
   import closeIcon from '../../internal/Icons/close';
@@ -34,9 +35,6 @@
     dispatch('close');
   }
 </script>
-
-<style lang="scss" src="./Chip.scss" global>
-</style>
 
 {#if active}
   <!-- svelte-ignore a11y-no-static-element-interactions -->

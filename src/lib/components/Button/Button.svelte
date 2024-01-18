@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ripple as Ripple, type RippleOptions } from '../../actions/Ripple';
-
+	import "./Button.scss";
+	
 	let klass:string = '';
 	/** classes added to the button */
 	export { klass as class };
@@ -43,9 +44,6 @@
 
 	const notypecheck = (x:any)=>x;
 </script>
-
-<style lang="scss" src="./Button.scss" global>
-</style>
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->

@@ -1,4 +1,5 @@
 <script>
+    import "./Toasts.scss";
     import { toast } from './index'
     import { format } from '../../internal/Style';
     import { flip } from 'svelte/animate';
@@ -12,8 +13,6 @@
     export let offsetX = '8px';
     export let offsetY = '8px';
 </script>
-
-<style lang="scss" src="./Toasts.scss" global></style>
 
 <div 
     class="s-snackbar__wrapper"

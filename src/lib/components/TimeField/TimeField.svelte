@@ -64,7 +64,7 @@
 
   </script>
   
-  <Menu closeOnClick={false} {...$$restProps} bind:active width="auto" placement="bottom-start">
+  <Menu closeOnClick={false} {...$$restProps} bind:active placement="bottom-start">
     <TextField
       slot="activator"
       value={value && new Intl.DateTimeFormat(locale, { hour:"2-digit", minute:"2-digit" }).format(value)}

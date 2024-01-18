@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./ListItemGroup.scss";
   import { setContext } from 'svelte';
   import ItemGroup, { ITEM_GROUP } from '../ItemGroup/ItemGroup.svelte';
 
@@ -14,9 +15,6 @@
   export let max = Infinity;
   export let style = null;
 </script>
-
-<style lang="scss" src="./ListItemGroup.scss" global>
-</style>
 
 <ItemGroup
   class="s-list-item-group {klass}"

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./ListGroup.scss";
   import { slide, type TransitionConfig } from 'svelte/transition';
   import { onMount, setContext } from 'svelte';
   import ListItem from './ListItem.svelte';
@@ -45,9 +46,6 @@
     });
   }
 </script>
-
-<style lang="scss" src="./ListGroup.scss" global>
-</style>
 
 <div class="s-list-group {klass}" >
   <ListItem

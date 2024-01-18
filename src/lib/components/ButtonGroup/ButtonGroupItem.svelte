@@ -1,8 +1,10 @@
 <script lang="ts">
+   import "./ButtonGroupItem.scss";
   import { getContext } from 'svelte';
   import Button from '../Button/Button.svelte';
   import { ITEM_GROUP } from '../ItemGroup/ItemGroup.svelte';
   import type {  ItemGroupContext } from '../ItemGroup/ItemGroup.svelte';
+ 
 
   const ITEM = getContext<ItemGroupContext>(ITEM_GROUP);
 
@@ -28,9 +30,6 @@
     if (!disabled) ITEM.select(value);
   }
 </script>
-
-<style lang="scss" src="./ButtonGroupItem.scss" global>
-</style>
 
 <Button
   class="s-btn-group-item {klass}"

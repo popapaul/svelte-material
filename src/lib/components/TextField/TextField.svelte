@@ -1,4 +1,5 @@
 <script lang="ts">
+	import "./TextField.scss";
 	import Icon from '../Icon/Icon.svelte';
 	import uid from '../../internal/uid';
 	import clearIcon from '../../internal/Icons/close';
@@ -199,6 +200,4 @@
   <slot slot="append-outer" name="append-outer" />
 </Input>
 
-
-<style lang="scss" src="./TextField.scss" global></style>
 

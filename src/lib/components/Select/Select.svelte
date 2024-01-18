@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./Select.scss";
   import {createEventDispatcher} from "svelte";
   type TValue = $$Generic;
   type T = TValue extends Array<infer U> ? U : TValue;
@@ -185,5 +186,3 @@
     </ListItemGroup>
   </Menu>
 </div>
-
-<style lang="scss" src="./Select.scss" global></style>

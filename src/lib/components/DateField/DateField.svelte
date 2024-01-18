@@ -53,7 +53,7 @@
 
 </script>
 
-<Menu closeOnClick={false} {...$$restProps} bind:active width="auto" placement="bottom-start">
+<Menu closeOnClick={false} {...$$restProps} bind:active  placement="bottom-start">
   <TextField
     slot="activator"
     value={value instanceof Date && !isNaN(value.getTime()) ? new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", year:"numeric", weekday: "long" }).format(value) : ""}

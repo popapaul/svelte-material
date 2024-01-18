@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./Tab.scss";
   import { getContext, onMount } from 'svelte';
   import { SLIDE_GROUP, type SlideGroupContext } from '../SlideGroup/SlideGroup.svelte';
   import { ITEM_GROUP, type ItemGroupContext } from '../ItemGroup/ItemGroup.svelte';
@@ -32,8 +33,6 @@
     registerTab({element:tab, value});
   });
 </script>
-
-<style lang="scss" src="./Tab.scss" global></style>
 
 <button
   bind:this={tab}

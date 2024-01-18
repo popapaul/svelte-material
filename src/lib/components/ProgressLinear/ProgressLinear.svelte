@@ -1,6 +1,7 @@
 <script>
   import BackgroundColor from '../../internal/BackgroundColor';
-
+  import "./ProgressLinear.scss";
+  
   let klass = '';
   export { klass as class };
   export let value = 0;
@@ -17,9 +18,6 @@
   export let striped = false;
   export let style = '';
 </script>
-
-<style lang="scss" src="./ProgressLinear.scss" global>
-</style>
 
 <div
   role="progressbar"

@@ -1,6 +1,6 @@
 <script lang="ts">
   import {format} from '../../internal/Style';
-
+  import "./Icon.scss";
   let klass = '';
   /** classes added to the icon */
   export { klass as class };
@@ -20,9 +20,6 @@
   export let style:string = null;
 
 </script>
-
-<style type="scss" src="./Icon.scss" global>
-</style>
 
 <i 
   {...$$restProps}

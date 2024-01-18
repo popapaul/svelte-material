@@ -1,5 +1,5 @@
 <script lang="ts">
-
+  import "./Breadcrumbs.scss";
 interface Breadcrumb {
 	disabled?: boolean;
 	href?: string;
@@ -28,9 +28,6 @@ interface Breadcrumb {
 
   items = items.map((x) => ({ ...defaults, ...x }));
 </script>
-
-<style lang="scss" src="./Breadcrumbs.scss" global>
-</style>
 
 <ul class="s-breadcrumbs {klass}" class:large {style}>
   {#each items as item, i}

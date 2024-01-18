@@ -3,7 +3,8 @@
   import { createPopperActions, type NanoPopPosition } from '../../actions/Popper';
   import { setContext, createEventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
-
+  import "./Menu.scss";
+  
   let klass:string = '';
   /** Classes to add to menu. */
   export { klass as class };
@@ -77,9 +78,6 @@
     closeOnClick && close();
   }
 </script>
-
-<style lang="scss" src="./Menu.scss" global>
-</style>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="s-menu__wrapper {classWrapper}"  {style}

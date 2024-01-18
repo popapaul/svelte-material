@@ -1,12 +1,10 @@
 <script lang="ts">
+  import "./Table.scss";
   let klass = '';
   export { klass as class };
   export let elevation:number=1;
   export let fixed = false;
 </script>
-
-
-<style lang="scss" src="./Table.scss"></style>
 
 <div class="s-table elevation-{elevation} {klass}">
   {#if $$slots.toolbar}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./NavigationDrawer.scss";
   import { fade, type TransitionConfig } from 'svelte/transition';
   import {format} from '../../internal/Style';
   let klass:string = '';
@@ -34,9 +35,6 @@
   export let style:string = null;
 
 </script>
-
-<style lang="scss" src="./NavigationDrawer.scss" global>
-</style>
 
 <aside
   class="s-navigation-drawer {klass}"

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "./DataRows.scss";
 	import { getContext } from "svelte";
     import {DATA_GRID_CONTEXT, type DataGridContext} from "./DataGrid.svelte";
     import DataRow from "./DataRow.svelte"
@@ -39,5 +40,3 @@
         <slot name="expand" slot="expand"/>
     </DataRow>
 {/each}
-
-<style lang="scss" src="./DataRows.scss" global></style>

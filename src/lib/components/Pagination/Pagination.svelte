@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "./Pagination.scss";
     import Select from "../Select/Select.svelte";
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
@@ -40,9 +41,6 @@
     $: middle = Math.floor(buttons.length/2);
 	$: pageCount = Math.ceil(count / pageSize)||1;
 </script>
-
-<style lang="scss" src="./Pagination.scss" global>
-</style>
 
 <div class="s-pagination {klass}">
     <span style="width:120px; {style}">{page * pageSize + 1}-{Math.min((Number(page) + 1) * pageSize,count )} din {count}</span>

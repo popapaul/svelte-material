@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+  import "./Radio.scss";
   import TextColor from '../../internal/TextColor';
   import { ripple as Ripple } from '../../actions/Ripple';
   import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
@@ -61,9 +62,6 @@
   id = id || `s-radio-${uid(5)}`;
   $: active = group === value;
 </script>
-
-<style lang="scss" src="./Radio.scss" global>
-</style>
 
 <div class="s-radio" {style}>
   <div

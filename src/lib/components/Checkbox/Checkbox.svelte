@@ -6,6 +6,7 @@
 </script>
 
 <script lang="ts">
+   import "./Checkbox.scss";
   import { ripple as Ripple } from '../../actions/Ripple';
   import TextColor from '../../internal/TextColor';
   import { getContext } from 'svelte';
@@ -86,10 +87,9 @@
       group = group;
     }
   }
+ 
 </script>
 
-<style lang="scss" src="./Checkbox.scss" global>
-</style>
 
 <div class="s-checkbox {klass}" {style}>
   <div

@@ -11,6 +11,7 @@
 </script>
 
 <script lang="ts">
+  import "./Dialog.scss";
   import Overlay from '../Overlay/Overlay.svelte';
   import {format} from '../../internal/Style';
   import {portal} from "../../actions/Portal";
@@ -52,8 +53,7 @@
   $: visible && dialogs.add(close);
 </script>
 
-<style lang="scss" src="./Dialog.scss" global>
-</style>
+
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->

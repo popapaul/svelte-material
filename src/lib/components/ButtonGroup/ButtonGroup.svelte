@@ -1,6 +1,7 @@
 <script lang="ts">
   import ItemGroup from '../ItemGroup/ItemGroup.svelte';
-
+  import "./ButtonGroup.scss";
+  
   // Classes to add to button group.
   let klass:string = '';
   export { klass as class };
@@ -35,9 +36,6 @@
   // Styles to apply to button group.
   export let style:string = null;
 </script>
-
-<style lang="scss" src="./ButtonGroup.scss" global>
-</style>
 
 <ItemGroup on:change bind:value {activeClass} {multiple} {mandatory} {max}>
   <div

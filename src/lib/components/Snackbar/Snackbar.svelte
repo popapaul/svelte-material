@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./Snackbar.scss";
     import { scale, type TransitionConfig } from 'svelte/transition';
     import Style from '../../internal/Style';
     let klass = '';
@@ -43,9 +44,7 @@
       }
     }
   </script>
-  
-  <style lang="scss" src="./Snackbar.scss" global>
-  </style>
+
   
   <div
     class="s-snackbar__wrapper"

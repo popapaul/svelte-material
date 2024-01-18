@@ -1,6 +1,7 @@
 <script>
   import TextColor from '../../internal/TextColor';
-
+  import "./ProgressCircular.scss";
+  
   let klass = '';
   export { klass as class };
   export let indeterminate = false;
@@ -26,9 +27,6 @@
     'stroke-dasharray': circumference,
   };
 </script>
-
-<style lang="scss" src="./ProgressCircular.scss" global>
-</style>
 
 <div
   role="progressbar"

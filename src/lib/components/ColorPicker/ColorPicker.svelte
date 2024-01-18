@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./ColorPicker.scss";
   import {createEventDispatcher} from 'svelte';
   import RangeSlider from "../RangeSlider/RangeSlider.svelte"
   import TextField from "../TextField/TextField.svelte"
@@ -213,7 +214,6 @@
   </script>
   <svelte:window  on:touchmove|passive={handleMove}   on:mousemove|passive={handleMove}    on:touchend= {()=>tracked = null} on:mouseup={()=>tracked = null} />
 
-  <style lang="scss" src="./ColorPicker.scss" global></style>
   <div class="main-container">
   <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div  class="colorsquare size" style="background-color:rgba({hsvToRgb(h, 1, 1).join(",")});">

@@ -11,6 +11,7 @@
 </script>
 
 <script lang="ts">
+  import "./ExpansionPanels.scss";
   import { createEventDispatcher, setContext } from 'svelte';
   import { type Writable, writable } from 'svelte/store';
 
@@ -83,9 +84,6 @@
     },
   });
 </script>
-
-<style lang="scss" src="./ExpansionPanels.scss" global>
-</style>
 
 <div
   class="s-expansion-panels {klass}"

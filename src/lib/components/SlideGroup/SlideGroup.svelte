@@ -7,6 +7,7 @@
 
 
 <script lang="ts">
+  import "./SlideGroup.scss";
   import { setContext, afterUpdate } from 'svelte';
   import ItemGroup from '../ItemGroup/ItemGroup.svelte';
   import prevIcon from '../../internal/Icons/prev';
@@ -65,9 +66,6 @@
 
   $: showArrows && setTimeout(()=> arrowsVisible = wrapperWidth < contentWidth, 1)
 </script>
-
-<style lang="scss" src="./SlideGroup.scss" global>
-</style>
 
 <ItemGroup
   class="s-slide-group {klass}"
