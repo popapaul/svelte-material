@@ -325,7 +325,7 @@
         background-color: currentColor;
         opacity: 0.15;
       }
-      :global(.focus-visible).day-control:focus:not([disabled]):not(.disabled):before {
+      :global(.focus-visible.day-control:focus:not([disabled]):not(.disabled):before) {
         background-color: currentColor;
         opacity: 0.3;
       }
