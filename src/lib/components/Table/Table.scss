@@ -26,10 +26,10 @@
 	}
 
 	.toolbar {
-		position: sticky;
+		--position: sticky;
 		padding: 8px 16px;
 		top: 0;
-		z-index: 10;
+		--z-index: 10;
 	}
 	.s-table-footer {
 		padding-top: 8px;
