@@ -1,15 +1,9 @@
 <script lang="ts">
-    import { createEventDispatcher, type ComponentProps } from "svelte";
+    import { createEventDispatcher } from "svelte";
     import TextField from "../TextField/TextField.svelte";
     import { isDate } from "../../internal/Date/date";
     import TimePicker from "../TimePicker/TimePicker.svelte";
     import Menu from "../Menu/Menu.svelte";
-
-
-  type $$Props =  ComponentProps<TextField>  & ComponentProps<TimePicker>  & ComponentProps<Menu> & {
-    locale?:string,
-    readonly?:boolean
-  }
 
 
 

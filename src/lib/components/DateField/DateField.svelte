@@ -3,15 +3,10 @@
   import TextField from "../TextField/TextField.svelte";
 	import DatePicker from "../DatePicker/DatePicker.svelte";
 	import Menu from "../Menu/Menu.svelte";
+  
   export let value:Date = null;
   export let locale:string = "ro";
   export let readonly = false;
-
-  type $$Props =  ComponentProps<TextField>  & ComponentProps<DatePicker>  & ComponentProps<Menu> & {
-    locale?:string,
-    readonly?:boolean
-  }
-
 
   const dispatch = createEventDispatcher();
   let elm;
