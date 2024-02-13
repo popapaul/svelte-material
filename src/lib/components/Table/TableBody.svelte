@@ -1,4 +1,4 @@
-<tbody>
+
+<tbody {...$$restProps}>
     <slot/>
-    <slot name="aggregate" />
 </tbody>

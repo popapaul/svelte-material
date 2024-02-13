@@ -16,7 +16,6 @@
   <div class="s-table-container">
     <table class:layout-fixed={fixed}>
         <slot/>
-        <slot name="aggregate"/>
     </table>
   </div>
 

@@ -12,7 +12,7 @@
 
     export let pageSize = 25;
     export let count=0;
-    export let pageSizes:number[] = [pageSize??20, 25, 50, 75, 100, 150];
+    export let pageSizes:number[] = Array.from(new Set([pageSize,10, 25, 50, 75, 100, 150])).sort((a,b)=>a-b);
 	export let page = 0;
     export let pageSelect=true;
     export let type = "buttons";

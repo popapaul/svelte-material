@@ -65,10 +65,10 @@ export { PasswordField } from './components/PasswordField';
 export { Toasts, toast } from './components/Toast';
 
 export {
-	SimpleTable,
 	Table,
 	TableHeader,
 	TableRow,
+	TableBody,
 	TableCell,
 	TableFooter
 } from './components/Table';

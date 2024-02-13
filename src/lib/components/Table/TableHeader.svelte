@@ -1,6 +1,6 @@
 
 <script>
-    import "./TableHead.scss";
+    import "./TableHeader.scss";
     import {setContext} from "svelte";
     setContext("tbl-header",true);
 </script>
