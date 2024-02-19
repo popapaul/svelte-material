@@ -8,7 +8,6 @@
 	display: inline-flex;
 	flex: 0 0 auto;
 	overflow: hidden;
-	position: relative;
 	outline: 0;
 	justify-content: center;
 	user-select: none;
@@ -18,10 +17,9 @@
 	transition-duration: $btn-transition-duration;
 	transition-property: box-shadow, transform, opacity;
 	background-color: var(--theme-app-bar);
-
+	position: relative;
 	align-items: center;
 	line-height: normal;
-	position: relative;
 	font-size: inherit;
 	font-weight: map-deep-get($headings, 'button', 'weight');
 	letter-spacing: map-deep-get($headings, 'button', 'letter-spacing');

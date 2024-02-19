@@ -13,7 +13,7 @@ import type { FlyParams } from 'svelte/transition';
  * }
  */
 
-interface Toast {
+export interface Toast {
 	id?: number;
 	duration?: number;
 	initial?: number;
@@ -21,6 +21,8 @@ interface Toast {
 	pausable?: boolean;
 	dismissable?: boolean;
 	intro?: FlyParams;
+	message?: string;
+	type: "success" | "error" | "info" | "warning"
 }
 
 const defaults: Toast = {
@@ -28,7 +30,8 @@ const defaults: Toast = {
 	initial: 1,
 	progress: 0,
 	pausable: true,
-	dismissable: true
+	dismissable: true,
+	type: "info"
 };
 
 const createToast = () => {
@@ -38,17 +41,16 @@ const createToast = () => {
 	const add = (
 		message: string,
 		type?: 'default' | 'success' | 'warning' | 'info' | 'error',
-		opts: Toast = {}
+		opts: Toast = defaults
 	) => {
 		const entry = {
+			...defaults,
+			...opts,
 			message,
 			reversed: false,
 			type,
-			...defaults,
-			...opts,
 			id: ++count
 		};
-
 		update((n) => (entry.reversed ? [...n, entry] : [entry, ...n]));
 		return count;
 	};
@@ -60,7 +62,7 @@ const createToast = () => {
 			return n.filter((i) => i.id !== target);
 		});
 	};
-	const set = (id: number, opts: Toast = {}) => {
+	const set = (id: number, opts: Toast = defaults) => {
 		const param = { ...opts, id };
 		update((n) => {
 			const idx = n.findIndex((i) => i.id === param.id);

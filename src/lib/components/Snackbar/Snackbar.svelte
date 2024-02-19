@@ -2,24 +2,14 @@
   import "./Snackbar.scss";
     import { scale, type TransitionConfig } from 'svelte/transition';
     import Style from '../../internal/Style';
+    import { tweened } from "svelte/motion";
+    import { linear } from "svelte/easing";
+	  import { createEventDispatcher, onMount } from "svelte";
     let klass = '';
     /** classes added to the snackbar */
     export { klass as class };
-    /** absolute sets the snackbar with position absolute otherwise it is fixed */
-    export let absolute = false;
-    /** active shows or hides the snackbar */
+
     export let active = true;
-    /** top shows the snackbar on the top side of the page */
-    export let top = false;
-    /** left shows the snackbar on the left side of the page */
-    export let left = false;
-    export let bottom = false;
-    export let right = false;
-    export let center = false;
-    /** offsetY defines the offset from the left or right side of the page */
-    export let offsetX = '8px';
-    /** offsetY defines the offset from the top or bottom side of the page */
-    export let offsetY = '8px';
     /** outlined gives the snackbar a outlined style */
     export let outlined = false;
     /** text gives the snackbar a text style */
@@ -28,47 +18,48 @@
     export let rounded = false;
     /** tile gives the snackbar a tile style */
     export let tile = false;
-    /** timout is the delay before the snackar hides away */
-    export let timeout = 0;
+    /** duration is the delay before the snackar hides away */
+    export let duration = 0;
     /** transiton function for the snackbar */
     export let transition:(node: Element, options?: any) => TransitionConfig = scale;
     /** styles added to the snackbar */
     export let style = '';
+    export let type = 'info';
+    let mounted = false;
+    const progress = tweened(0, {delay :100, duration: 5000, easing: linear })
 
-
-    $: {
-      if (active && timeout) {
-        setTimeout(() => {
-          active = false;
-        }, timeout);
-      }
+    const dispatch = createEventDispatcher();
+    export const close = ()=>{
+      active = false;
+      dispatch("close");
     }
-  </script>
 
-  
-  <div
-    class="s-snackbar__wrapper"
-    class:absolute
-    class:top
-    class:left
-    class:bottom
-    class:right
-    class:center
-    use:Style={{ 'snackbar-x': offsetX, 'snackbar-y': offsetY }}>
+    onMount(()=>{$progress = 100; mounted = true})
+
+    const pause = () => progress.set($progress, { duration: 0 });
+    
+    const resume = () =>  {
+      progress.set(100, { duration: duration - (duration * ($progress / 100)) })
+    }
+    
+    $: Math.floor($progress) === 100 && setTimeout(close,500)
+  </script>
     {#if active}
       <div
-        transition:transition
+        role="progressbar"
+        transition:transition|global
+        on:mouseenter={pause} 
+        on:mouseleave={resume}
         on:introstart
         on:outrostart
         on:introend
         on:outroend
-        class="s-snackbar {klass}"
+        class="s-snackbar snackbar-{type} {klass}"
         class:outlined
         class:text
         class:rounded
         class:tile
         {style}>
-        <slot />
+        <slot {close} progress={mounted ? Math.ceil($progress) : 0} />
       </div>
     {/if}
-  </div>

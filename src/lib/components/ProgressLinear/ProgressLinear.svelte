@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
+
   import BackgroundColor from '../../internal/BackgroundColor';
   import "./ProgressLinear.scss";
-  
+
   let klass = '';
   export { klass as class };
   export let value = 0;
@@ -13,9 +14,9 @@
   export let color = backgroundColor;
   export let buffer = 100;
   export let reversed = false;
-  export let stream = false;
+  export let stream = true;
   export let rounded = false;
-  export let striped = false;
+  export let striped = true;
   export let style = '';
 </script>
 

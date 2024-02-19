@@ -1,10 +1,40 @@
-<script>
-    import "./Toasts.scss";
-    import { toast } from './index'
-    import { format } from '../../internal/Style';
-    import { flip } from 'svelte/animate';
-    import ToastItem from './ToastItem.svelte';
+<script lang="ts">
+    import toast from './store';
+	import Snackbar from "../Snackbar/Snackbar.svelte";
+    import type {ComponentProps} from "svelte";
+	import ProgressLinear from '../ProgressLinear/ProgressLinear.svelte';
+	import Icon from '../Icon/Icon.svelte';
+	import Button from '../Button/Button.svelte';
+    import info from '../../internal/Icons/info';
+    import warning from '../../internal/Icons/warning';
+    import success from '../../internal/Icons/success';
+    import error from '../../internal/Icons/error';
+    import hide from "../../internal/Icons/close";
+	import type { Toast } from './store';
+	import Style from '../../internal/Style';
 
+    const icons = {
+        info,
+        warning,
+        success,
+        error
+    }
+    type $$Props = ComponentProps<Snackbar> & Toast & {
+         /** absolute sets the snackbar with position absolute otherwise it is fixed */
+        absolute:boolean
+        /** top shows the snackbar on the top side of the page */
+        top:boolean;
+        /** left shows the snackbar on the left side of the page */
+        left:boolean;
+        bottom:boolean;
+        right:boolean;
+        center:boolean;
+        /** offsetY defines the offset from the left or right side of the page */
+        offsetX: string
+        /** offsetY defines the offset from the top or bottom side of the page */
+        offsetY: string
+    }; 
+    export let absolute = false;
     export let top = false;
     export let left = false;
     export let bottom = false;
@@ -13,18 +43,23 @@
     export let offsetX = '8px';
     export let offsetY = '8px';
 </script>
-
-<div 
+ 
+<div
     class="s-snackbar__wrapper"
+    class:absolute
     class:top
     class:left
     class:bottom
     class:right
     class:center
-    style="--s-snackbar-x:{format(offsetX)};--s-snackbar-u:{format(offsetY)};">
-    {#each $toast as item(item)}
-        <div animate:flip>
-            <ToastItem {item} {...$$restProps}  />
-        </div>
-    {/each}
+    use:Style={{ 'snackbar-x': offsetX, 'snackbar-y': offsetY }}>
+    {#each $toast as item(item.id)}
+        <Snackbar {...$$restProps} {...item} on:close={()=>toast.pop(item.id)} let:progress>
+            <ProgressLinear striped backgroundColor="secondary" class="progress" value={progress} />
+            <Icon style="color:white;" path={icons[item.type]} />{@html item.message}
+            <Button style="margin-left:auto;color:white;" on:click={()=>toast.pop(item.id)} fab depressed size="x-small" >
+                <Icon path={hide} />
+            </Button>
+        </Snackbar>
+    {/each} 
 </div>
