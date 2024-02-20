@@ -5,6 +5,7 @@
     import { slide } from 'svelte/transition';
     const dispatch = createEventDispatcher();
     import Button from '../Button/Button.svelte';
+    import close from "../../internal/Icons/close";
     
     let klass = '';
     /** classes added to the alert */
@@ -76,9 +77,9 @@
           <slot />
         </div>
         {#if dismissible}
-          <Button icon class={dismissible=="top" ? "top" : ""} on:click={dismiss}>
+          <Button icon size="small" class={dismissible=="top" ? "top" : ""} on:click={dismiss}>
             <!-- Slot for close button icon. -->
-            <slot name="close">✖</slot>
+            <slot name="close">{@html close}</slot>
           </Button>
         {/if}
         {#if border}

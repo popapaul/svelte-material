@@ -55,9 +55,9 @@
     use:Style={{ 'snackbar-x': offsetX, 'snackbar-y': offsetY }}>
     {#each $toast as item(item.id)}
         <Snackbar {...$$restProps} {...item} on:close={()=>toast.pop(item.id)} let:progress>
-            <ProgressLinear striped backgroundColor="secondary" class="progress" value={progress} />
+            <ProgressLinear striped backgroundColor="info" class="progress" value={progress} />
             <Icon style="color:white;" path={icons[item.type]} />{@html item.message}
-            <Button style="margin-left:auto;color:white;" on:click={()=>toast.pop(item.id)} fab depressed size="x-small" >
+            <Button style="margin-left:auto;color:white;" on:click={()=>toast.pop(item.id)} icon depressed size="x-small" >
                 <Icon path={hide} />
             </Button>
         </Snackbar>
