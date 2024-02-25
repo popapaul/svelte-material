@@ -46,12 +46,12 @@
     <span style="width:120px; {style}">{page * pageSize + 1}-{Math.min((Number(page) + 1) * pageSize,count )} din {count}</span>
     {#if pageSelect}
         <Select
-            style="width:max-content;"
+            style="width:60px;"
             mandatory
             items={pageSizes.map((size) => ({ name: size?.toString(), value: size }))}
             bind:value={pageSize}
         >
-            Randuri pe pagina
+            Randuri
         </Select>
     {/if}
     <div class="flex gap-2">
