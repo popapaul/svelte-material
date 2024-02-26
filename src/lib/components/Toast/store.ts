@@ -40,7 +40,7 @@ const createToast = () => {
 
 	const add = (
 		message: string,
-		type?: 'default' | 'success' | 'warning' | 'info' | 'error',
+		type?: 'success' | 'warning' | 'info' | 'error',
 		opts: Toast = defaults
 	) => {
 		const entry = {
@@ -51,7 +51,7 @@ const createToast = () => {
 			type,
 			id: ++count
 		};
-		update((n) => (entry.reversed ? [...n, entry] : [entry, ...n]));
+		update((n) => [...n, entry]);
 		return count;
 	};
 	const pop = (id: number) => {

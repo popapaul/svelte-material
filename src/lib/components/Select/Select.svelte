@@ -156,33 +156,33 @@
         <slot slot="append-outer" name="append-outer" />
       </TextField>
  
-    <ListItemGroup bind:value on:change on:change={handleChange} {mandatory} {multiple} {max}>
-      <slot name="items">
-        <div class={itemsPanelClass}>
-          {#if filteredItems.length}
-            {#each filteredItems as item}
-              {@const active = isActive(value,item)}
-              <slot name="item" {item} {active}>
-                <ListItem
-                  {dense}
-                  value={getValue(item)}
-                  {active}
-                >
-                  <span slot="prepend">
-                    {#if multiple}
-                      <Checkbox checked={active}/>
-                    {/if}
-                  </span>
-                  {getName(item)}
-                </ListItem>
-              </slot>
-            {/each}
-          {:else}
-          No items
-          {/if}
-        </div>
-
-      </slot>
-    </ListItemGroup>
+      <ListItemGroup bind:value on:change on:change={handleChange} {mandatory} {multiple} {max}>
+        <slot name="items">
+          <div class={itemsPanelClass}>
+            {#if filteredItems.length}
+              {#each filteredItems as item}
+                {@const active = isActive(value,item)}
+                <slot name="item" {item} {active}>
+                  <ListItem
+                    {dense}
+                    value={getValue(item)}
+                    {active}
+                  >
+                    <span slot="prepend">
+                      {#if multiple}
+                        <Checkbox checked={active}/>
+                      {/if}
+                    </span>
+                    {getName(item)}
+                  </ListItem>
+                </slot>
+              {/each}
+            {:else}
+            No items
+            {/if}
+          </div>
+  
+        </slot>
+      </ListItemGroup>
   </Menu>
 </div>

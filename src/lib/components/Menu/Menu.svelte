@@ -44,7 +44,6 @@
   export let nudgeX:number = 0;
   export let nudgeY:number = 0;
 
-  let activatorWidth:number=null;
   let menu:HTMLElement;
   let clicked=false;
   const dispatch = createEventDispatcher();
@@ -88,7 +87,6 @@
 >
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div 
-    bind:clientWidth={activatorWidth}
     use:popperRef
     on:click={activatorClick}  
     on:keydown={activatorClick}  
@@ -101,7 +99,8 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div bind:this={menu} 
       class="s-menu {klass}"  
-      style="z-index:{index};{fullWidth ? `width: ${activatorWidth}px` : "width:auto"}"
+      style="z-index:{index};"
+      style:width={fullWidth ? "100%" : "auto"}
       style:margin-right="{nudgeX}px"
       style:margin-top="{nudgeY}px"
       role="menu"
