@@ -54,7 +54,8 @@
 		position: absolute;
 		right: 0;
 		top: 0;
-		transition: 0.2s border-color map-get($transitions, 'fast-out-slow-in'),
+		transition:
+			0.2s border-color map-get($transitions, 'fast-out-slow-in'),
 			0.2s opacity map-get($transitions, 'fast-out-slow-in');
 	}
 

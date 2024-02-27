@@ -22,7 +22,7 @@ export interface Toast {
 	dismissable?: boolean;
 	intro?: FlyParams;
 	message?: string;
-	type: "success" | "error" | "info" | "warning"
+	type: 'success' | 'error' | 'info' | 'warning';
 }
 
 const defaults: Toast = {
@@ -31,7 +31,7 @@ const defaults: Toast = {
 	progress: 0,
 	pausable: true,
 	dismissable: true,
-	type: "info"
+	type: 'info'
 };
 
 const createToast = () => {

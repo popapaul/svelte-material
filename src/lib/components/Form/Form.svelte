@@ -1,18 +1,18 @@
 <script context="module" lang="ts">
 	export const FORM_FIELDS = {};
 
-    type Field = {
-        id?: string; 
-        validate: () => string[];
-    }
+	type Field = {
+		id?: string;
+		validate: () => string[];
+	};
 
-    type Error = {
-        id:string;
-        errors:string[];
-    }
+	type Error = {
+		id: string;
+		errors: string[];
+	};
 
 	export interface FormContext {
-		register: (x:Field) => Field;
+		register: (x: Field) => Field;
 	}
 </script>
 
@@ -27,40 +27,37 @@
 	interface $$Events {
 		submit: CustomEvent;
 		error: CustomEvent<Error[]>;
-	
-    }
+	}
 
 	const dispatch = createEventDispatcher();
 	const formFields: Set<Field> = new Set();
 
 	setContext<FormContext>(FORM_FIELDS, {
-		register: (field:Field) => {
+		register: (field: Field) => {
 			formFields.add(field);
 			onDestroy(() => formFields.delete(field));
 			return field;
-		},
+		}
 	});
 
 	const onSubmit = () => {
 		const errorFields = validate();
 
-		if (errorFields.length) 
-        {
-            const field = errorFields[0];
-            const input = document.querySelector("#" + field.id);
-            input?.scrollIntoView?.({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-            return dispatch('error', errorFields);
-        }
+		if (errorFields.length) {
+			const field = errorFields[0];
+			const input = document.querySelector('#' + field.id);
+			input?.scrollIntoView?.({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+			return dispatch('error', errorFields);
+		}
 
-        dispatch('submit');
+		dispatch('submit');
 	};
 
 	export function validate() {
 		const errorFields = Array.from(formFields)
-			.map(({id,validate}) => ({  errors: validate(), id }))
+			.map(({ id, validate }) => ({ errors: validate(), id }))
 			.filter((x) => x.errors.length);
-		if (errorFields.length) 
-            return errorFields;
+		if (errorFields.length) return errorFields;
 		return [];
 	}
 </script>

@@ -15,7 +15,7 @@ var _typeof =
 	typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol'
 		? function (obj: any) {
 				return typeof obj;
-		  }
+			}
 		: function (obj: any) {
 				return obj &&
 					typeof Symbol === 'function' &&
@@ -23,7 +23,7 @@ var _typeof =
 					obj !== Symbol.prototype
 					? 'symbol'
 					: typeof obj;
-		  };
+			};
 
 var jumper = function jumper() {
 	// private variable cache

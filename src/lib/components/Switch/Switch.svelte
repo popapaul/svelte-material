@@ -1,87 +1,89 @@
 <script context="module">
-  import uid from '../../internal/uid';
+	import uid from '../../internal/uid';
 </script>
 
 <script>
-  import "./Switch.scss";
-  import TextColor from '../../internal/TextColor';
+	import './Switch.scss';
+	import TextColor from '../../internal/TextColor';
 
-  // Add class to switch wrapper.
-  let klass = '';
-  export { klass as class };
-  
-  // Color of the switch when active.
-  export let color = 'primary';
+	// Add class to switch wrapper.
+	let klass = '';
+	export { klass as class };
 
-  // The value for the switch.
-  export let value = null;
+	// Color of the switch when active.
+	export let color = 'primary';
 
-  // Combines components into a single group.
-  export let group = [];
+	// The value for the switch.
+	export let value = null;
 
-  // Get/Set checked state.
-  export let checked = false;
+	// Combines components into a single group.
+	export let group = [];
 
-  // make switch inset.
-  export let inset = false;
+	// Get/Set checked state.
+	export let checked = false;
 
-  // Makes the switch dense.
-  export let dense = false;
+	// make switch inset.
+	export let inset = false;
 
-  // Disables the switch.
-  export let disabled = false;
+	// Makes the switch dense.
+	export let dense = false;
 
-  // Id for switch.
-  export let id = null;
+	// Disables the switch.
+	export let disabled = false;
 
-  // Styles to add to switch.
-  export let style = null;
+	// Id for switch.
+	export let id = null;
 
-  // The <input/> element of the switch.
-  export let inputElement = null;
+	// Styles to add to switch.
+	export let style = null;
 
-  id = id || `s-switch-${uid(5)}`;
+	// The <input/> element of the switch.
+	export let inputElement = null;
 
-  const hasValidGroup = Array.isArray(group);
-  if (hasValidGroup && value) {
-    if (group.indexOf(value) >= 0) checked = true;
-  }
+	id = id || `s-switch-${uid(5)}`;
 
-  function groupUpdate() {
-    if (hasValidGroup && value) {
-      const i = group.indexOf(value);
-      if (i < 0) {
-        group.push(value);
-      } else {
-        group.splice(i, 1);
-      }
-      group = group;
-    }
-  }
+	const hasValidGroup = Array.isArray(group);
+	if (hasValidGroup && value) {
+		if (group.indexOf(value) >= 0) checked = true;
+	}
+
+	function groupUpdate() {
+		if (hasValidGroup && value) {
+			const i = group.indexOf(value);
+			if (i < 0) {
+				group.push(value);
+			} else {
+				group.splice(i, 1);
+			}
+			group = group;
+		}
+	}
 </script>
 
 <div class="s-switch {klass}" {style}>
-  <div
-    class="s-switch__wrapper"
-    class:dense
-    class:inset
-    class:disabled
-    use:TextColor={checked && color}>
-    <input
-      type="checkbox"
-      bind:this={inputElement}
-      role="switch"
-      aria-checked={checked}
-      bind:checked
-      {id}
-      {disabled}
-      {value}
-      on:change={groupUpdate}
-      on:change />
-    <div class="s-switch__track" />
-    <div class="s-switch__thumb" />
-  </div>
-  <label for={id}>
-    <slot />
-  </label>
+	<div
+		class="s-switch__wrapper"
+		class:dense
+		class:inset
+		class:disabled
+		use:TextColor={checked && color}
+	>
+		<input
+			type="checkbox"
+			bind:this={inputElement}
+			role="switch"
+			aria-checked={checked}
+			bind:checked
+			{id}
+			{disabled}
+			{value}
+			on:change={groupUpdate}
+			on:change
+		/>
+		<div class="s-switch__track" />
+		<div class="s-switch__thumb" />
+	</div>
+	<label for={id}>
+		<slot />
+	</label>
 </div>

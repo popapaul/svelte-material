@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "./TextField.scss";
+	import './TextField.scss';
 	import Icon from '../Icon/Icon.svelte';
 	import uid from '../../internal/uid';
 	import clearIcon from '../../internal/Icons/close';
@@ -23,7 +23,7 @@
 	/** Classes to add to text field wrapper. */
 	export { klass as class };
 	/** Value of the text field. */
-	export let value: number | string = "";
+	export let value: number | string = '';
 	/** Color class of the text field when active. */
 	export let color = 'primary';
 	/** Whether text field is the `filled` material design variant. */
@@ -102,9 +102,9 @@
 		if (validateOnBlur) validate();
 	}
 
-	function clear(event:Event) {
+	function clear(event: Event) {
 		event.preventDefault();
-		event.stopPropagation()
+		event.stopPropagation();
 		value = null;
 		dispatch('clear');
 	}
@@ -118,86 +118,76 @@
 	}
 </script>
 
+<Input class="s-text-field {klass}" {color} {dense} {readonly} {disabled} {error} {success} {style}>
+	<!-- Slot for prepend outside the input. -->
+	<slot slot="prepend-outer" name="prepend-outer" />
+	<div
+		class="s-text-field__wrapper"
+		class:filled
+		class:solo
+		class:outlined
+		class:flat
+		class:line={underline}
+		class:rounded
+	>
+		<!-- Slot for prepend inside the input. -->
+		<slot name="prepend" />
 
-<Input
-  class="s-text-field {klass}"
-  {color}
-  {dense}
-  {readonly}
-  {disabled}
-  {error}
-  {success}
-  {style}>
-  <!-- Slot for prepend outside the input. -->
-  <slot slot="prepend-outer" name="prepend-outer" />
-  <div
-    class="s-text-field__wrapper"
-    class:filled
-    class:solo
-    class:outlined
-    class:flat
-	class:line={underline}
-    class:rounded>
-    <!-- Slot for prepend inside the input. -->
-    <slot name="prepend" />
+		<div class="s-text-field__input">
+			<label for={id} class:active={labelActive || value || value?.toString?.() || focused}>
+				<slot />
+			</label>
+			<slot name="content" />
+			<!-- keypress Event is deprecated. Use keydown or keyup instead -->
+			<input
+				bind:this={inputElement}
+				value={value ?? ''}
+				on:input={handleChange}
+				{type}
+				{placeholder}
+				{id}
+				{readonly}
+				{disabled}
+				on:focus={onFocus}
+				on:blur={onBlur}
+				on:change={validate}
+				on:change={handleChange}
+				on:focus
+				on:blur
+				on:input
+				on:click
+				on:change
+				on:keypress
+				on:keydown
+				on:keyup
+				{...$$restProps}
+			/>
+		</div>
 
-    <div class="s-text-field__input">
-      <label for={id} class:active={labelActive || value || value?.toString?.() || focused}>
-        <slot />
-      </label>
-      <slot name="content" />
-      <!-- keypress Event is deprecated. Use keydown or keyup instead -->
-      <input
-		bind:this={inputElement}
-		value={value??""}
-		on:input={handleChange}
-		{type}
-		{placeholder}
-		{id}
-		{readonly}
-		{disabled}
-		on:focus={onFocus}
-		on:blur={onBlur}
-		on:change={validate}
-		on:change={handleChange}
-		on:focus
-		on:blur
-		on:input
-		on:click
-		on:change
-		on:keypress
-		on:keydown
-		on:keyup
-		{...$$restProps}
-		 />
-    </div>
+		{#if clearable && value?.toString().length > 0}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<div on:click={clear} style="cursor:pointer">
+				<!-- Slot for the icon when `clearable` is true. -->
+				<slot name="clear-icon">
+					<Icon size={20} path={clearIcon} />
+				</slot>
+			</div>
+		{/if}
 
-    {#if clearable && value?.toString().length > 0}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div on:click={clear} style="cursor:pointer">
-        <!-- Slot for the icon when `clearable` is true. -->
-        <slot name="clear-icon">
-          <Icon size={20} path={clearIcon} />
-        </slot>
-      </div>
-    {/if}
+		<!-- Slot for append inside the input. -->
+		<slot name="append" />
+	</div>
 
-    <!-- Slot for append inside the input. -->
-    <slot name="append" />
-  </div>
+	<div slot="messages">
+		<div>
+			<span>{hint ?? ''}</span>
+			{#each messages as message}<span>{message}</span>{/each}
+			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
+		</div>
+		{#if counter}<span>{value?.toString?.()?.length}</span>{/if}
+	</div>
 
-  <div slot="messages">
-    <div>
-      <span>{hint ?? ""}</span>
-      {#each messages as message}<span>{message}</span>{/each}
-      {#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
-    </div>
-    {#if counter}<span>{value?.toString?.()?.length}</span>{/if}
-  </div>
-
-  <!-- Slot for append outside the input. -->
-  <slot slot="append-outer" name="append-outer" />
+	<!-- Slot for append outside the input. -->
+	<slot slot="append-outer" name="append-outer" />
 </Input>
-
-

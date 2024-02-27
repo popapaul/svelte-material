@@ -1,50 +1,44 @@
 <script lang="ts">
-  import ItemGroup from '../ItemGroup/ItemGroup.svelte';
-  import "./ButtonGroup.scss";
-  
-  // Classes to add to button group.
-  let klass:string = '';
-  export { klass as class };
+	import ItemGroup from '../ItemGroup/ItemGroup.svelte';
+	import './ButtonGroup.scss';
 
-  // Does not remove box shadow.
-  export let elevated:boolean = false;
+	// Classes to add to button group.
+	let klass: string = '';
+	export { klass as class };
 
-  // Remove border.
-  export let borderless:boolean = false;
+	// Does not remove box shadow.
+	export let elevated: boolean = false;
 
-  // Remove border radius.
-  export let tile:boolean = false;
+	// Remove border.
+	export let borderless: boolean = false;
 
-  // Add border radius to the first and last button.
-  export let rounded:boolean = false;
+	// Remove border radius.
+	export let tile: boolean = false;
 
-  // Identifies buttons as active with this class.
-  export let activeClass:string = 'active';
+	// Add border radius to the first and last button.
+	export let rounded: boolean = false;
 
-  // Array or string with the active button(s) value.
-  export let value:any|any[];
+	// Identifies buttons as active with this class.
+	export let activeClass: string = 'active';
 
-  // Forces a value to always be selected (if available).
-  export let mandatory:boolean = false;
+	// Array or string with the active button(s) value.
+	export let value: any | any[];
 
-  // Allow multiple selections, makes the value prop an array.
-  export let multiple:boolean = false;
+	// Forces a value to always be selected (if available).
+	export let mandatory: boolean = false;
 
-  // Maximun number of selections.
-  export let max:number = Infinity;
+	// Allow multiple selections, makes the value prop an array.
+	export let multiple: boolean = false;
 
-  // Styles to apply to button group.
-  export let style:string = null;
+	// Maximun number of selections.
+	export let max: number = Infinity;
+
+	// Styles to apply to button group.
+	export let style: string = null;
 </script>
 
 <ItemGroup on:change bind:value {activeClass} {multiple} {mandatory} {max}>
-  <div
-    class="s-btn-group {klass}"
-    class:elevated
-    class:borderless
-    class:tile
-    class:rounded
-    {style}>
-    <slot />
-  </div>
+	<div class="s-btn-group {klass}" class:elevated class:borderless class:tile class:rounded {style}>
+		<slot />
+	</div>
 </ItemGroup>

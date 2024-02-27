@@ -12,7 +12,7 @@ const config = {
 				includePaths: ['theme']
 			},
 			sourceMap: false
-		}),
+		})
 	],
 
 	kit: {

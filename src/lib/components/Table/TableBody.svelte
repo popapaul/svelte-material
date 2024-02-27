@@ -1,4 +1,3 @@
-
 <tbody {...$$restProps}>
-    <slot/>
+	<slot />
 </tbody>

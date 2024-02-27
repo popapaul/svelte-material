@@ -86,17 +86,17 @@ const getPosition = (event: PointerEvent & TouchEvent) => {
 	const xPos = event.clientX
 		? event.clientX
 		: event.touches && event.touches.length
-		? event.touches[0].clientX
-		: event.changedTouches && event.changedTouches.length
-		? event.changedTouches[0].clientX
-		: 0;
+			? event.touches[0].clientX
+			: event.changedTouches && event.changedTouches.length
+				? event.changedTouches[0].clientX
+				: 0;
 	const yPos = event.clientY
 		? event.clientY
 		: event.touches && event.touches.length
-		? event.touches[0].clientY
-		: event.changedTouches && event.changedTouches.length
-		? event.changedTouches[0].clientY
-		: 0;
+			? event.touches[0].clientY
+			: event.changedTouches && event.changedTouches.length
+				? event.changedTouches[0].clientY
+				: 0;
 	// Get canvas position on view
 	const canvas = (event.target as HTMLElement).getBoundingClientRect();
 	const x = xPos - canvas.width / 2 - canvas.left;
