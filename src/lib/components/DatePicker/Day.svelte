@@ -3,58 +3,18 @@
     import { fly, fade } from "svelte/transition";
     import Icon from "../Icon/Icon.svelte";
     import Button from "../Button/Button.svelte";
-    export let locale;
-    export let isAllowed:(date:Date)=>boolean = () => true;
+    export let locale:string;
+    export let onRender:(date: Date) => { disabled?:boolean, message?:string };
     export let value:Date= new Date();
     export let month:number;
     export let year:number; 
-    let weekStart = 0; // Number
-    let legacy = false;
+    export let weekStart = 1; // Number
     let direction = 0;
     const dispatch = createEventDispatcher();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const weekStartOne =
-      "af ar-tn az be bg bm br bs ca cs cv cy da de-at de-ch de el en-SG en-au en-gb en-ie en-nz eo es-do es et eu fi fo fr-ch fr fy ga gd gl gom-latn hr hu hy-am id is it-ch it jv ka kk km ky lb lt lv me mi mk ms-my ms mt my nb nl-be nl nn oc-lnc pl pt-br pt ro ru sd se sk sl sq sr-cyrl sr ss sv sw tet tg tl-ph tlh tr tzl ug-cn uk ur uz-latn uz vi x-pseudo yo zh-cn".split(
-        " "
-      );
-    const weekStartSix = "ar-ly ar-ma ar ku tzm-latn tzm".split(" ");
-    let weekdays = [];
-    let cells = [];
-    $: if (locale) {
-      // locale changed
-      if (weekStartOne.indexOf(locale.toLowerCase()) >= 0) {
-        weekStart = 1;
-      } else if (weekStartSix.indexOf(locale.toLowerCase()) >= 0) {
-        weekStart = 6;
-      } else if (weekStartOne.indexOf(locale.split("-")[0].toLowerCase()) >= 0) {
-        weekStart = 1;
-      } else if (weekStartSix.indexOf(locale.split("-")[0].toLowerCase()) >= 0) {
-        weekStart = 6;
-      } else {
-        weekStart = 0;
-      }
-      weekdays.length = 0;
-      let date = new Date(0);
-      for (let i = 0; i < 7; i++) {
-        date.setDate(4 + weekStart + i);
-        weekdays.push(
-          new Intl.DateTimeFormat(locale, {
-            weekday: "narrow",
-          }).format(date)
-        );
-      }
-      cells = getDateCells(year, month).map((c) => ({
-        value: c,
-        allowed: allow(year, month, c),
-      }));
-    }
-    $: cells = getDateCells(year, month).map((c) => ({
-      value: c,
-      allowed: allow(year, month, c),
-    }));
+
     onMount(() => {
-      legacy = typeof document.createElement("div").style.grid !== "string";
       if (!locale) {
         locale =
           navigator.languages && navigator.languages.length
@@ -62,34 +22,36 @@
             : navigator.language || "ro";
       }
     });
-    const allow = (year, month, date) => {
-      if (!date) return true;
-      return isAllowed(new Date(year, month, date));
-    };
-    const getDateCells = (year, month) => {
-      const rows = Array.from({ length: 42 });
-      const days = new Date(year, month + 1, 0).getDate();
-      let startIndex = new Date(year, month, 1).getDay();
-      if (startIndex < weekStart) {
-        startIndex += 7;
+
+
+    const calendarize = (year: number, month:number, offset: number) => {
+      let i = 0, j = 0, week: number[], out: number[][] = [];
+  
+      // day index (of week) for 1st of month
+      var first = new Date(year, month, 1 - (offset | 0)).getDay();
+
+      // how many days there are in this month
+      var days = new Date(year, month + 1, 0).getDate();
+
+      while (i < days) {
+        for (j = 0, week = Array(7); j < 7; ) {
+          while (j < first) week[j++] = 0;
+          week[j++] = ++i > days ? 0 : i;
+          first = 0;
+        }
+        out.push(week);
       }
-      Array.from({ length: days }).forEach((_, i) => {
-        const index = startIndex + i - weekStart;
-        rows[index] = i + 1;
-      });
-      return rows;
-    };
+
+      return out;
+	  };
+
     function onMonth() {
       direction = 0;
       dispatch("changeView", { type: "month" });
     }
-    function onDay(e) {
-        const date = new Date(year, month, +e.target.innerText);
-        if(isAllowed(date))
-        {
-            value = date;
-            dispatch("select", value);
-        }
+    function onDay(date:Date) {
+        value = date;
+        dispatch("select", value);
     }
     function onKeydown(e) {
       // click simulate
@@ -104,7 +66,7 @@
         e.target.blur();
       }
     }
-    function isEqualDate(d1, d2) {
+    function isEqualDate(d1:Date, d2:Date) {
       return (
         d1 &&
         d2 &&
@@ -113,7 +75,7 @@
         d1.getDate() === d2.getDate()
       );
     }
-    function addMonths(amount) {
+    function addMonths(amount:number) {
       let d = new Date(new Date().setFullYear(year, month, 1));
       d.setMonth(d.getMonth() + amount);
       month = d.getMonth();
@@ -132,7 +94,7 @@
           addMonths(-1);
         }}
       >
-        <Icon path="<path fill='currentColor' d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'></path>" />
+        <Icon path="<svg><path fill='currentColor' d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'></path></svg>" />
       </Button>
       <Button
         icon
@@ -141,11 +103,10 @@
           addMonths(1);
         }}
       >
-       <Icon path="<path fill='currentColor' d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z'></path>" />
+       <Icon path="<svg><path fill='currentColor' d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z'></path></svg>" />
       </Button>
     </div>
     <div class="grid">
-      {#each [0] as item (legacy ? item : year + month)}
         <div
           class="grid-cell"
           in:fly|local={{ x: direction * 50, duration: 200, delay: 80 }}
@@ -156,31 +117,31 @@
             {new Intl.DateTimeFormat(locale, { month: "long" }).format(new Date(year, month, 1))} {("000" + year).slice(-4)}
           </div>
           <div class="weekdays">
-            {#each weekdays as day}
-              <span class="cell">{day}</span>
+            {#each Array(7) as _,day}
+              <span class="cell">
+               {new Intl.DateTimeFormat(locale, { weekday: "narrow" }).format(new Date(1970, 0, 4 + weekStart + day))}
+              </span>
             {/each}
           </div>
-          {#each Array(6) as _, week}
+          {#each calendarize(year,month, weekStart) as week}
             <div class="row">
-              {#each Array(7) as _, day}
+              {#each week as day}
                 <div class="cell">
-                  {#if cells[day + week * 7].value}
-                    <button
-                      type="button"
-                      tabindex={!cells[day + week * 7].allowed ? -1 : 0}
-                      class="day-control"
-                      class:today={isEqualDate(
-                        new Date(new Date().setFullYear(year, month, cells[day + week * 7].value)),
-                        today
-                      )}
-                      class:selected={isEqualDate(
-                        new Date(new Date().setFullYear(year, month, cells[day + week * 7].value)),isNaN(value?.getTime()) ? new Date(0) : value
-                      )}
-                      class:disabled={!cells[day + week * 7].allowed}
-                      on:keydown={onKeydown}
-                      on:click={onDay}
-                    >
-                      {cells[day + week * 7].value || ""}
+                  {#if day}
+                    {@const date = new Date(year, month, day)}
+                    {@const attrs = onRender?.(date)??{}}
+                      <button
+                        type="button"
+                        tabindex={attrs.disabled ? -1 : 0}
+                        data-message={attrs.message || null}
+                        class="day-control"
+                        class:today={isEqualDate(date, today)}
+                        class:selected={isEqualDate(date, isNaN(value?.getTime()) ? new Date(0) : value )}
+                        class:disabled={attrs.disabled}
+                        on:keydown={onKeydown}
+                        on:click={()=> !attrs.disabled && onDay(date)}
+                      >
+                      {day}
                     </button>
                   {/if}
                 </div>
@@ -188,7 +149,6 @@
             </div>
           {/each}
         </div>
-      {/each}
     </div>
   </div>
   
@@ -210,23 +170,16 @@
     }
     .grid {
       width: 100%;
-      overflow: hidden;
       user-select: none;
-      display: -ms-grid;
       display: grid;
-      -ms-grid-columns: 1fr;
-      -ms-grid-rows: 1fr;
     }
     .grid-cell {
       position: relative;
       z-index: 3;
-      -ms-grid-column: 1;
       grid-column: 1;
-      -ms-grid-row: 1;
       grid-row: 1;
     }
     .grid-cell:nth-child(2) {
-      -ms-grid-row: 1;
       grid-row: 1;
     }
     .title {
@@ -271,13 +224,37 @@
       width: 36px;
       height: unset;
     }
-
+    .day-control:after{
+      content: attr(data-message);
+      position:absolute;
+      bottom: 115%;
+      opacity:0;
+      left:50%;
+      color:black;
+      transform: translateX(-100%);
+      background-color: rgb(252, 207, 8);
+      pointer-events: none;
+      border-radius: 10%;
+      margin-top: 4px;
+      text-align: center;
+      z-index: 2;
+      visibility: hidden;
+      max-width: 120px;
+      width: max-content;
+      color:black;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+    .day-control:hover::after{
+      opacity:1;
+      visibility: visible;
+    }
     .day-control {
       font-size: 14px;
       font-weight: 500;
       display: block; /* .selected need it */
       box-sizing: border-box;
       cursor: pointer;
+      position: relative;
       width: 34px;
       height: 34px;
       line-height: 34px;
@@ -285,8 +262,8 @@
       border: none;
     }
     .day-control.disabled{
-      opacity: 0.6;
       cursor:auto;
+      color:#afafaf;
     }
     .day-control.today {
       border: 1px solid;

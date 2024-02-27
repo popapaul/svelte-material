@@ -11,8 +11,9 @@
     import Year from "./Year.svelte";
     
     export let locale: string = "ro";
-    export let isAllowed: (date: Date) => boolean = () => true;
+    export let onRender:(date: Date) => { disabled?:boolean, message?:string } = () => ({});
     export let header: boolean = true;
+    export let weekStart:number;
     export let value: Date = null;
     export let noDateText: string = "No Date"
     export let mode:DateMode = "days";
@@ -27,14 +28,7 @@
   
     month = d.getMonth();
     year = d.getFullYear();
-    $: if (elm) {
-      setTimeout(() => {
-        if (elm) {
-          elm.style.height = elm.offsetHeight + "px";
-          elm.style.width = elm.offsetWidth + "px";
-        }
-      }, 0);
-    }
+
     function onView({ detail }) {
       mode = detail.type;
     }
@@ -59,7 +53,6 @@
       <div class="header">
         {#if isDate(value)}
           <div class="year">{("000" + value.getFullYear()).slice(-4)}</div>
-          <div class="wrap">
             <div class="date">
               {new Intl.DateTimeFormat(locale, {
                 weekday: "long",
@@ -67,7 +60,6 @@
                 day: "numeric",
               }).format(value)}
             </div>
-          </div>
         {:else}
           <div class="year">&nbsp;</div>
           <div class="date">{noDateText}</div>
@@ -80,7 +72,7 @@
       {:else if mode === "month"}
         <Month {locale} bind:year {value} on:select={onMonth} on:changeView={onView} />
       {:else}
-        <Day {locale} {isAllowed} bind:month bind:year {value} on:select={onDay} on:changeView={onView} />
+        <Day {locale} {onRender} bind:month bind:year {value} {weekStart} on:select={onDay} on:changeView={onView} />
       {/if}
     </div>
   </div>
@@ -88,7 +80,6 @@
   <style>
     .datepicker {
       position: relative;
-      overflow: hidden;
     }
     .header {
       box-sizing: border-box;
@@ -96,32 +87,19 @@
       color: var(--alternate, #fff);
       background: #1976d2;
       background: var(--primary, #1976d2);
-      padding: 16px;
-      height: 97px;
-    }
-    .wrap {
-      position: relative;
-    }
-    .wrap .date {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-       text-overflow: ellipsis; 
-      white-space: nowrap;
+      padding:10px 16px;
     }
     .year {
       font-size: 16px;
       font-weight: 700;
       opacity: 0.6;
-      margin-bottom: 8px;
     }
     .date {
       font-size: 28px;
       font-weight: 500;
     }
     .body {
-      overflow: hidden;
+      width: 260px;
     }
     @media only screen and (max-height: 400px) and (min-width: 420px) {
       .datepicker {
@@ -130,9 +108,6 @@
       .header {
         height: auto;
         width: 148px;
-      }
-      .wrap .date {
-        white-space: unset;
       }
     }
   </style>

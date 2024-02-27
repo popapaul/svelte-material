@@ -54,7 +54,7 @@
           addYear(-1);
         }}
       >
-        <Icon path="<path fill='currentColor' d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'></path>" />
+        <Icon path="<svg><path fill='currentColor' d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'></path></svg>" />
       </Button>
       <Button
         icon
@@ -63,7 +63,7 @@
           addYear(1);
         }}
       >
-        <Icon path="<path fill='currentColor' d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z'></path>" />
+        <Icon path="<svg><path fill='currentColor' d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z'></path></svg>" />
       </Button>
     </div>
     <div class="grid">
@@ -191,6 +191,7 @@
       display: block;
       box-sizing: border-box;
       cursor: pointer;
+      width:100%;
       line-height: 34px;
       border-radius: 2px;
     }

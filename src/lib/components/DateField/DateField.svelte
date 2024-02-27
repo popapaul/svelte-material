@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, type ComponentProps } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import TextField from "../TextField/TextField.svelte";
 	import DatePicker from "../DatePicker/DatePicker.svelte";
 	import Menu from "../Menu/Menu.svelte";
@@ -7,6 +7,9 @@
   export let value:Date = null;
   export let locale:string = "ro";
   export let readonly = false;
+  export let weekStart:number = 1;
+  export let onRender:(date: Date) => { disabled?:boolean, message?:string };
+  export let noDateText: string = "No Date";
 
   const dispatch = createEventDispatcher();
   let elm;
@@ -70,6 +73,10 @@
     on:change 
     on:change={handleChange} 
     {...$$restProps} 
+    {weekStart}
+    {onRender}
+    {noDateText}
+    {locale}
     bind:value={value} 
   />
 </Menu>
