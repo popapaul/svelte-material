@@ -55,7 +55,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 {#if $$slots.activator}
-	<div on:click={() => (active = true)} style="display:contents;">
+	<div on:click|preventDefault|stopPropagation={() => (active = true)} style="display:contents;">
 		<slot name="activator" />
 	</div>
 {/if}
@@ -71,13 +71,13 @@
 			<div
 				class="s-dialog__content {klass}"
 				class:fullscreen
-				transition:transition={{ duration: 300, start: 0.1 }}
+				transition:transition|global={{ duration: 300, start: 0.1 }}
 				on:introstart
 				on:outrostart
 				on:introend
 				on:outroend
 			>
-				<slot />
+				<slot {close} />
 			</div>
 			<Overlay index={zindex - 1} {...overlay} active={visible} on:click={close} />
 		</div>
