@@ -4,6 +4,7 @@
 	import { setContext, createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import './Menu.scss';
+	import { portal } from '../../actions/Portal';
 
 	let klass: string = '';
 	/** Classes to add to menu. */
@@ -43,7 +44,8 @@
 
 	export let nudgeX: number = 0;
 	export let nudgeY: number = 0;
-
+	let activatorWidth = 0;
+	let activator: HTMLElement;
 	let menu: HTMLElement;
 	let clicked = false;
 	const dispatch = createEventDispatcher();
@@ -62,7 +64,9 @@
 
 	const open = () => {
 		if (disabled) return;
+		activatorWidth = activator.clientWidth;
 		active = true;
+
 		dispatch('open');
 	};
 
@@ -89,6 +93,7 @@
 >
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
+		bind:this={activator}
 		use:popperRef
 		on:click={activatorClick}
 		on:keydown={activatorClick}
@@ -100,10 +105,11 @@
 	{#if active}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
+			use:portal={".s-app"}
 			bind:this={menu}
 			class="s-menu {klass}"
 			style="z-index:{index};"
-			style:width={fullWidth ? '100%' : 'auto'}
+			style:width={fullWidth ? activatorWidth+"px" : 'auto'}
 			style:margin-right="{nudgeX}px"
 			style:margin-top="{nudgeY}px"
 			role="menu"

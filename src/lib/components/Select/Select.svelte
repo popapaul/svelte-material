@@ -129,6 +129,7 @@
 		bind:active
 		on:open={() => inputElement?.focus()}
 		class={menuClass}
+		fullWidth
 		{...$$restProps}
 	>
 		<TextField
