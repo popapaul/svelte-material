@@ -38,7 +38,7 @@
 	/** props for the overlay */
 	export let overlay: any = {};
 
-	export let zindex: number = 10;
+	export let zindex: number = 100;
 
 	const dispatch = createEventDispatcher();
 
