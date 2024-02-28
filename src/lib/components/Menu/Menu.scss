@@ -7,7 +7,7 @@
 .s-menu {
 	background-color: var(--theme-surface);
 	backface-visibility: hidden;
-	position: fixed;
+	position: absolute;
 	contain: content;
 	max-height: $menu-max-height;
 	overflow: auto;
