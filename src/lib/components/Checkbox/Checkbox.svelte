@@ -34,6 +34,7 @@
 	// Make the checkbox disabled.
 	export let disabled: boolean = false;
 
+	export let errorCount = 1;
 	/**
 	 * A list of validator functions that take the text field value and return an error
 	 * message, or `true` otherwise.
@@ -46,6 +47,9 @@
 	// Combines components into a single group.
 	export let group: any[] = null;
 
+	/** Hint text. */
+	export let hint = '';
+
 	// Id for the checkbox, defaults to a random uid.
 	export let id: string = null;
 
@@ -55,7 +59,9 @@
 	// The <input/> element of the checkbox.
 	export let inputElement: HTMLInputElement = null;
 
-	let error: boolean = false;
+	export let messages: string[] = [];
+
+	export let error: boolean = false;
 
 	id = id || `s-checkbox-${uid(5)}`;
 
@@ -122,8 +128,10 @@
 			<slot />
 		</label>
 		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label>
-			{#each errorMessages.slice(0, 1) as message}<span>{message}</span>{/each}
-		</label>
+		<div style="padding-left:12px">
+			<span>{hint ?? ''}</span>
+			{#each (messages ?? []) as message}<span style="margin-right:8px;">{message}</span>{/each}
+			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
+		</div>
 	</div>
 </div>

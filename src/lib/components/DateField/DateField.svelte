@@ -4,6 +4,10 @@
 	import DatePicker from '../DatePicker/DatePicker.svelte';
 	import Menu from '../Menu/Menu.svelte';
 
+	type $$Events = {
+		change: CustomEvent<Date>
+	}
+
 	export let value: Date = null;
 	export let locale: string = 'ro';
 	export let readonly = false;

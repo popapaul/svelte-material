@@ -182,7 +182,7 @@
 	<div slot="messages">
 		<div>
 			<span>{hint ?? ''}</span>
-			{#each messages as message}<span>{message}</span>{/each}
+			{#each (messages ?? []) as message}<span style="margin-right:8px;">{message}</span>{/each}
 			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
 		</div>
 		{#if counter}<span>{value?.toString?.()?.length}</span>{/if}
