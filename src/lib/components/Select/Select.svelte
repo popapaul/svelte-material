@@ -68,7 +68,7 @@
 	 */
 	export let closeOnClick: boolean = !multiple;
 	/** Convert the selected value for the underlying text field. */
-
+	export let filter: boolean = true;
 	export let emptyString = '';
 	export let inputElement = null;
 	export let menuClass = '';
@@ -80,8 +80,8 @@
 		value && Array.isArray(value)
 			? value.includes(getValue(item))
 			: typeof value === 'string'
-				? value?.toString().includes(getValue(item)?.toString())
-				: value == getValue(item);
+			? value?.toString().includes(getValue(item)?.toString())
+			: value == getValue(item);
 
 	export function getSelectString(v: TValue) {
 		// We could also use `return items[0].value ? find.. : v` or provide a `basic` prop
@@ -141,6 +141,7 @@
 			{outlined}
 			{solo}
 			{validateOnBlur}
+			readonly={!filter}
 			on:keydown
 			on:clear={() => (value = null)}
 			{dense}
@@ -150,7 +151,7 @@
 				filterValue = event.target.value;
 				dispatch('search', filterValue);
 			}}
-			value={active || chips ? filterValue : items ? format(value) : ''}
+			value={(active || chips) && filter ? filterValue : items ? format(value) : ''}
 			{placeholder}
 			{hint}
 		>
@@ -194,7 +195,7 @@
 							</slot>
 						{/each}
 					{:else}
-						No items
+						Nu au fost gasite optiuni
 					{/if}
 				</div>
 			</slot>
