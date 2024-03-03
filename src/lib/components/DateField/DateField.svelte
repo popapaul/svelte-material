@@ -52,7 +52,7 @@
 	}
 </script>
 
-<Menu closeOnClick={false} {...$$restProps} bind:active placement="bottom-start">
+<Menu closeOnClick={false}  bind:active placement="bottom-start">
 	<TextField
 		slot="activator"
 		value={value instanceof Date && !isNaN(value.getTime())
@@ -80,7 +80,7 @@
 	<DatePicker
 		on:change
 		on:change={handleChange}
-		{...$$restProps}
+
 		{weekStart}
 		{onRender}
 		{noDateText}

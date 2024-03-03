@@ -122,7 +122,7 @@
 	};
 </script>
 
-<div class="s-select {klass}" {style} class:disabled class:chips {...$$restProps}>
+<div class="s-select {klass}" {style} class:disabled class:chips>
 	<Menu
 		{closeOnClick}
 		{disabled}
@@ -130,7 +130,6 @@
 		on:open={() => inputElement?.focus()}
 		class={menuClass}
 		fullWidth
-		{...$$restProps}
 	>
 		<TextField
 			slot="activator"

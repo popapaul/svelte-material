@@ -135,6 +135,7 @@
 				<slot />
 			</label>
 			<textarea
+				aria-invalid={error}
 				bind:this={textarea}
 				bind:value
 				{rows}

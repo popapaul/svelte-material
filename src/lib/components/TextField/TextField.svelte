@@ -148,6 +148,7 @@
 				{id}
 				{readonly}
 				{disabled}
+				aria-invalid={error}
 				on:focus={onFocus}
 				on:blur={onBlur}
 				on:change={validate}
