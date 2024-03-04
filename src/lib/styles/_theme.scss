@@ -1,21 +1,20 @@
 @use './variables' as *;
 
 @function -flatten($map, $prefix: '') {
-	$output: (
-	);
-
-@each $x, $y in $map {
-	@if type-of($y)=='map' {
-		$output: map-merge($output, -flatten($y, $prefix + '-' + $x));
+	$output: ();
+	@each $x, $y in $map {
+		@if type-of($y) == 'map' {
+			$output: map-merge($output, -flatten($y, $prefix + '-' + $x));
+		} @else {
+			$output: map-merge(
+				$output,
+				(
+					'--theme#{$prefix}-#{$x}': $y
+				)
+			);
+		}
 	}
-
-	@else {
-		$output: map-merge($output,
-				('--theme#{$prefix}-#{$x}': $y));
-	}
-}
-
-@return $output;
+	@return $output;
 }
 
 @each $name, $material in ('light': $material-light-theme, 'dark': $material-dark-theme) {
@@ -24,6 +23,7 @@
 			#{$x}: #{$y};
 		}
 
+		background-color: var(--theme-background);
 		color: var(--theme-text-primary);
 
 		a {
