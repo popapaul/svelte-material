@@ -246,14 +246,13 @@
 		border-radius: 10%;
 		margin-top: 4px;
 		text-align: center;
+		line-height: 1.2rem;
 		z-index: 2;
 		visibility: hidden;
-		max-width: 120px;
+		max-width: 140px;
 		width: max-content;
 		color: black;
-		box-shadow:
-			0 1px 3px 0 rgb(0 0 0 / 0.1),
-			0 1px 2px -1px rgb(0 0 0 / 0.1);
+		box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 	}
 	.day-control:hover::after {
 		opacity: 1;
