@@ -52,7 +52,6 @@
 
 .s-switch {
 	display: flex;
-	margin-bottom: 8px;
 	align-items: center;
 	position: relative;
 
@@ -130,7 +129,7 @@
 		}
 	}
 
-	& > input {
+	&>input {
 		position: absolute;
 		opacity: 0;
 		width: 100%;
@@ -138,7 +137,8 @@
 		user-select: none;
 		cursor: pointer;
 
-		&:checked ~ {
+		&:checked~ {
+
 			// stylelint-disable-next-line no-descending-specificity
 			.s-switch__track,
 			.s-switch__thumb {

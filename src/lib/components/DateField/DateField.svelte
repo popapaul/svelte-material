@@ -5,8 +5,9 @@
 	import Menu from '../Menu/Menu.svelte';
 
 	type $$Events = {
-		change: CustomEvent<Date>
-	}
+		change: CustomEvent<Date>;
+		focus: CustomEvent<any>;
+	};
 
 	export let value: Date = null;
 	export let locale: string = 'ro';
@@ -52,7 +53,7 @@
 	}
 </script>
 
-<Menu closeOnClick={false}  bind:active placement="bottom-start">
+<Menu closeOnClick={false} bind:active placement="bottom-start">
 	<TextField
 		slot="activator"
 		value={value instanceof Date && !isNaN(value.getTime())
@@ -61,7 +62,7 @@
 					day: 'numeric',
 					year: 'numeric',
 					weekday: 'long'
-				}).format(value)
+			  }).format(value)
 			: ''}
 		{...$$restProps}
 		on:keydown={onkeydown}
@@ -80,7 +81,6 @@
 	<DatePicker
 		on:change
 		on:change={handleChange}
-
 		{weekStart}
 		{onRender}
 		{noDateText}
