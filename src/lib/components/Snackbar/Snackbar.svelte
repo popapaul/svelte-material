@@ -1,7 +1,6 @@
 <script lang="ts">
 	import './Snackbar.scss';
 	import { scale, type TransitionConfig } from 'svelte/transition';
-	import Style from '../../internal/Style';
 	import { tweened } from 'svelte/motion';
 	import { linear } from 'svelte/easing';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -24,7 +23,7 @@
 	export let transition: (node: Element, options?: any) => TransitionConfig = scale;
 	/** styles added to the snackbar */
 	export let style = '';
-	export let type = 'info';
+	export let type: 'success' | 'error' | 'info' | 'warning' = 'info';
 	let mounted = false;
 	const progress = tweened(0, { delay: 100, duration: 5000, easing: linear });
 

@@ -1,5 +1,6 @@
+import { ComponentProps } from 'svelte';
 import { writable } from 'svelte/store';
-import type { FlyParams } from 'svelte/transition';
+import { Snackbar } from '../Snackbar';
 
 /**
  * Default Toast Options
@@ -13,17 +14,14 @@ import type { FlyParams } from 'svelte/transition';
  * }
  */
 
-export interface Toast {
+export type Toast = {
 	id?: number;
-	duration?: number;
 	initial?: number;
 	progress?: number;
 	pausable?: boolean;
 	dismissable?: boolean;
-	intro?: FlyParams;
 	message?: string;
-	type: 'success' | 'error' | 'info' | 'warning';
-}
+} & ComponentProps<Snackbar>
 
 const defaults: Toast = {
 	duration: 5000,
