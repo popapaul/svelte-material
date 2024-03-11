@@ -84,32 +84,30 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-	class="s-menu__wrapper {classWrapper}"
+	class={classWrapper}
 	{style}
 	use:clickOutside={{ include: [menu] }}
 	on:clickOutside={() => closeOnClickOutside && close()}
 	on:mouseenter={() => !active && hover && open()}
 	on:mouseleave={() => !clicked && hover && close()}
+	bind:this={activator}
+	use:popperRef
+	on:click={activatorClick}
+	on:keydown={activatorClick}
+	on:contextmenu|preventDefault={() => rightClick && open()}
 >
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		bind:this={activator}
-		use:popperRef
-		on:click={activatorClick}
-		on:keydown={activatorClick}
-		on:contextmenu|preventDefault={() => rightClick && open()}
-	>
-		<slot name="activator" />
-	</div>
+
+	<slot name="activator" />
 
 	{#if active}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
-			use:portal={".s-app"}
+			use:portal={'.s-app'}
 			bind:this={menu}
 			class="s-menu {klass}"
 			style="z-index:{index};"
-			style:width={fullWidth ? activatorWidth+"px" : 'auto'}
+			style:width={fullWidth ? activatorWidth + 'px' : 'auto'}
 			style:margin-right="{nudgeX}px"
 			style:margin-top="{nudgeY}px"
 			role="menu"
