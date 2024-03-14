@@ -1,4 +1,4 @@
-import { ComponentProps } from 'svelte';
+import type { ComponentProps } from 'svelte';
 import { writable } from 'svelte/store';
 import { Snackbar } from '../Snackbar';
 
