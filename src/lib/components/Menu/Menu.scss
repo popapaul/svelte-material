@@ -2,8 +2,7 @@
 
 .s-menu {
 	background-color: var(--theme-surface);
-	backface-visibility: hidden;
-	position: absolute;
+	animation: fade-in 0.3s;
 	contain: content;
 	max-height: $menu-max-height;
 	overflow: auto;
@@ -11,5 +10,15 @@
 
 	&:not(.tile) {
 		border-radius: $menu-content-border-radius;
+	}
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
 	}
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { clickOutside } from '../../actions/ClickOutside';
 	import './Dialog.scss';
 	import { createEventDispatcher } from 'svelte';
 
@@ -43,7 +44,9 @@
 	</div>
 {/if}
 
-<dialog class="s-dialog {klass}" style:width style:height {style} bind:this={dialog} on:close={close} on:close>
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<dialog on:click={(event)=> (event.target== dialog ) && close()} class="s-dialog {klass}" style:width style:height {style} bind:this={dialog} on:close={close} on:close>
 	{#if active}
 	<slot {close} />
 	{/if}

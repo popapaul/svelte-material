@@ -1,7 +1,7 @@
 /* eslint-disable */
 // Shamefully ripped from https://github.com/lukeed/uid
 let IDX = 36;
-let HEX = '';
+let HEX = crypto.randomUUID();
 while (IDX--) HEX += IDX.toString(36);
 
 export default (len: number) => {
