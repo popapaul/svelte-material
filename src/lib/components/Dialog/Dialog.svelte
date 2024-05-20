@@ -25,7 +25,7 @@
 
 	function open(){
 		if(disabled) return;
-		dialog.showModal();
+		dialog?.showModal();
 	}
 
 	function close() {
@@ -33,7 +33,7 @@
 		dialog?.close();
 		dispatch('close');
 	}
-	$: active ? open() : close(); 
+	$:  if(dialog){active ? open() : close()}; 
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
