@@ -12,32 +12,34 @@
 	-ms-user-select: none;
 	user-select: none;
 }
+
 .saturation-gradient {
 	background: linear-gradient(to right, rgb(255, 255, 255), rgba(255, 255, 255, 0));
 	width: 100%;
 	height: 160px;
 }
+
 .value-gradient {
 	background: linear-gradient(to top, rgb(0, 0, 0), rgba(0, 0, 0, 0));
 	overflow: hidden;
 	width: 100%;
 	height: 160px;
 }
+
 .hue-selector {
-	background: linear-gradient(
-		to right,
-		#ff0000 0%,
-		#ffff00 17%,
-		#00ff00 33%,
-		#00ffff 50%,
-		#0000ff 67%,
-		#ff00ff 83%,
-		#ff0000 100%
-	);
+	background: linear-gradient(to right,
+			#ff0000 0%,
+			#ffff00 17%,
+			#00ff00 33%,
+			#00ffff 50%,
+			#0000ff 67%,
+			#ff00ff 83%,
+			#ff0000 100%);
 	margin: 15px 10px 10px 10px;
 	border-radius: 10px;
 	height: 10px;
 }
+
 #hue-picker {
 	background: #fff;
 	width: 12px;
@@ -51,6 +53,7 @@
 	-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.67);
 	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.67);
 }
+
 #hue-event {
 	width: 236px;
 	height: 14px;
@@ -58,6 +61,7 @@
 	cursor: default;
 	touch-action: none;
 }
+
 .alpha-selector {
 	background-image: linear-gradient(45deg, #808080 25%, transparent 25%),
 		linear-gradient(-45deg, #808080 25%, transparent 25%),
@@ -74,6 +78,7 @@
 	height: 10px;
 	position: relative;
 }
+
 #alpha-picker {
 	background: #fff;
 	width: 12px;
@@ -87,6 +92,7 @@
 	-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.67);
 	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.67);
 }
+
 #alpha-event {
 	width: 236px;
 	height: 14px;
@@ -94,6 +100,7 @@
 	cursor: default;
 	touch-action: none;
 }
+
 .alpha-value {
 	background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
 	width: 100%;
@@ -112,6 +119,7 @@
 	transform: translate(-9px, -9px);
 	left: 100%;
 }
+
 #colorsquare-event {
 	width: 100%;
 	height: 100%;
@@ -119,6 +127,7 @@
 	transform: translate(0, -16px);
 	touch-action: none;
 }
+
 .color-info-box {
 	margin: 10px;
 	display: flex;
@@ -126,6 +135,7 @@
 	gap: 10px;
 	position: relative;
 }
+
 .color-picked {
 	width: 18px;
 	height: 18px;
@@ -133,6 +143,7 @@
 	background: rgba(255, 0, 0, 1);
 	display: inline-block;
 }
+
 .color-picked-bg {
 	background: white;
 	border-radius: 4px;
@@ -141,6 +152,7 @@
 	color: #fff;
 	display: inline-block;
 }
+
 .hex-text-block {
 	display: inline-block;
 	background: white;
@@ -149,6 +161,7 @@
 	border: 1px solid #e3e3e3;
 	text-align: center;
 }
+
 .rgb-text-block {
 	display: inline-block;
 	background: white;
@@ -161,33 +174,10 @@
 	vertical-align: top;
 	text-align: center;
 }
+
 .rgb-text-div {
 	right: 10%;
 	display: inline-block;
 	vertical-align: top;
 	position: absolute;
-}
-.text-label {
-	position: relative;
-	top: -12px;
-	font-family: sans-serif;
-	font-size: small;
-	color: #888;
-}
-.text {
-	display: inline;
-	font-family: sans-serif;
-	margin: 0;
-	display: inline-block;
-	font-size: 12px;
-	font-size-adjust: 0.5;
-	position: relative;
-	top: -1px;
-	vertical-align: middle;
-	-webkit-touch-callout: all;
-	-webkit-user-select: all;
-	-khtml-user-select: all;
-	-moz-user-select: all;
-	-ms-user-select: all;
-	user-select: all;
 }

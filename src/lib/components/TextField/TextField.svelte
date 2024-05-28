@@ -134,9 +134,11 @@
 		<slot name="prepend" />
 
 		<div class="s-text-field__input">
-			<label for={id} class:active={labelActive || value || value?.toString?.() || focused}>
-				<slot />
-			</label>
+			{#if $$slots.default}
+				<label for={id} class:active={labelActive || value || value?.toString?.() || focused}>
+					<slot />
+				</label>
+			{/if}
 			<slot name="content" />
 			<!-- keypress Event is deprecated. Use keydown or keyup instead -->
 			<input
