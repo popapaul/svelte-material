@@ -143,6 +143,7 @@
 			readonly={!filter}
 			on:keydown
 			on:clear={() => (value = null)}
+			on:clear
 			{dense}
 			bind:inputElement
 			{disabled}
