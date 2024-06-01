@@ -14,6 +14,7 @@
 	import DOWN_ICON from '../../internal/Icons/down';
 
 	interface $$Events {
+		clear: CustomEvent;
 		change: CustomEvent<TValue>;
 		keydown: KeyboardEvent;
 		search: CustomEvent<string>;
