@@ -14,6 +14,7 @@
 	import DOWN_ICON from '../../internal/Icons/down';
 
 	interface $$Events {
+		clear: CustomEvent;
 		change: CustomEvent<TValue>;
 		keydown: KeyboardEvent;
 		search: CustomEvent<string>;
@@ -143,6 +144,7 @@
 			readonly={!filter}
 			on:keydown
 			on:clear={() => (value = null)}
+			on:clear
 			{dense}
 			bind:inputElement
 			{disabled}
