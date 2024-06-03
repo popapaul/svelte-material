@@ -50,9 +50,9 @@
 			<ProgressLinear striped backgroundColor="info" class="progress" value={progress} />
 			<Icon style="color:white;" path={icons[item.type]} />{@html item.message}
 			<Button
-				style="margin-left:auto;color:white;"
+				style="margin-left:auto;background:transparent;"
 				on:click={() => toast.pop(item.id)}
-				icon
+				fab
 				depressed
 				size="x-small"
 			>
