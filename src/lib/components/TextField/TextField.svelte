@@ -135,7 +135,7 @@
 
 		<div class="s-text-field__input">
 			{#if $$slots.default}
-				<label for={id} class:active={labelActive || value || value?.toString?.() || focused}>
+				<label for={id} class:active={labelActive || value || value?.toString?.() || focused || ["date", "time", "datetime-local"].includes(type)}>
 					<slot />
 				</label>
 			{/if}

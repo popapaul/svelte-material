@@ -1,6 +1,7 @@
 @import './variables';
 
 .s-menu {
+	padding: 0;
 	background-color: var(--theme-surface);
 	animation: fade-in 0.3s;
 	contain: content;

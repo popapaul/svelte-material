@@ -68,11 +68,14 @@
 	 * on multiple select or when select is filterable.
 	 */
 	export let closeOnClick: boolean = !multiple;
+	/** Select values not in the list. */
+	export let acceptValue = false;
 	/** Convert the selected value for the underlying text field. */
-	export let filter: boolean = true;
+	export let filter: boolean = !acceptValue;
 	export let emptyString = '';
 	export let inputElement = null;
 	export let menuClass = '';
+	
 
 	export let filterValue: string = '';
 	export let validateOnBlur = false;
@@ -141,7 +144,7 @@
 			{outlined}
 			{solo}
 			{validateOnBlur}
-			readonly={!filter}
+			readonly={!filter && !acceptValue}
 			on:keydown
 			on:clear={() => (value = null)}
 			on:clear
@@ -149,10 +152,15 @@
 			bind:inputElement
 			{disabled}
 			on:input={(event) => {
+				if(acceptValue)
+				{
+					value = event.target.value;
+					return;
+				}
 				filterValue = event.target.value;
 				dispatch('search', filterValue);
 			}}
-			value={(active || chips) && filter ? filterValue : items ? format(value) : ''}
+			value={(active || chips) && filter ? filterValue : acceptValue ? value : format(value)}
 			{placeholder}
 			{hint}
 		>

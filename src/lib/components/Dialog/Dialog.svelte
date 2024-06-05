@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { clickOutside } from '../../actions/ClickOutside';
 	import './Dialog.scss';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, tick } from 'svelte';
+	import {fade} from "svelte/transition";
 
 	let klass: string = '';
 
@@ -23,14 +24,15 @@
 
 	const dispatch = createEventDispatcher();
 
-	function open(){
+	async function open(){
 		if(disabled) return;
+		await tick();
 		dialog?.showModal();
 	}
 
 	function close() {
 		active = false;
-		dialog?.close();
+		//dialog?.close();
 		dispatch('close');
 	}
 	$:  if(dialog){active ? open() : close()}; 
@@ -46,9 +48,9 @@
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<dialog on:click={(event)=> (event.target== dialog ) && close()} class="s-dialog {klass}" style:width style:height {style} bind:this={dialog} on:close={close} on:close>
-	{#if active}
-	<slot {close} />
-	{/if}
-</dialog>
+{#if active}
+	<dialog transition:fade on:click={(event)=> (event.target== dialog ) && close()} class="s-dialog {klass}" style:width style:height {style} bind:this={dialog} on:close={close} on:close>
+		<slot {close} />
+	</dialog>
+{/if}
 
