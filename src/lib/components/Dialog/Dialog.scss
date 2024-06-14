@@ -1,21 +1,9 @@
 .s-dialog {
 	transition: 0.3s;
 	outline: none;
-	-animation: fade-in 0.3s;
 	background-color: var(--theme-surface);
 }
 
 .s-dialog::backdrop {
 	background: rgba(0, 0, 0, 0.4);
-	-animation: fade-in 0.5s;
-}
-
-@keyframes fade-in {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
 }

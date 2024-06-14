@@ -237,10 +237,11 @@
 		content: attr(data-message);
 		position: absolute;
 		bottom: 115%;
+		padding:4px;
 		opacity: 0;
 		left: 50%;
 		color: black;
-		transform: translateX(-100%);
+		transform: translateX(-50%);
 		background-color: rgb(252, 207, 8);
 		pointer-events: none;
 		border-radius: 10%;

@@ -3,7 +3,6 @@
 .s-menu {
 	padding: 0;
 	background-color: var(--theme-surface);
-	animation: fade-in 0.3s;
 	contain: content;
 	max-height: $menu-max-height;
 	overflow: auto;
@@ -14,12 +13,6 @@
 	}
 }
 
-@keyframes fade-in {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
+.s-menu::backdrop {
+	background: transparent;
 }

@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { createPopperActions, type NanoPopPosition } from '../../actions/Popper';
-	import { setContext, createEventDispatcher, onMount } from 'svelte';
+	import { setContext, createEventDispatcher, onMount, tick } from 'svelte';
 	import './Menu.scss';
 	import { clickOutside } from '../../actions/ClickOutside';
+	import { fade } from 'svelte/transition';
 
 	let klass: string = '';
 	/** Classes to add to menu. */
@@ -28,9 +29,10 @@
 
 	export let nudgeX: number = 0;
 	export let nudgeY: number = 0;
+
 	let activatorWidth = 0;
 	let activator: HTMLButtonElement;
-	let menu: HTMLElement;
+	let menu: HTMLDialogElement;
 	let clicked = false;
 	const dispatch = createEventDispatcher();
 
@@ -45,18 +47,25 @@
 		const { destroy } = popperRef(target);
 		return destroy;
 	})
-	$: active ? menu?.showPopover() : menu?.hidePopover();
+
+	
+
 	const close = () => {
 		active = false;
 		clicked = false;
 		dispatch('close');
 	};
 	
-	const open = () => {
+	const open = async () => {
 		if (disabled) return;
-
 		activatorWidth = activator.firstElementChild.clientWidth;
+
 		active = true;
+
+		await tick();
+
+		menu?.showModal();
+
 		dispatch('open');
 	};
 
@@ -67,6 +76,7 @@
 		clicked=true;
 		open();
 	}
+	//$: menu && active ? open() : close();
 </script>
 
 
@@ -81,23 +91,24 @@
 		<slot name="activator" />
 	</button>
 
-	<div
-		use:popperContent={{position:placement}}
-		bind:this={menu}
-		popover="manual"
-		{style}
-		class="s-menu {klass}"
-		style:width={fullWidth ? activatorWidth+"px" : null}
-		style:margin-right="{nudgeX}px"
-		style:margin-top="{nudgeY}px"
-		style:margin-left="{0}px"
-		style:margin-bottom="{0}px"
-		role="menu"
-		tabindex="0"
-		class:tile
-		on:click={menuClick}
-		on:keydown={menuClick}
-	>
-		<slot />
-	</div>
+	{#if active}
+		<dialog transition:fade={{duration:300}} bind:this={menu} on:close={close} on:close on:click={(event)=> (event.target== menu ) && close()}
+			use:popperContent={{position:placement}}
+			popover="manual"
+			{style}
+			class="s-menu {klass}"
+			style:width={fullWidth ? activatorWidth+"px" : null}
+			style:margin-right="{nudgeX}px"
+			style:margin-top="{nudgeY}px"
+			style:margin-left="{0}px"
+			style:margin-bottom="{0}px"
+			role="menu"
+			tabindex="0"
+			class:tile
+			on:click={menuClick}
+			on:keydown={menuClick}
+		>
+			<slot />
+		</dialog>
+	{/if}
 </div>
