@@ -45,7 +45,7 @@
 	export let value: any | any[] = null;
 
 	// Combines components into a single group.
-	export let group: any[] = null;
+	export let group: any[] = [];
 
 	/** Hint text. */
 	export let hint = '';

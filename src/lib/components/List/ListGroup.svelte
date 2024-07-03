@@ -54,6 +54,7 @@
 		{...activatorProps}
 		on:click={toggle}
 	>
+		<slot slot="subtitle" name="subtitle"  />
 		<slot slot="prepend" name="prepend" {active} />
 		<slot name="activator" />
 		<slot slot="append" name="append" {active} />
