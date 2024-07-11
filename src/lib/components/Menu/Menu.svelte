@@ -41,21 +41,19 @@
 
 	const [popperRef, popperContent] = createPopperActions();
 
-	onMount(()=>{
+	onMount(() => {
 		const target = activator.firstElementChild as HTMLElement;
 
 		const { destroy } = popperRef(target);
 		return destroy;
-	})
-
-	
+	});
 
 	const close = () => {
 		active = false;
 		clicked = false;
 		dispatch('close');
 	};
-	
+
 	const open = async () => {
 		if (disabled) return;
 		activatorWidth = activator.firstElementChild.clientWidth;
@@ -63,47 +61,58 @@
 		active = true;
 
 		await tick();
-
-		menu?.showModal();
-
 		dispatch('open');
+		if (!menu) return;
 	};
 
 	const menuClick = () => {
 		closeOnClick && close();
 	};
-	const activatorClick=()=>{
-		clicked=true;
+	const activatorClick = () => {
+		clicked = true;
 		open();
-	}
+	};
 	//$: menu && active ? open() : close();
 </script>
 
-
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div use:clickOutside on:clickOutside={close} on:mouseleave={()=>!clicked && hover && close()} style="display:contents">
-	<button type="button" bind:this={activator} on:mouseenter={()=> hover && open()} 
-		on:click={()=>!rightClick && activatorClick()}
-		on:keydown={()=>!rightClick && activatorClick()} 
-		on:contextmenu|preventDefault={()=>rightClick && activatorClick()}
-		popovertargetaction="show" style="display:contents;" >
+<div
+	use:clickOutside
+	on:clickOutside={close}
+	on:mouseleave={() => !clicked && hover && close()}
+	style="display:contents"
+>
+	<button
+		type="button"
+		bind:this={activator}
+		on:mouseenter={() => hover && open()}
+		on:click={() => !rightClick && activatorClick()}
+		on:keydown={() => !rightClick && activatorClick()}
+		on:contextmenu|preventDefault={() => rightClick && activatorClick()}
+		popovertargetaction="show"
+		style="display:contents;"
+	>
 		<slot name="activator" />
 	</button>
 
 	{#if active}
-		<dialog transition:fade={{duration:300}} bind:this={menu} on:close={close} on:close on:click={(event)=> (event.target== menu ) && close()}
-			use:popperContent={{position:placement}}
+		<dialog
+			open
+			transition:fade={{ duration: 300 }}
+			bind:this={menu}
+			on:close={close}
+			on:close
+			on:click={(event) => event.target == menu && close()}
+			use:popperContent={{ position: placement }}
 			popover="manual"
 			{style}
 			class="s-menu {klass}"
-			style:width={fullWidth ? activatorWidth+"px" : null}
+			style:width={fullWidth ? activatorWidth + 'px' : null}
 			style:margin-right="{nudgeX}px"
 			style:margin-top="{nudgeY}px"
 			style:margin-left="{0}px"
 			style:margin-bottom="{0}px"
-			role="menu"
-			tabindex="0"
 			class:tile
 			on:click={menuClick}
 			on:keydown={menuClick}
