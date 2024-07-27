@@ -3,6 +3,7 @@
 @import './variables';
 
 .s-btn {
+	@include elevation(3);
 	align-items: center;
 	border-radius: $btn-border-radius;
 	display: inline-flex;
@@ -44,7 +45,7 @@
 		text-transform: map-deep-get($headings, 'button', 'text-transform');
 	}
 
-	@include elevation(3);
+
 
 	&::before {
 		border-radius: inherit;
@@ -153,6 +154,7 @@
 		min-width: 0;
 		min-height: 0;
 		padding: 0;
+
 		@each $name, $size in $fab-icon-sizes {
 			&.size-#{$name} .s-icon {
 				font-size: #{$size}px;
