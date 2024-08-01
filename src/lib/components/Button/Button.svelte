@@ -47,8 +47,8 @@
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<svelte:element
-	this={tag}
+<a
+	
 	bind:this={button}
 	{...notypecheck({ type, href, disabled })}
 	class="s-btn size-{size} {active ? activeClass : ''} {klass}"
@@ -68,4 +68,4 @@
 	{...$$restProps}
 >
 	<slot />
-</svelte:element>
+</a>

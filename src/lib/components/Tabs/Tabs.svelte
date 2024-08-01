@@ -42,6 +42,7 @@
 	});
 
 	function moveSlider({ detail }) {
+		
 		if (detail == null) return;
 		if (slider) {
 			const activeTab = tabs.find((x) => x.value == detail)?.element;
