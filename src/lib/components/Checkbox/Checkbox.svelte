@@ -101,7 +101,7 @@
 		class="s-checkbox__wrapper"
 		class:disabled
 		use:Ripple={{ centered: true }}
-		use:TextColor={error ? 'error' : color}
+		use:TextColor={error ? 'error' : null}
 		use:TextColor={checked || indeterminate ? color : false}
 	>
 		<input
