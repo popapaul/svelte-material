@@ -42,10 +42,11 @@
 	});
 
 	function moveSlider({ detail }) {
-		
+			
 		if (detail == null) return;
 		if (slider) {
 			const activeTab = tabs.find((x) => x.value == detail)?.element;
+			console.log(activeTab)
 			if (!activeTab) return;
 			if (vertical) {
 				sliderElement.style.top = `${activeTab.offsetTop}px`;
@@ -55,7 +56,8 @@
 				sliderElement.style.width = `${activeTab.offsetWidth}px`;
 			}
 		}
-		windowComponent.set(value);
+		const index = tabs ? tabs.findIndex(x=>x.value == detail) : value;
+		windowComponent.set(index);
 	}
 	$: tabWidth && moveSlider({ detail: value });
 </script>

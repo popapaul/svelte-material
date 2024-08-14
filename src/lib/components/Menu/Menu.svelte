@@ -83,18 +83,16 @@
 	on:mouseleave={() => !clicked && hover && close()}
 	style="display:contents"
 >
-	<button
-		type="button"
+	<div
 		bind:this={activator}
 		on:mouseenter={() => hover && open()}
 		on:click={() => !rightClick && activatorClick()}
 		on:keydown={() => !rightClick && activatorClick()}
 		on:contextmenu|preventDefault={() => rightClick && activatorClick()}
-		popovertargetaction="show"
 		style="display:contents;"
 	>
 		<slot name="activator" />
-	</button>
+	</div>
 
 	{#if active}
 		<dialog
