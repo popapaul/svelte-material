@@ -46,7 +46,7 @@
 		if (detail == null) return;
 		if (slider) {
 			const activeTab = tabs.find((x) => x.value == detail)?.element;
-			console.log(activeTab)
+		
 			if (!activeTab) return;
 			if (vertical) {
 				sliderElement.style.top = `${activeTab.offsetTop}px`;
