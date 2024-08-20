@@ -37,7 +37,7 @@
 		on:keydown
 		style="z-index:{index};{style}"
 	>
-		<div class="s-overlay__scrim" use:BackgroundColor={color} style="opacity:{opacity}" />
+		<div class="s-overlay__scrim" use:BackgroundColor={color} style="opacity:{opacity}"></div>
 		<div class="s-overlay__content">
 			<slot />
 		</div>

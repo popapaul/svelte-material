@@ -151,7 +151,7 @@
 				on:input
 				on:change
 				{...$$restProps}
-			/>
+			></textarea>
 		</div>
 
 		{#if clearable && value !== ''}

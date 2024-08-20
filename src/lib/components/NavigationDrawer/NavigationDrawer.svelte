@@ -60,6 +60,6 @@
 	</div>
 	<slot name="append" />
 	{#if !borderless}
-		<div class="s-navigation-drawer__border" />
+		<div class="s-navigation-drawer__border" ></div>
 	{/if}
 </aside>

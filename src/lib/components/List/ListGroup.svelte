@@ -54,10 +54,9 @@
 		{...activatorProps}
 		on:click={toggle}
 	>
-		<slot slot="subtitle" name="subtitle"  />
-		<slot slot="prepend" name="prepend" {active} />
-		<slot name="activator" />
-		<slot slot="append" name="append" {active} />
+		<slot slot="prepend" name="prepend" {active} toggle={()=>active=!active} />
+		<slot name="activator" toggle={()=>active=!active} />
+		<slot slot="append" name="append" {active} toggle={()=>active=!active} />
 	</ListItem>
 	{#if active}
 		<div

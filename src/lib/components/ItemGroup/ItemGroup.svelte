@@ -50,7 +50,6 @@
 				if (!mandatory) value = null;
 			} else value = val;
 			dispatch('change', value);
-			console.log(value)
 		},
 		register: (setValue) => {
 			const u = valueStore.subscribe((val) => {

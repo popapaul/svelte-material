@@ -3,8 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	type TValue = $$Generic;
 	type T = TValue extends Array<infer U> ? U : TValue;
-	type TItem = string | { name: string; value: any };
-
+	type TItem = $$Generic<TItem extends object ? { name: string; value: T } : T>;
 	import TextField from '../TextField/TextField.svelte';
 	import Menu from '../Menu/Menu.svelte';
 	import ListItemGroup from '../List/ListItemGroup.svelte';
@@ -37,7 +36,7 @@
 	 * Value of the select.
 	 * If multiple is true, this will be an array; otherwise a single value.
 	 */
-	export let value: T | T[] = null;
+	export let value: TValue = null;
 	/** List of items to select from. */
 	export let items: TItem[] = [];
 	/** Whether select is the `filled` material design variant. */
@@ -62,6 +61,8 @@
 	export let chips: boolean = false;
 	/** Whether select is disabled. */
 	export let disabled: boolean = false;
+	/** Class to add to the select list div. */
+	export let itemsPanelClass: string = '';
 	/**
 	 * Whether select closes on selection. Defaults to `true` on single select and `false`
 	 * on multiple select or when select is filterable.
@@ -70,27 +71,29 @@
 	/** Select values not in the list. */
 	export let acceptValue = false;
 	/** Convert the selected value for the underlying text field. */
+	export let filter: boolean = !acceptValue;
 	export let emptyString = '';
 	export let inputElement = null;
 	export let menuClass = '';
+	
 
 	export let filterValue: string = '';
 	export let validateOnBlur = false;
 
-	export let isActive = (value: T | T[], item: TItem) =>
+	export let isActive = (value: TValue, item: TItem) =>
 		value && Array.isArray(value)
 			? value.includes(getValue(item))
 			: typeof value === 'string'
 			? value?.toString().includes(getValue(item)?.toString())
 			: value == getValue(item);
 
-	export function getSelectString(v: T) {
+	export function getSelectString(v: TValue) {
 		// We could also use `return items[0].value ? find.. : v` or provide a `basic` prop
 		const item = items.find((i) => getValue(i) == v);
 
 		return (item && getName(item)) || emptyString;
 	}
-	export function format(val: T | T[]) {
+	export function format(val: TValue) {
 		if (!val && val !== 0) return null;
 
 		if (Array.isArray(val))
@@ -103,12 +106,14 @@
 	}
 
 	const getFilteredItems = (items: TItem[], search: string) => {
-		if (!search) return items;
+		if (!search) return [...items];
 
 		return items.filter((item) =>
-			(getName(item) || getValue(item).toString())?.toLowerCase?.()?.includes(search.toLowerCase())
+			(getName(item) || getValue(item).toString()).toLowerCase().includes(search.toLowerCase())
 		);
 	};
+
+	$: filteredItems = getFilteredItems(items, filterValue);
 
 	const removeItem = (itemValue: T) => {
 		if (Array.isArray(value)) value = value.filter((x) => x != itemValue) as TValue;
@@ -119,36 +124,16 @@
 		if (multiple) return;
 		if (closeOnClick) active = false;
 	};
-	const handleKey = (event: KeyboardEvent & { target: EventTarget & HTMLInputElement }) => {
-		if (event.key === 'Enter') {
-			const val = event.target.value;
-			multiple
-				? (value = Array.from(new Set([...(value ?? ([] as any)), val])))
-				: event.target.value;
-			items = Array.from(new Set([...items, val]));
-			filterValue = '';
-		}
-		if (event.key === 'Backspace' && !filterValue) {
-			if (multiple) {
-				filterValue = getSelectString((value as any)?.pop?.() ?? '');
-				value = value;
-			} else {
-				filterValue = getSelectString(value as T);
-				value = null;
-			}
-		}
-	};
 </script>
 
 <div class="s-select {klass}" {style} class:disabled class:chips>
 	<Menu
-		closeOnClick={false}
+		{closeOnClick}
 		{disabled}
 		bind:active
+		on:open={() => inputElement?.focus()}
 		class={menuClass}
 		fullWidth
-		on:close={() => (filterValue = '')}
-		on:open={() => setTimeout(() => inputElement.focus(), 1)}
 	>
 		<TextField
 			slot="activator"
@@ -159,36 +144,39 @@
 			{outlined}
 			{solo}
 			{validateOnBlur}
-			on:keydown={handleKey}
-			on:input={(event) => (filterValue = event.target.value)}
+			readonly={!filter && !acceptValue}
+			on:keydown
 			on:clear={() => (value = null)}
 			on:clear
 			{dense}
 			bind:inputElement
 			{disabled}
-			value={filterValue ? filterValue : chips || multiple ? '' : format(value)}
+			on:input={(event) => {
+				if(acceptValue)
+				{
+					value = event.target.value;
+					return;
+				}
+				filterValue = event.target.value;
+				dispatch('search', filterValue);
+			}}
+			value={(active || chips) && filter ? filterValue : acceptValue ? value : format(value)}
 			{placeholder}
 			{hint}
 		>
 			<slot slot="prepend-outer" name="prepend-outer" />
 			<slot />
-			<svelte:fragment slot="content">
-				{#if (chips || multiple) && !!value}
+			<div slot="content">
+				{#if chips && !!value}
 					{#each (Array.isArray(value) ? value : [value]).filter(Boolean) as val}
-						{#if chips}
-							<Chip size="small" close on:close={() => removeItem(val)}>
-								<span style="flex-basis: 0; flex-grow: 1;">
-									{getSelectString(val)}
-								</span>
-							</Chip>
-						{:else}
-							<span style="">
+						<Chip size="small" close on:close={() => removeItem(val)}>
+							<span style="flex-basis: 0; flex-grow: 1;">
 								{getSelectString(val)}
 							</span>
-						{/if}
+						</Chip>
 					{/each}
 				{/if}
-			</svelte:fragment>
+			</div>
 			<Icon
 				slot="append"
 				on:click={() => active && setTimeout(() => (active = false), 2)}
@@ -199,25 +187,27 @@
 		</TextField>
 
 		<ListItemGroup bind:value on:change on:change={handleChange} {mandatory} {multiple} {max}>
-			{@const filteredItems = getFilteredItems(items, filterValue)}
 			<slot name="items">
-				{#if filteredItems.length}
-					{#each filteredItems as item}
-						{@const active = isActive(value, item)}
-						<slot name="item" {item} {active}>
-							<ListItem {dense} value={getValue(item)} {active}>
-								<span slot="prepend">
-									{#if multiple}
-										<Checkbox checked={active} />
-									{/if}
-								</span>
-								{getName(item)}
-							</ListItem>
-						</slot>
-					{/each}
-				{:else}
-					Nu au fost gasite optiuni
-				{/if}
+				<div class={itemsPanelClass}>
+					{#if filteredItems.length}
+						{#each filteredItems as item}
+							{@const active = isActive(value, item)}
+							<slot name="item" {item} {active}>
+								<ListItem {dense} value={getValue(item)} {active}>
+									<span slot="prepend">
+										{#if multiple}
+											<Checkbox checked={active} />
+										{/if}
+									</span>
+
+									{getName(item)}
+								</ListItem>
+							</slot>
+						{/each}
+					{:else}
+						Nu au fost gasite optiuni
+					{/if}
+				</div>
 			</slot>
 		</ListItemGroup>
 	</Menu>

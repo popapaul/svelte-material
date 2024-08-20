@@ -62,7 +62,7 @@
 	/** Whether to delay validation until blur. */
 	export let validateOnBlur = true;
 	/** Whether text field has error. */
-	export let error = true;
+	export let error = false;
 	/** Whether text field has `success` class. */
 	export let success = false;
 	/** Id of the text field. Defaults to a random uid. */
@@ -88,7 +88,7 @@
 	export function validate() {
 		const text = value ?? inputElement.value;
 		errorMessages = rules.map((r) => r(text?.toString())).filter((r) => typeof r === 'string');
-		error = error || !!errorMessages.length;
+		error = !!errorMessages.length;
 		return errorMessages;
 	}
 
@@ -116,7 +116,6 @@
 	function onInput() {
 		if (!validateOnBlur) validate();
 	}
-	$: console.log(error)
 </script>
 
 <Input class="s-text-field {klass}" {color} {dense} {readonly} {disabled} {error} {success} {style}>

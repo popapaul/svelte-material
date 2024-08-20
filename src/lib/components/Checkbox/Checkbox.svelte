@@ -9,16 +9,15 @@
 	import './Checkbox.scss';
 	import { ripple as Ripple } from '../../actions/Ripple';
 	import TextColor from '../../internal/TextColor';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
 
 	const context = getContext<FormContext>(FORM_FIELDS);
 
 	interface $$Events {
 		change: Event & { target: EventTarget & HTMLInputElement };
-		group: CustomEvent<T[]>;
 	}
-	type T = $$Generic;
+
 	// Add class to checkbox wrapper.
 	let klass: string = '';
 	export { klass as class };
@@ -43,10 +42,10 @@
 	export let rules: ((value: string) => string)[] = [];
 
 	// The value for the checkbox.
-	export let value: T = null;
+	export let value: any | any[] = null;
 
 	// Combines components into a single group.
-	export let group: T[] = [];
+	export let group: any[] = null;
 
 	/** Hint text. */
 	export let hint = '';
@@ -64,7 +63,6 @@
 
 	export let error: boolean = false;
 
-	const dispatch = createEventDispatcher();
 	id = id || `s-checkbox-${uid(5)}`;
 
 	let errorMessages: string[] = [];
@@ -91,7 +89,6 @@
 				group.splice(i, 1);
 			}
 			group = group;
-			dispatch("group", group);
 		}
 	}
 </script>
@@ -101,7 +98,7 @@
 		class="s-checkbox__wrapper"
 		class:disabled
 		use:Ripple={{ centered: true }}
-		use:TextColor={error ? 'error' : null}
+		use:TextColor={error ? 'error' : color}
 		use:TextColor={checked || indeterminate ? color : false}
 	>
 		<input

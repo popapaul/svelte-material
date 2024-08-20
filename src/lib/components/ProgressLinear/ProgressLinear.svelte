@@ -33,17 +33,16 @@
 	<div
 		use:BackgroundColor={backgroundColor}
 		class="background"
-		style="opacity:{backgroundOpacity};{reversed ? 'right' : 'left'}:{value}%;width:{buffer -
-			value}%"
-	/>
+		style="opacity:{backgroundOpacity};{reversed ? 'right' : 'left'}:{value}%;width:{buffer - value}%">
+	</div>
 
 	{#if indeterminate}
 		<div use:BackgroundColor={color}>
-			<div class="indeterminate long" />
-			<div class="indeterminate short" />
+			<div class="indeterminate long"></div>
+			<div class="indeterminate short"></div>
 		</div>
 	{:else}
-		<div use:BackgroundColor={color} class="determinate" class:striped style="width:{value}%" />
+		<div use:BackgroundColor={color} class="determinate" class:striped style="width:{value}%" ></div>
 	{/if}
 
 	<div class="s-progress-linear__content">
@@ -51,6 +50,6 @@
 	</div>
 
 	{#if stream}
-		<div class="stream {color}" style="width:{100 - buffer}%" />
+		<div class="stream {color}" style="width:{100 - buffer}%" ></div>
 	{/if}
 </div>

@@ -6,8 +6,6 @@
 	contain: content;
 	max-height: $menu-max-height;
 	overflow: auto;
-	z-index: 99999;
-
 	@include elevation($menu-content-elevation);
 
 	&:not(.tile) {

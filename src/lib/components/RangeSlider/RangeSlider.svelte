@@ -648,7 +648,7 @@
 			class="rangeBar"
 			style="{orientationStart}: {rangeStart($springPositions)}%; 
              {orientationEnd}: {rangeEnd($springPositions)}%;"
-		/>
+			 ></span>
 	{/if}
 	{#if pips}
 		<RangePips

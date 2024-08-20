@@ -5,13 +5,8 @@
 .s-text-field__input {
 	display: flex;
 	flex-grow: 1;
-	flex-wrap: wrap;
-	gap: 4px;
 	max-width: 100%;
-	color: var(--theme-text-primary);
 	overflow: hidden;
-	line-height: $text-field-line-height;
-	padding: $text-field-padding;
 
 	// input[type='time'],
 	// input[type='date'],
@@ -48,10 +43,11 @@
 	&>textarea {
 		caret-color: inherit;
 		flex: 1 1 auto;
-
+		line-height: $text-field-line-height;
+		padding: $text-field-padding;
 		max-width: 100%;
-		min-width: 50px;
-		flex-basis: 50px;
+		min-width: 0;
+		width: 100%;
 		outline: none;
 	}
 }

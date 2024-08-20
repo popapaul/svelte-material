@@ -3,7 +3,6 @@
 @import './variables';
 
 .s-btn {
-	@include elevation(3);
 	align-items: center;
 	border-radius: $btn-border-radius;
 	display: inline-flex;
@@ -25,6 +24,7 @@
 	font-weight: map-deep-get($headings, 'button', 'weight');
 	letter-spacing: map-deep-get($headings, 'button', 'letter-spacing');
 	text-transform: map-deep-get($headings, 'button', 'text-transform');
+	@include elevation(3);
 
 	a,
 	.s-icon {

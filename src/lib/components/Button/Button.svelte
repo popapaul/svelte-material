@@ -47,48 +47,25 @@
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-
-{#if href}
-	<a
-		{href}
-		class="s-btn size-{size} {active ? activeClass : ''} {klass}"
-		class:s-btn--fab={fab}
-		class:icon
-		class:block
-		class:tile
-		class:text={text || icon}
-		class:depressed={depressed || text || disabled || outlined || icon}
-		class:outlined
-		class:rounded
-		class:disabled
-		{style}
-		aria-disabled={disabled}
-		use:Ripple={ripple}
-		on:click
-		{...$$restProps}
-	>
-		<slot />
-	</a>
-	{:else}
-	<button
-		{type}
-		{disabled}
-		class="s-btn size-{size} {active ? activeClass : ''} {klass}"
-		class:s-btn--fab={fab}
-		class:icon
-		class:block
-		class:tile
-		class:text={text || icon}
-		class:depressed={depressed || text || disabled || outlined || icon}
-		class:outlined
-		class:rounded
-		class:disabled
-		{style}
-		aria-disabled={disabled}
-		use:Ripple={ripple}
-		on:click
-		{...$$restProps}
-	>
-		<slot />
-	</button>
-{/if}
+<svelte:element
+	this={tag}
+	bind:this={button}
+	{...notypecheck({ type, href, disabled })}
+	class="s-btn size-{size} {active ? activeClass : ''} {klass}"
+	class:s-btn--fab={fab}
+	class:icon
+	class:block
+	class:tile
+	class:text={text || icon}
+	class:depressed={depressed || text || disabled || outlined || icon}
+	class:outlined
+	class:rounded
+	class:disabled
+	{style}
+	aria-disabled={disabled}
+	use:Ripple={ripple}
+	on:click
+	{...$$restProps}
+>
+	<slot />
+</svelte:element>

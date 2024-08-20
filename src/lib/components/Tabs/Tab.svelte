@@ -38,7 +38,6 @@
 	bind:this={tab}
 	class="s-tab s-slide-item {active ? activeClass : ''} {klass}"
 	role="tab"
-	type="button"
 	aria-selected={active}
 	tabindex={disabled ? -1 : 0}
 	class:disabled

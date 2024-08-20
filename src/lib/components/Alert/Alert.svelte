@@ -83,7 +83,7 @@
 				</Button>
 			{/if}
 			{#if border}
-				<div class="s-alert__border border-{border}" />
+				<div class="s-alert__border border-{border}"></div>
 			{/if}
 		</div>
 	</div>
