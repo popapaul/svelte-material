@@ -1,19 +1,14 @@
 import adapter from '@sveltejs/adapter-auto';
-import preprocess from 'svelte-preprocess';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import optimizeComponents from './src/lib/preprocessor/index.js';
+import { mdsvex } from "mdsvex";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
-	preprocess: [
-		preprocess({
-			preserve: ['module'],
-			scss: {
-				includePaths: ['theme']
-			},
-			sourceMap: false
-		})
-	],
+	extensions: [".svelte", ".svx"],
+	preprocess: [vitePreprocess(), mdsvex()],
 
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.

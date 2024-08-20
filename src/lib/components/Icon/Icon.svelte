@@ -18,6 +18,8 @@
 	export let label: string = null;
 	/** styles added to the icon */
 	export let style: string = null;
+	export let viewWidth = '24';
+  export let viewHeight = '24';
 </script>
 
 <i
@@ -29,5 +31,23 @@
 	aria-label={label}
 	class:disabled
 	style="--s-icon-size:{format(size)};--s-icon-rotate:{rotate}deg; {style}"
-	aria-disabled={disabled}>{@html path}</i
+	aria-disabled={disabled}>
+	{#if path.includes("<svg")}
+		{@html path}
+	{:else}
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width={size}
+		height={size}
+		viewBox="0 0 {viewWidth} {viewHeight}">
+		<path d={path}>
+		{#if label}
+			<title>{label}</title>
+		{/if}
+		</path>
+	</svg>
+	{/if}
+	
+	
+	</i
 >

@@ -1,0 +1,8 @@
+<script>
+  import { Switch } from '$lib/index';
+
+  const values = [false, true];
+</script>
+
+<Switch bind:checked={values[0]} dense>Dense {values[0]}</Switch>
+<Switch bind:checked={values[1]} dense>Dense {values[1]}</Switch>

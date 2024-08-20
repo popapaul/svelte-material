@@ -62,7 +62,7 @@
 					day: 'numeric',
 					year: 'numeric',
 					weekday: 'long'
-			  }).format(value)
+				}).format(value)
 			: ''}
 		{...$$restProps}
 		on:keydown={onkeydown}
