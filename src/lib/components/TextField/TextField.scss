@@ -256,7 +256,7 @@
 
 				input,
 				textarea {
-					margin-top: math.div($text-field-filled-margin-top, 2);
+					--margin-top: math.div($text-field-filled-margin-top, 2);
 				}
 
 				label {

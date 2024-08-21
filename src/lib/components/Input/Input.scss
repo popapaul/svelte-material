@@ -8,8 +8,6 @@
 	align-items: center;
 	color: inherit;
 	display: flex;
-	margin-bottom: $input-slot-margin-bottom;
-	margin-top: $input-slot-margin-top;
 	position: relative;
 	transition: $primary-transition;
 	width: 100%;
@@ -30,7 +28,7 @@
 	font-size: 12px;
 	overflow: hidden;
 
-	& > [slot='messages'] {
+	&>[slot='messages'] {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -47,6 +45,8 @@
 	letter-spacing: $input-letter-spacing;
 	max-width: 100%;
 	text-align: $input-text-align;
+	margin-bottom: $input-slot-margin-bottom;
+	margin-top: $input-slot-margin-top;
 
 	input {
 		max-height: $input-max-height;
@@ -57,6 +57,7 @@
 	textarea {
 		color: var(--theme-text-primary);
 		background-color: transparent;
+
 		&:invalid {
 			box-shadow: none;
 		}
@@ -71,7 +72,8 @@
 		}
 	}
 
-	& > {
+	&> {
+
 		[slot='prepend-outer'],
 		[slot='append-outer'] {
 			align-self: flex-start;
@@ -135,8 +137,6 @@
 	}
 
 	&.dense {
-		.s-input__slot {
-			margin-bottom: $input-dense-slot-margin-bottom;
-		}
+		margin-bottom: $input-dense-slot-margin-bottom;
 	}
 }

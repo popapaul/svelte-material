@@ -63,6 +63,7 @@
 	export let disabled: boolean = false;
 	/** Class to add to the select list div. */
 	export let itemsPanelClass: string = '';
+	export let fullWidth:boolean = true;
 	/**
 	 * Whether select closes on selection. Defaults to `true` on single select and `false`
 	 * on multiple select or when select is filterable.
@@ -133,7 +134,9 @@
 		bind:active
 		on:open={() => inputElement?.focus()}
 		class={menuClass}
-		fullWidth
+		{fullWidth}
+		on:close={() => (filterValue = '')}
+		on:open={() => setTimeout(() => inputElement.focus(), 1)}
 	>
 		<TextField
 			slot="activator"
