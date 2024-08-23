@@ -54,7 +54,8 @@
 				sliderElement.style.width = `${activeTab.offsetWidth}px`;
 			}
 		}
-		windowComponent.set(value);
+		const index = tabs.findIndex((x) => x.value == detail);
+		windowComponent.set(index);
 	}
 	$: tabWidth && moveSlider({ detail: value });
 </script>
