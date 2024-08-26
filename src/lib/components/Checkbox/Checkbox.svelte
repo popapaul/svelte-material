@@ -9,13 +9,15 @@
 	import './Checkbox.scss';
 	import { ripple as Ripple } from '../../actions/Ripple';
 	import TextColor from '../../internal/TextColor';
-	import { getContext } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
 
+	const dispatch = createEventDispatcher();
 	const context = getContext<FormContext>(FORM_FIELDS);
 
 	interface $$Events {
 		change: Event & { target: EventTarget & HTMLInputElement };
+		group: CustomEvent<any[]>;
 	}
 
 	// Add class to checkbox wrapper.
@@ -81,7 +83,9 @@
 	}
 
 	function groupUpdate() {
-		if (hasValidGroup && value != null) {
+		if(!hasValidGroup)
+		group = [];
+		if (value != null) {
 			const i = group.indexOf(value);
 			if (i < 0) {
 				group.push(value);
@@ -89,7 +93,9 @@
 				group.splice(i, 1);
 			}
 			group = group;
+		
 		}
+		dispatch("group", group);
 	}
 </script>
 

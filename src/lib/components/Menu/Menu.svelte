@@ -84,13 +84,13 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div use:clickOutside on:clickOutside={close} on:mouseleave={()=>!clicked && hover && close()} style="display:contents">
-	<button type="button" bind:this={activator} on:mouseenter={()=> hover && open()} 
+	<div  bind:this={activator} on:mouseenter={()=> hover && open()} 
 		on:click={()=>!rightClick && activatorClick()}
 		on:keydown={()=>!rightClick && activatorClick()} 
 		on:contextmenu|preventDefault={()=>rightClick && activatorClick()}
 		popovertargetaction="show" style="display:contents;" >
 		<slot name="activator" />
-	</button>
+	</div>
 
 	{#if active}
 		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
