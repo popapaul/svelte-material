@@ -35,6 +35,7 @@
 </script>
 
 <button
+	type="button"
 	bind:this={tab}
 	class="s-tab s-slide-item {active ? activeClass : ''} {klass}"
 	role="tab"
