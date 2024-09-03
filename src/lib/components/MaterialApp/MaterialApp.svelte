@@ -8,6 +8,6 @@
 	export let style: string = null;
 </script>
 
-<div class="s-app {klass} theme--{theme}" {style}>
+<div class="s-app {klass} theme--{theme}" {...$$restProps} {style} >
 	<slot />
 </div>
