@@ -127,7 +127,7 @@
 	};
 </script>
 
-<div class="s-select {klass}" {style} class:disabled class:chips>
+
 	<Menu
 		{closeOnClick}
 		{disabled}
@@ -214,4 +214,3 @@
 			</slot>
 		</ListItemGroup>
 	</Menu>
-</div>
