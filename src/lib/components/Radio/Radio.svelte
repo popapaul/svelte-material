@@ -61,9 +61,9 @@
 	$: active = group === value;
 </script>
 
-<div class="s-radio" {style}>
+<div class="s-radio {klass}" {style}>
 	<div
-		class="s-radio__wrapper {klass}"
+		class="s-radio__wrapper "
 		class:disabled
 		use:TextColor={!disabled && active && color}
 		use:Ripple={{ centered: true }}
