@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 	import uid from '../../internal/uid';
 </script>
 

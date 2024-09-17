@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 	import uid from '../../internal/uid';
 
 	const check = 'M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z';
@@ -83,8 +83,7 @@
 	}
 
 	function groupUpdate() {
-		if(!hasValidGroup)
-		group = [];
+		if (!hasValidGroup) group = [];
 		if (value != null) {
 			const i = group.indexOf(value);
 			if (i < 0) {
@@ -93,9 +92,8 @@
 				group.splice(i, 1);
 			}
 			group = group;
-		
 		}
-		dispatch("group", group);
+		dispatch('group', group);
 	}
 </script>
 
@@ -136,7 +134,7 @@
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<div style="padding-left:12px">
 			<span>{hint ?? ''}</span>
-			{#each (messages ?? []) as message}<span style="margin-right:8px;">{message}</span>{/each}
+			{#each messages ?? [] as message}<span style="margin-right:8px;">{message}</span>{/each}
 			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
 		</div>
 	</div>

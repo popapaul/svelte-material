@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 	import uid from '../../internal/uid';
 </script>
 
@@ -63,7 +63,7 @@
 
 <div class="s-radio {klass}" {style}>
 	<div
-		class="s-radio__wrapper "
+		class="s-radio__wrapper"
 		class:disabled
 		use:TextColor={!disabled && active && color}
 		use:Ripple={{ centered: true }}

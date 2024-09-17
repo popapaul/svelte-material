@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export const EXPANSION_PANELS = {};
 
 	export interface EXPANSION_PANELS_Context {

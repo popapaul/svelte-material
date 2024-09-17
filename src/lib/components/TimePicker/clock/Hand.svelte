@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	const TIME_MODE = { hour: 'hour', minute: 'minute' } as const;
 	export type TimeMode = keyof typeof TIME_MODE;
 </script>
