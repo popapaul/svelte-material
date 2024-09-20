@@ -29,8 +29,13 @@
 	a,
 	.s-icon {
 		color: inherit;
-		pointer-events: none;
+
+		svg {
+			pointer-events: none;
+		}
 	}
+
+
 
 	.s-btn__content {
 		display: flex;
