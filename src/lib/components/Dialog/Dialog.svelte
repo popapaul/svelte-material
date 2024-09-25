@@ -50,7 +50,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 {#if active}
-	<dialog transition:fade class="s-dialog {klass}" style:width style:height {style} bind:this={dialog} on:close={close} on:close>
+	<dialog transition:fade class="s-dialog {klass}" style:width style:height {style} bind:this={dialog} on:click={(event)=>(event.target === event.currentTarget) && close()} on:close={close} on:close>
 		<slot {close} />
 	</dialog>
 {/if}
