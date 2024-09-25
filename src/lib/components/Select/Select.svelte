@@ -63,7 +63,7 @@
 	export let disabled: boolean = false;
 	/** Class to add to the select list div. */
 	export let itemsPanelClass: string = '';
-	export let fullWidth:boolean = true;
+	export let fullWidth: boolean = true;
 	/**
 	 * Whether select closes on selection. Defaults to `true` on single select and `false`
 	 * on multiple select or when select is filterable.
@@ -76,7 +76,6 @@
 	export let emptyString = '';
 	export let inputElement = null;
 	export let menuClass = '';
-	
 
 	export let filterValue: string = '';
 	export let validateOnBlur = false;
@@ -85,8 +84,8 @@
 		value && Array.isArray(value)
 			? value.includes(getValue(item))
 			: typeof value === 'string'
-			? value?.toString().includes(getValue(item)?.toString())
-			: value == getValue(item);
+				? value?.toString().includes(getValue(item)?.toString())
+				: value == getValue(item);
 
 	export function getSelectString(v: TValue) {
 		// We could also use `return items[0].value ? find.. : v` or provide a `basic` prop
@@ -127,90 +126,88 @@
 	};
 </script>
 
-
-	<Menu
-		{closeOnClick}
+<Menu
+	{closeOnClick}
+	{disabled}
+	bind:active
+	on:open={() => inputElement?.focus()}
+	class={menuClass}
+	{fullWidth}
+	on:close={() => (filterValue = '')}
+	on:open={() => setTimeout(() => inputElement.focus(), 1)}
+>
+	<TextField
+		slot="activator"
+		class="s-select-input"
+		{...$$restProps}
+		{filled}
+		labelActive={active || !!value}
+		{outlined}
+		{solo}
+		{validateOnBlur}
+		readonly={!filter && !acceptValue}
+		on:keydown
+		on:clear={() => (value = null)}
+		on:clear
+		{dense}
+		bind:inputElement
 		{disabled}
-		bind:active
-		on:open={() => inputElement?.focus()}
-		class={menuClass}
-		{fullWidth}
-		on:close={() => (filterValue = '')}
-		on:open={() => setTimeout(() => inputElement.focus(), 1)}
+		on:input={(event) => {
+			if (acceptValue) {
+				value = event.target.value;
+				return;
+			}
+			filterValue = event.target.value;
+			dispatch('search', filterValue);
+		}}
+		value={(active || chips) && filter ? filterValue : acceptValue ? value : format(value)}
+		{placeholder}
+		{hint}
 	>
-		<TextField
-			slot="activator"
-			class="s-select-input"
-			{...$$restProps}
-			{filled}
-			labelActive={active || !!value}
-			{outlined}
-			{solo}
-			{validateOnBlur}
-			readonly={!filter && !acceptValue}
-			on:keydown
-			on:clear={() => (value = null)}
-			on:clear
-			{dense}
-			bind:inputElement
-			{disabled}
-			on:input={(event) => {
-				if(acceptValue)
-				{
-					value = event.target.value;
-					return;
-				}
-				filterValue = event.target.value;
-				dispatch('search', filterValue);
-			}}
-			value={(active || chips) && filter ? filterValue : acceptValue ? value : format(value)}
-			{placeholder}
-			{hint}
-		>
-			<slot slot="prepend-outer" name="prepend-outer" />
-			<slot />
-			<div slot="content">
-				{#if chips && !!value}
-					{#each (Array.isArray(value) ? value : [value]).filter(Boolean) as val}
-						<Chip size="small" close on:close={() => removeItem(val)}>
-							<span style="flex-basis: 0; flex-grow: 1;">
-								{getSelectString(val)}
-							</span>
-						</Chip>
+		<slot slot="prepend-outer" name="prepend-outer" />
+		<slot />
+		<div slot="content">
+			{#if chips && !!value}
+				{#each (Array.isArray(value) ? value : [value]).filter(Boolean) as val}
+					<Chip size="small" close on:close={() => removeItem(val)}>
+						<span style="flex-basis: 0; flex-grow: 1;">
+							{getSelectString(val)}
+						</span>
+					</Chip>
+				{/each}
+			{/if}
+		</div>
+		<Icon
+			slot="append"
+			on:click={() => active && setTimeout(() => (active = false), 2)}
+			path={DOWN_ICON}
+			rotate={active ? 180 : 0}
+		/>
+		<slot slot="append-outer" name="append-outer" />
+	</TextField>
+
+	<ListItemGroup bind:value on:change on:change={handleChange} {mandatory} {multiple} {max}>
+		<slot name="items">
+			<div class={itemsPanelClass}>
+				{#if filteredItems.length}
+					{#each filteredItems as item}
+						{@const active = isActive(value, item)}
+						<slot name="item" {item} {active}>
+							<ListItem {dense} value={getValue(item)} {active}>
+								<span slot="prepend">
+									{#if multiple}
+										<Checkbox checked={active} />
+									{/if}
+								</span>
+
+								{getName(item)}
+							</ListItem>
+						</slot>
 					{/each}
+				{:else}
+					Nu au fost gasite optiuni
 				{/if}
 			</div>
-			<Icon
-				slot="append"
-				on:click={() => active && setTimeout(() => (active = false), 2)}
-				path={DOWN_ICON}
-				rotate={active ? 180 : 0}
-			/>
-			<slot slot="append-outer" name="append-outer" />
-		</TextField>
-
-		<ListItemGroup bind:value on:change on:change={handleChange} {mandatory} {multiple} {max}>
-			<slot name="items">
-				<div class={itemsPanelClass}>
-					{#if filteredItems.length}
-						{#each filteredItems as item}
-							{@const active = isActive(value, item)}
-							<slot name="item" {item} {active}>
-								<ListItem {dense} value={getValue(item)} {active}>
-									<span slot="prepend">
-										{#if multiple}
-											<Checkbox checked={active} />
-										{/if}
-									</span>
-
-									{getName(item)}
-								</ListItem>
-							</slot>
-						{/each}
-					{:else}
-						Nu au fost gasite optiuni
-					{/if}
-				</div>
-			</slot>
-		</ListItemGroup>
-	</Menu>
+		</slot>
+	</ListItemGroup>
+</Menu>
