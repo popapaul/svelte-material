@@ -13,7 +13,7 @@
 
 	export let activatorProps = {};
 	/** toggle the active state */
-	export let active = true;
+	export let active = false;
 	/** will force the components content to render on mount */
 	export let eager = false;
 	/** transition when open or close */
