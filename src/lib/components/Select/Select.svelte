@@ -138,7 +138,8 @@
 >
 	<TextField
 		slot="activator"
-		class="s-select-input"
+		class="s-select-input {klass}"
+		{style}
 		{...$$restProps}
 		{filled}
 		labelActive={active || !!value}
