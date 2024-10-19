@@ -11,6 +11,7 @@
 	class={klass}
 	{...$$restProps}
 	use:intersect={options}
+	on:intersect
 	on:intersect={({ detail: { isIntersecting } }) => (intersecting = isIntersecting)}
 >
 	<slot {intersecting} />
