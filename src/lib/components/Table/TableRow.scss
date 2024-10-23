@@ -1,10 +1,10 @@
-@import './variables';
+@use 'variables';
 
 .s-table-row {
 	&:nth-of-type(even) {
-		background-color: $tbl-background-odd;
+		background-color: variables.$tbl-background-odd;
 	}
 	&:hover .s-table-cell:not(th) {
-		background-color: $tbl-background-hover;
+		background-color: variables.$tbl-background-hover;
 	}
 }

@@ -1,4 +1,6 @@
-@import '../../styles/variables';
+@use '../../styles/variables';
+@use "../../styles/tools/functions";
+
 
 $list-dense-subheader-font-size: 0.75rem !default;
 $list-dense-subheader-height: 40px !default;
@@ -10,8 +12,8 @@ $list-item-icon-margin-y: 16px !default;
 
 $list-item-min-height: 48px !default;
 
-$list-item-title-font-size: map-deep-get($headings, 'subtitle-1', 'size') !default;
-$list-item-subtitle-font-size: map-deep-get($headings, 'subtitle-2', 'size') !default;
+$list-item-title-font-size: functions.map-deep-get(variables.$headings, 'subtitle-1', 'size') !default;
+$list-item-subtitle-font-size: functions.map-deep-get(variables.$headings, 'subtitle-2', 'size') !default;
 
 $list-padding: 8px 0 !default;
 $list-padding-top: 8px !default;
@@ -28,7 +30,7 @@ $list-item-dense-action-icon-margin: 24px !default;
 
 $list-nav-rounded-dense-item-margin-bottom: 4px !default;
 
-$list-nav-border-radius: $border-radius-root !default;
+$list-nav-border-radius: variables.$border-radius-root !default;
 $list-nav-rounded-item-margin-bottom: 8px !default;
 $list-nav-padding-left: 8px !default;
 $list-nav-padding-right: 8px !default;

@@ -1,4 +1,8 @@
-@import './variables';
+@use "sass:map";
+@use 'variables';
+@use "../../styles/tools/elevation";
+@use "../../styles/variables" as styles-variables;
+
 
 .s-card {
 	background-color: var(--theme-cards);
@@ -8,29 +12,29 @@
 	outline: none;
 	text-decoration: none;
 	transition-property: box-shadow, opacity;
-	overflow-wrap: $card-overflow-wrap;
+	overflow-wrap: variables.$card-overflow-wrap;
 	position: relative;
-	white-space: $card-white-space;
+	white-space: variables.$card-white-space;
 
 	&:not(.flat) {
-		@include elevation($card-elevation);
+		@include elevation.elevation(variables.$card-elevation);
 	}
 
 	&:not(.tile) {
-		border-radius: $card-border-radius;
+		border-radius: variables.$card-border-radius;
 	}
 
 	&.outlined {
-		border: $card-outlined-border-width solid rgba(0, 0, 0, 0.12);
-		@include elevation(0);
+		border: variables.$card-outlined-border-width solid rgba(0, 0, 0, 0.12);
+		@include elevation.elevation(0);
 	}
 
 	&.raised {
-		@include elevation($card-raised-elevation);
+		@include elevation.elevation(variables.$card-raised-elevation);
 	}
 
 	&.shaped {
-		border-radius: $card-shaped-border-radius;
+		border-radius: variables.$card-shaped-border-radius;
 	}
 
 	&.hover {
@@ -39,7 +43,7 @@
 
 		&:hover,
 		&:focus {
-			@include elevation($card-hover-elevation);
+			@include elevation.elevation(variables.$card-hover-elevation);
 		}
 	}
 
@@ -60,11 +64,11 @@
 			position: absolute;
 			right: 0;
 			top: 0;
-			transition: 0.2s opacity map-get($transitions, 'fast-in-slow-out');
+			transition: 0.2s opacity map.get(styles-variables.$transitions, 'fast-in-slow-out');
 		}
 
 		&:focus::before {
-			opacity: $card-link-focus-opacity;
+			opacity: variables.$card-link-focus-opacity;
 		}
 	}
 
@@ -73,7 +77,7 @@
 		user-select: none;
 
 		> *:not(.s-progress-linear) {
-			opacity: $card-disabled-opacity;
+			opacity: variables.$card-disabled-opacity;
 			transition: inherit;
 		}
 	}

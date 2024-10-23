@@ -1,4 +1,5 @@
-@import './variables';
+@use "sass:math";
+@use 'variables';
 
 .s-tooltip__wrapper {
 	display: inline-block;
@@ -6,14 +7,14 @@
 }
 
 .s-tooltip {
-	background: $tooltip-background-color;
-	color: $tooltip-text-color;
-	border-radius: $tooltip-border-radius;
-	font-size: $tooltip-font-size;
-	line-height: round($tooltip-font-size * 1.6);
-	z-index: $tooltip-z-index;
+	background: variables.$tooltip-background-color;
+	color: variables.$tooltip-text-color;
+	border-radius: variables.$tooltip-border-radius;
+	font-size: variables.$tooltip-font-size;
+	line-height: math.round(variables.$tooltip-font-size * 1.6);
+	z-index: variables.$tooltip-z-index;
 	display: inline-block;
-	padding: $tooltip-padding;
+	padding: variables.$tooltip-padding;
 	position: fixed;
 	text-transform: initial;
 	text-align: center;

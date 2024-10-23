@@ -1,4 +1,6 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-slide-group {
 	display: flex;
@@ -8,7 +10,7 @@
 	display: flex;
 	flex: 1 0 auto;
 	position: relative;
-	transition: $primary-transition;
+	transition: styles-variables.$primary-transition;
 	white-space: nowrap;
 }
 
@@ -24,9 +26,9 @@
 .s-slide-group__prev {
 	align-items: center;
 	display: flex;
-	flex: 0 1 $slide-group-control-basis;
+	flex: 0 1 variables.$slide-group-control-basis;
 	justify-content: center;
-	min-width: $slide-group-control-basis;
+	min-width: variables.$slide-group-control-basis;
 	cursor: pointer;
 
 	&.disabled {

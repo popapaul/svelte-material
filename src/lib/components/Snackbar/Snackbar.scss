@@ -1,4 +1,8 @@
-@import './variables';
+@use "sass:map";
+@use 'variables';
+@use "../../styles/tools/elevation";
+@use "../../styles/variables" as styles-variables;
+
 
 .s-snackbar__wrapper {
 	display: flex;
@@ -14,12 +18,12 @@
 
 	&:not(.absolute) {
 		position: fixed;
-		z-index: $snackbar-z-index;
+		z-index: variables.$snackbar-z-index;
 	}
 
 	&.absolute {
 		position: absolute;
-		z-index: $snackbar-absolute-z-index;
+		z-index: variables.$snackbar-absolute-z-index;
 	}
 
 	&.center {
@@ -50,17 +54,17 @@
 	position: relative;
 	gap: 5px;
 	pointer-events: auto;
-	padding: $snackbar-padding;
-	font-size: $snackbar-font-size;
-	letter-spacing: $snackbar-letter-spacing;
-	background-color: $snackbar-background-color;
-	color: $snackbar-color;
-	margin: $snackbar-wrapper-margin;
-	min-height: $snackbar-wrapper-min-height;
-	min-width: $snackbar-wrapper-min-width;
+	padding: variables.$snackbar-padding;
+	font-size: variables.$snackbar-font-size;
+	letter-spacing: variables.$snackbar-letter-spacing;
+	background-color: variables.$snackbar-background-color;
+	color: variables.$snackbar-color;
+	margin: variables.$snackbar-wrapper-margin;
+	min-height: variables.$snackbar-wrapper-min-height;
+	min-width: variables.$snackbar-wrapper-min-width;
 	overflow: hidden;
 	position: relative;
-	@include elevation($snackbar-elevation);
+	@include elevation.elevation(variables.$snackbar-elevation);
 
 	&.snackbar-info {
 		background-color: #467dec;
@@ -81,17 +85,17 @@
 	}
 
 	&:not(.tile) {
-		border-radius: $snackbar-border-radius;
+		border-radius: variables.$snackbar-border-radius;
 	}
 
 	&.outlined {
 		background-color: transparent;
-		color: $snackbar-background-color;
+		color: variables.$snackbar-background-color;
 		border: thin solid currentColor;
 	}
 
 	&.text {
-		color: $snackbar-background-color;
+		color: variables.$snackbar-background-color;
 		background-color: inherit;
 
 		&::before {
@@ -109,10 +113,10 @@
 	}
 
 	&.rounded {
-		border-radius: map-get($rounded, 'pill');
+		border-radius: map.get(styles-variables.$rounded, 'pill');
 	}
 
 	.s-btn {
-		padding: $snackbar-btn-padding;
+		padding: variables.$snackbar-btn-padding;
 	}
 }

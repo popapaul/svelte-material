@@ -1,4 +1,7 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/tools/elevation";
+@use "../../styles/variables" as styles-variables;
+
 
 .s-switch__track,
 .s-switch__thumb {
@@ -8,31 +11,31 @@
 
 .s-switch__track {
 	color: var(--theme-controls-track-inactive);
-	border-radius: $switch-track-border-radius;
-	width: $switch-track-width;
-	height: $switch-track-height;
-	left: $switch-track-x;
+	border-radius: variables.$switch-track-border-radius;
+	width: variables.$switch-track-width;
+	height: variables.$switch-track-height;
+	left: variables.$switch-track-x;
 	position: absolute;
-	opacity: $switch-track-opacity;
-	right: $switch-track-x;
-	top: $switch-track-top;
-	transition: background-color $primary-transition;
+	opacity: variables.$switch-track-opacity;
+	right: variables.$switch-track-x;
+	top: variables.$switch-track-top;
+	transition: background-color styles-variables.$primary-transition;
 	will-change: background-color;
 }
 
 .s-switch__thumb {
 	color: var(--theme-controls-thumb-inactive);
 	border-radius: 50%;
-	top: $switch-thumb-top;
-	height: $switch-thumb-height;
+	top: variables.$switch-thumb-top;
+	height: variables.$switch-thumb-height;
 	position: relative;
-	width: $switch-thumb-width;
+	width: variables.$switch-thumb-width;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	transition: $primary-transition;
+	transition: styles-variables.$primary-transition;
 	will-change: transform;
-	@include elevation(4);
+	@include elevation.elevation(4);
 
 	&::before {
 		background: currentColor;
@@ -61,7 +64,7 @@
 }
 
 .s-switch__wrapper {
-	width: $switch-width;
+	width: variables.$switch-width;
 	display: inline-flex;
 	flex: 0 0 auto;
 	height: 24px;
@@ -74,15 +77,15 @@
 	}
 
 	&.inset {
-		width: $switch-track-inset-width;
+		width: variables.$switch-track-inset-width;
 
 		.s-switch__track {
-			width: $switch-track-inset-width;
-			border-radius: $switch-track-inset-border-radius;
-			height: $switch-track-inset-height;
+			width: variables.$switch-track-inset-width;
+			border-radius: variables.$switch-track-inset-border-radius;
+			height: variables.$switch-track-inset-height;
 			left: -4px;
-			opacity: $switch-track-inset-opacity;
-			top: calc(50% - #{$switch-track-inset-height * 0.5});
+			opacity: variables.$switch-track-inset-opacity;
+			top: calc(50% - #{variables.$switch-track-inset-height * 0.5});
 		}
 
 		.s-switch__thumb {
@@ -92,27 +95,27 @@
 
 	&.dense {
 		.s-switch__thumb {
-			width: $switch-thumb-dense-width;
-			height: $switch-thumb-dense-height;
+			width: variables.$switch-thumb-dense-width;
+			height: variables.$switch-thumb-dense-height;
 		}
 
 		.s-switch__track {
-			height: $switch-track-dense-height;
-			width: $switch-track-dense-width;
+			height: variables.$switch-track-dense-height;
+			width: variables.$switch-track-dense-width;
 		}
 
 		&.inset {
 			.s-switch__track {
-				height: $switch-track-dense-inset-height;
-				width: $switch-track-dense-inset-width;
-				top: $switch-track-dense-top;
+				height: variables.$switch-track-dense-inset-height;
+				width: variables.$switch-track-dense-inset-width;
+				top: variables.$switch-track-dense-top;
 				left: -3px;
 			}
 		}
 	}
 
 	&.disabled {
-		opacity: $switch-disabled-opacity;
+		opacity: variables.$switch-disabled-opacity;
 		pointer-events: none;
 
 		.s-switch__thumb {
@@ -146,7 +149,7 @@
 			}
 
 			.s-switch__thumb {
-				transform: translate($switch-dirty-offset-x);
+				transform: translate(variables.$switch-dirty-offset-x);
 			}
 		}
 	}

@@ -1,12 +1,14 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-expansion-panels {
-	border-radius: $expansion-panel-border-radius;
+	border-radius: variables.$expansion-panel-border-radius;
 	display: flex;
 	flex: 0 1 auto;
 	position: relative;
 	max-width: 100%;
-	transition: $primary-transition;
+	transition: styles-variables.$primary-transition;
 	flex-wrap: wrap;
 	justify-content: center;
 	list-style-type: none;
@@ -36,20 +38,20 @@
 
 	&.popout {
 		> .s-expansion-panel {
-			max-width: $expansion-panel-popout-max-width;
+			max-width: variables.$expansion-panel-popout-max-width;
 
 			&.active {
-				max-width: $expansion-panel-popout-active-max-width;
+				max-width: variables.$expansion-panel-popout-active-max-width;
 			}
 		}
 	}
 
 	&.inset {
 		> .s-expansion-panel {
-			max-width: $expansion-panel-inset-max-width;
+			max-width: variables.$expansion-panel-inset-max-width;
 
 			&.active {
-				max-width: $expansion-panel-inset-active-max-width;
+				max-width: variables.$expansion-panel-inset-active-max-width;
 			}
 		}
 	}
@@ -77,11 +79,11 @@
 	&:not(.accordion):not(.tile) {
 		> .s-expansion-panel {
 			&.active {
-				border-radius: $expansion-panel-border-radius;
+				border-radius: variables.$expansion-panel-border-radius;
 
 				+ .s-expansion-panel {
-					border-top-left-radius: $expansion-panel-border-radius;
-					border-top-right-radius: $expansion-panel-border-radius;
+					border-top-left-radius: variables.$expansion-panel-border-radius;
+					border-top-right-radius: variables.$expansion-panel-border-radius;
 				}
 			}
 		}

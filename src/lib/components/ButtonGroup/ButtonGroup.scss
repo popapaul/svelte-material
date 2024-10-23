@@ -1,12 +1,14 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-btn-group {
-	border-radius: $btn-group-border-radius;
+	border-radius: variables.$btn-group-border-radius;
 	display: inline-flex;
 	max-width: 100%;
 	flex: 0 1 auto;
 	position: relative;
-	transition: $primary-transition;
+	transition: styles-variables.$primary-transition;
 
 	&:not(.elevated) {
 		.s-btn-group-item.s-btn {
@@ -25,6 +27,6 @@
 	}
 
 	&.rounded {
-		border-radius: $btn-group-round-border-radius;
+		border-radius: variables.$btn-group-round-border-radius;
 	}
 }

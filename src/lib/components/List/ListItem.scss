@@ -1,4 +1,6 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-list-item__content {
 	align-items: center;
@@ -7,14 +9,14 @@
 	flex-wrap: wrap;
 	flex: 1 1;
 	overflow: hidden;
-	padding: $list-item-content-padding;
+	padding: variables.$list-item-content-padding;
 
 	> * {
 		line-height: 1.1;
 		flex: 1 0 100%;
 
 		&:not(:last-child) {
-			margin-bottom: $list-item-content-children-margin-bottom;
+			margin-bottom: variables.$list-item-content-children-margin-bottom;
 		}
 	}
 }
@@ -25,16 +27,16 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	line-height: $list-item-title-subtitle-line-height;
+	line-height: variables.$list-item-title-subtitle-line-height;
 }
 
 .s-list-item__title {
 	align-self: center;
-	font-size: $list-item-title-font-size;
+	font-size: variables.$list-item-title-font-size;
 }
 
 .s-list-item__subtitle {
-	font-size: $list-item-subtitle-font-size;
+	font-size: variables.$list-item-subtitle-font-size;
 	color: var(--theme-text-secondary);
 }
 
@@ -43,34 +45,34 @@
 	display: flex;
 	flex: 1 1 100%;
 	letter-spacing: normal;
-	min-height: $list-item-min-height;
+	min-height: variables.$list-item-min-height;
 	outline: none;
-	padding: $list-item-padding;
+	padding: variables.$list-item-padding;
 	position: relative;
 	text-decoration: none;
 	overflow: hidden;
 
 	.s-avatar {
 		align-self: center;
-		margin-top: $list-item-avatar-margin-y;
-		margin-bottom: $list-item-avatar-margin-y;
+		margin-top: variables.$list-item-avatar-margin-y;
+		margin-bottom: variables.$list-item-avatar-margin-y;
 	}
 
 	.s-icon {
-		margin-top: $list-item-icon-margin-y;
-		margin-bottom: $list-item-icon-margin-y;
+		margin-top: variables.$list-item-icon-margin-y;
+		margin-bottom: variables.$list-item-icon-margin-y;
 	}
 
 	.s-icon,
 	.s-avatar {
 		display: inline-flex;
-		min-width: $list-item-child-min-width;
+		min-width: variables.$list-item-child-min-width;
 	}
 
 	[slot='prepend'] {
 		&.s-avatar,
 		.s-avatar {
-			margin-right: $list-item-avatar-first-child-margin;
+			margin-right: variables.$list-item-avatar-first-child-margin;
 		}
 
 		&.s-icon,
@@ -79,7 +81,7 @@
 		.s-checkbox,
 		&.s-radio,
 		.s-radio {
-			margin-right: $list-item-action-icon-margin;
+			margin-right: variables.$list-item-action-icon-margin;
 		}
 	}
 
@@ -97,7 +99,7 @@
 			pointer-events: none;
 			position: absolute;
 			opacity: 0;
-			transition: $primary-transition;
+			transition: styles-variables.$primary-transition;
 		}
 
 		&:not(.active):hover::before {
@@ -158,29 +160,29 @@
 
 .s-list-item.dense,
 .s-list.dense .s-list-item {
-	min-height: $list-dense-min-height;
+	min-height: variables.$list-dense-min-height;
 
 	.s-icon {
-		margin-top: $list-item-icon-margin-y * 0.5;
-		margin-bottom: $list-item-icon-margin-y * 0.5;
+		margin-top: variables.$list-item-icon-margin-y * 0.5;
+		margin-bottom: variables.$list-item-icon-margin-y * 0.5;
 	}
 
 	[slot='prepend'] {
 		.s-icon,
 		.s-checkbox,
 		.s-radio {
-			margin-right: $list-item-dense-action-icon-margin;
+			margin-right: variables.$list-item-dense-action-icon-margin;
 		}
 	}
 
 	.s-list-item__content {
-		padding: $list-dense-content-padding;
+		padding: variables.$list-dense-content-padding;
 	}
 
 	.s-list-item__title,
 	.s-list-item__subtitle {
-		font-size: $list-item-dense-title-font-size;
-		font-weight: $list-item-dense-title-font-weight;
-		line-height: $list-item-dense-title-line-height;
+		font-size: variables.$list-item-dense-title-font-size;
+		font-weight: variables.$list-item-dense-title-font-weight;
+		line-height: variables.$list-item-dense-title-line-height;
 	}
 }

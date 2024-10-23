@@ -1,10 +1,16 @@
 @use 'sass:math';
 
-@import './variables';
+@use "sass:map";
+@use 'variables';
+@use "../../styles/tools/colors";
+@use "../../styles/tools/elevation";
+@use "../../styles/tools/functions";
+@use "../../styles/variables" as styles-variables;
+
 
 .s-btn {
 	align-items: center;
-	border-radius: $btn-border-radius;
+	border-radius: variables.$btn-border-radius;
 	display: inline-flex;
 	flex: 0 0 auto;
 	overflow: hidden;
@@ -14,17 +20,17 @@
 	vertical-align: middle;
 	white-space: nowrap;
 	text-decoration: none;
-	transition-duration: $btn-transition-duration;
+	transition-duration: variables.$btn-transition-duration;
 	transition-property: box-shadow, transform, opacity;
 	background-color: var(--theme-app-bar);
 	position: relative;
 	align-items: center;
 	line-height: normal;
 	font-size: inherit;
-	font-weight: map-deep-get($headings, 'button', 'weight');
-	letter-spacing: map-deep-get($headings, 'button', 'letter-spacing');
-	text-transform: map-deep-get($headings, 'button', 'text-transform');
-	@include elevation(3);
+	font-weight: functions.map-deep-get(styles-variables.$headings, 'button', 'weight');
+	letter-spacing: functions.map-deep-get(styles-variables.$headings, 'button', 'letter-spacing');
+	text-transform: functions.map-deep-get(styles-variables.$headings, 'button', 'text-transform');
+	@include elevation.elevation(3);
 
 	a,
 	.s-icon {
@@ -46,9 +52,9 @@
 		line-height: normal;
 		position: relative;
 		font-size: inherit;
-		font-weight: map-deep-get($headings, 'button', 'weight');
-		letter-spacing: map-deep-get($headings, 'button', 'letter-spacing');
-		text-transform: map-deep-get($headings, 'button', 'text-transform');
+		font-weight: functions.map-deep-get(styles-variables.$headings, 'button', 'weight');
+		letter-spacing: functions.map-deep-get(styles-variables.$headings, 'button', 'letter-spacing');
+		text-transform: functions.map-deep-get(styles-variables.$headings, 'button', 'text-transform');
 	}
 
 
@@ -64,11 +70,11 @@
 		position: absolute;
 		right: 0;
 		top: 0;
-		transition: $btn-transition;
+		transition: variables.$btn-transition;
 		background-color: currentColor;
 	}
 
-	@each $name, $size in $btn-font-sizes {
+	@each $name, $size in variables.$btn-font-sizes {
 		&.size-#{$name} {
 			font-size: $size;
 		}
@@ -76,29 +82,29 @@
 
 	&:not(.disabled) {
 		&:hover::before {
-			opacity: $btn-hover-opacity;
+			opacity: variables.$btn-hover-opacity;
 		}
 
 		&.active::before {
-			opacity: $btn-active-opacity;
+			opacity: variables.$btn-active-opacity;
 		}
 
 		&.focus-visible::before {
-			opacity: $btn-focus-opacity;
+			opacity: variables.$btn-focus-opacity;
 		}
 	}
 
 	&:not(.outlined) {
-		@include has-theme-bg {
-			color: map-deep-get($material-dark-theme, 'text', 'primary');
+		@include colors.has-theme-bg {
+			color: functions.map-deep-get(styles-variables.$material-dark-theme, 'text', 'primary');
 		}
 	}
 
 	&:not(.icon):not(.s-btn--fab) {
-		@each $name, $size in $btn-sizes {
+		@each $name, $size in variables.$btn-sizes {
 			&.size-#{$name} {
 				height: #{$size}px;
-				min-width: #{round($size * 1.777777777777778)}px; // default ratio
+				min-width: #{math.round($size * 1.777777777777778)}px; // default ratio
 				padding: 0 #{math.div($size, 2.25)}px;
 			}
 		}
@@ -133,7 +139,7 @@
 	}
 
 	&.rounded {
-		border-radius: map-get($rounded, 'pill');
+		border-radius: map.get(styles-variables.$rounded, 'pill');
 	}
 
 	&.disabled {
@@ -146,7 +152,7 @@
 	}
 
 	&.icon {
-		@each $name, $size in $btn-sizes {
+		@each $name, $size in variables.$btn-sizes {
 			&.size-#{$name} {
 				height: #{$size}px;
 				width: #{$size}px;
@@ -161,7 +167,7 @@
 		min-height: 0;
 		padding: 0;
 
-		@each $name, $size in $fab-icon-sizes {
+		@each $name, $size in variables.$fab-icon-sizes {
 			&.size-#{$name} .s-icon {
 				font-size: #{$size}px;
 			}
@@ -169,7 +175,7 @@
 	}
 
 	&.s-btn--fab {
-		@each $size, $value in $fab-sizes {
+		@each $size, $value in variables.$fab-sizes {
 			&.size-#{$size} {
 				height: #{$value}px;
 				width: #{$value}px;

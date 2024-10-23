@@ -1,7 +1,9 @@
 // @use '../TextField/TextField.scss';
 // @use '../Textarea/Textarea.scss';
 
-@import './variables';
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-input__slot {
 	border-radius: inherit;
@@ -9,7 +11,7 @@
 	color: inherit;
 	display: flex;
 	position: relative;
-	transition: $primary-transition;
+	transition: styles-variables.$primary-transition;
 	width: 100%;
 	height: inherit;
 }
@@ -41,15 +43,15 @@
 	align-items: center;
 	flex-direction: row;
 	flex: 1 1 auto;
-	font-size: $input-font-size;
-	letter-spacing: $input-letter-spacing;
+	font-size: variables.$input-font-size;
+	letter-spacing: variables.$input-letter-spacing;
 	max-width: 100%;
-	text-align: $input-text-align;
-	margin-bottom: $input-slot-margin-bottom;
-	margin-top: $input-slot-margin-top;
+	text-align: variables.$input-text-align;
+	margin-bottom: variables.$input-slot-margin-bottom;
+	margin-top: variables.$input-slot-margin-top;
 
 	input {
-		max-height: $input-max-height;
+		max-height: variables.$input-max-height;
 		border: none;
 	}
 
@@ -84,11 +86,11 @@
 		}
 
 		[slot='prepend-outer'] {
-			margin-right: $input-prepend-append-outer-margin;
+			margin-right: variables.$input-prepend-append-outer-margin;
 		}
 
 		[slot='append-outer'] {
-			margin-left: $input-prepend-append-outer-margin;
+			margin-left: variables.$input-prepend-append-outer-margin;
 		}
 	}
 
@@ -96,20 +98,20 @@
 		user-select: none;
 		align-items: center;
 		display: inline-flex;
-		height: $input-icon-height;
+		height: variables.$input-icon-height;
 		justify-content: center;
-		min-width: $input-icon-min-width;
-		width: $input-icon-width;
+		min-width: variables.$input-icon-min-width;
+		width: variables.$input-icon-width;
 		margin-top: auto;
 		margin-bottom: auto;
 	}
 
 	label {
-		height: $input-label-height;
-		line-height: $input-label-letter-spacing;
+		height: variables.$input-label-height;
+		line-height: variables.$input-label-letter-spacing;
 		color: var(--theme-text-secondary);
 		white-space: nowrap;
-		transition: $primary-transition;
+		transition: styles-variables.$primary-transition;
 	}
 
 	&:focus-within {
@@ -137,6 +139,6 @@
 	}
 
 	&.dense {
-		margin-bottom: $input-dense-slot-margin-bottom;
+		margin-bottom: variables.$input-dense-slot-margin-bottom;
 	}
 }

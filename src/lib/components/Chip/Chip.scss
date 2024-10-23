@@ -1,14 +1,20 @@
-@import './variables';
+@use "sass:map";
+@use 'variables';
+@use "../../styles/tools/colors";
+@use "../../styles/tools/elevation";
+@use "../../styles/tools/functions";
+@use "../../styles/variables" as styles-variables;
+
 
 .s-chip__close {
 	cursor: pointer;
-	margin-left: $chip-icon-margin-after;
-	margin-right: $chip-icon-margin-before;
+	margin-left: variables.$chip-icon-margin-after;
+	margin-right: variables.$chip-icon-margin-before;
 
 	.s-icon {
-		font-size: $chip-close-size;
-		max-height: $chip-close-size;
-		max-width: $chip-close-size;
+		font-size: variables.$chip-close-size;
+		max-height: variables.$chip-close-size;
+		max-width: variables.$chip-close-size;
 		user-select: none;
 	}
 
@@ -25,18 +31,18 @@
 	align-items: center;
 	cursor: default;
 	display: inline-flex;
-	line-height: $chip-line-height;
+	line-height: variables.$chip-line-height;
 	max-width: 100%;
 	outline: none;
 	overflow: hidden;
-	padding: $chip-padding;
+	padding: variables.$chip-padding;
 	position: relative;
 	text-decoration: none;
-	transition-duration: $chip-transition-duration;
+	transition-duration: variables.$chip-transition-duration;
 	transition-property: box-shadow, opacity;
-	transition-timing-function: $chip-transition-fn;
+	transition-timing-function: variables.$chip-transition-fn;
 	vertical-align: middle;
-	white-space: $chip-white-space;
+	white-space: variables.$chip-white-space;
 
 	&::before {
 		background-color: currentColor;
@@ -52,13 +58,13 @@
 	}
 
 	.s-avatar {
-		height: $chip-avatar-size;
-		min-width: $chip-avatar-size;
-		width: $chip-avatar-size;
+		height: variables.$chip-avatar-size;
+		min-width: variables.$chip-avatar-size;
+		width: variables.$chip-avatar-size;
 	}
 
 	.s-icon {
-		font-size: $chip-icon-size;
+		font-size: variables.$chip-icon-size;
 	}
 
 	& > .s-icon,
@@ -66,27 +72,27 @@
 		color: inherit;
 
 		&:first-child {
-			margin-left: $chip-icon-margin-before;
-			margin-right: $chip-icon-margin-after;
+			margin-left: variables.$chip-icon-margin-before;
+			margin-right: variables.$chip-icon-margin-after;
 		}
 
 		&:last-child {
-			margin-left: $chip-icon-margin-after;
-			margin-right: $chip-icon-margin-before;
+			margin-left: variables.$chip-icon-margin-after;
+			margin-right: variables.$chip-icon-margin-before;
 		}
 	}
 
-	@each $name, $size in $icon-sizes {
+	@each $name, $size in variables.$icon-sizes {
 		&.size-#{$name} {
-			border-radius: #{map-get($size, 'height') * 0.5}px;
-			font-size: #{map-get($size, 'font-size')}px;
-			height: #{map-get($size, 'height')}px;
+			border-radius: #{map.get($size, 'height') * 0.5}px;
+			font-size: #{map.get($size, 'font-size')}px;
+			height: #{map.get($size, 'height')}px;
 		}
 	}
 
 	&:not(.outlined) {
-		@include has-theme-bg {
-			color: map-deep-get($material-dark-theme, 'text', 'primary');
+		@include colors.has-theme-bg {
+			color: functions.map-deep-get(styles-variables.$material-dark-theme, 'text', 'primary');
 		}
 	}
 
@@ -96,15 +102,15 @@
 
 	&.pill {
 		& > .s-avatar {
-			height: $chip-pill-avatar-size;
-			width: $chip-pill-avatar-size;
+			height: variables.$chip-pill-avatar-size;
+			width: variables.$chip-pill-avatar-size;
 
 			&:first-child {
-				margin-left: $chip-pill-avatar-margin-before;
+				margin-left: variables.$chip-pill-avatar-margin-before;
 			}
 
 			&:last-child {
-				margin-right: $chip-pill-avatar-margin-before;
+				margin-right: variables.$chip-pill-avatar-margin-before;
 			}
 		}
 	}
@@ -114,25 +120,25 @@
 		user-select: none;
 
 		&:active {
-			@include elevation(2);
+			@include elevation.elevation(2);
 		}
 	}
 
 	&.outlined {
-		border: currentColor solid $icon-outlined-border-width;
+		border: currentColor solid variables.$icon-outlined-border-width;
 		background: transparent;
 
 		&:active::before {
-			opacity: $chip-outlined-active-opacity;
+			opacity: variables.$chip-outlined-active-opacity;
 		}
 	}
 
 	&.label {
-		border-radius: $chip-label-border-radius;
+		border-radius: variables.$chip-label-border-radius;
 	}
 
 	&.disabled {
-		opacity: $chip-disabled-opacity;
+		opacity: variables.$chip-disabled-opacity;
 		pointer-events: none;
 		user-select: none;
 	}

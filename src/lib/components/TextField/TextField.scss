@@ -1,6 +1,9 @@
 @use 'sass:math';
 @use '../Input/Input.scss';
-@import './variables';
+@use 'variables';
+@use "../../styles/tools/elevation";
+@use "../../styles/variables" as styles-variables;
+
 
 .s-text-field__input {
 	display: flex;
@@ -29,13 +32,13 @@
 		max-width: 90%;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		top: $text-field-label-top;
+		top: variables.$text-field-label-top;
 		pointer-events: none;
 		transform-origin: top left;
 
 		&.active {
 			max-width: 133%;
-			transform: $text-field-label-active-transform;
+			transform: variables.$text-field-label-active-transform;
 		}
 	}
 
@@ -43,8 +46,8 @@
 	&>textarea {
 		caret-color: inherit;
 		flex: 1 1 auto;
-		line-height: $text-field-line-height;
-		padding: $text-field-padding;
+		line-height: variables.$text-field-line-height;
+		padding: variables.$text-field-padding;
 		max-width: 100%;
 		min-width: 0;
 		width: 100%;
@@ -65,7 +68,7 @@
 	display: flex;
 	align-items: center;
 
-	transition: $primary-transition;
+	transition: styles-variables.$primary-transition;
 
 	&::before,
 	&::after {
@@ -115,7 +118,7 @@
 
 	&> {
 		[slot='prepend'] {
-			margin-right: $text-field-prepend-append-margin;
+			margin-right: variables.$text-field-prepend-append-margin;
 		}
 
 		[slot='append'] {
@@ -135,12 +138,12 @@
 		}
 
 		label {
-			top: $text-field-outlined-label-top;
+			top: variables.$text-field-outlined-label-top;
 
 			&.active {
 				padding: 0 4px;
 				background-color: var(--theme-surface);
-				transform: $text-field-outlined-label-active-transform;
+				transform: variables.$text-field-outlined-label-active-transform;
 			}
 		}
 	}
@@ -148,16 +151,16 @@
 	&.outlined,
 	&.solo,
 	&.filled {
-		padding: $text-field-wrapper-padding;
+		padding: variables.$text-field-wrapper-padding;
 	}
 
 	&.filled,
 	&.outlined {
-		min-height: $text-field-filled-outlined-min-height;
+		min-height: variables.$text-field-filled-outlined-min-height;
 	}
 
 	&.filled {
-		border-radius: $text-field-filled-border-radius;
+		border-radius: variables.$text-field-filled-border-radius;
 		background-color: var(--theme-text-fields-filled);
 
 		&:hover {
@@ -166,14 +169,14 @@
 
 		input,
 		textarea {
-			padding-top: $text-field-filled-margin-top;
+			padding-top: variables.$text-field-filled-margin-top;
 		}
 
 		label {
-			top: $text-field-filled-label-top;
+			top: variables.$text-field-filled-label-top;
 
 			&.active {
-				transform: $text-field-filled-label-active-transform;
+				transform: variables.$text-field-filled-label-active-transform;
 			}
 		}
 	}
@@ -188,12 +191,12 @@
 
 	&.outlined,
 	&.solo {
-		border-radius: $text-field-border-radius;
+		border-radius: variables.$text-field-border-radius;
 	}
 
 	&.solo {
-		min-height: $text-field-solo-min-height;
-		@include elevation($text-field-solo-depth);
+		min-height: variables.$text-field-solo-min-height;
+		@include elevation.elevation(variables.$text-field-solo-depth);
 
 		&::before {
 			display: none;
@@ -201,19 +204,19 @@
 	}
 
 	&.rounded {
-		border-radius: $text-field-rounded-border-radius;
+		border-radius: variables.$text-field-rounded-border-radius;
 
 		&.filled::before {
 			border: none;
 		}
 
 		&.outlined {
-			padding: $text-field-outlined-rounded-padding;
+			padding: variables.$text-field-outlined-rounded-padding;
 		}
 	}
 
 	&.flat {
-		@include elevation(0, true);
+		@include elevation.elevation(0, true);
 	}
 }
 
@@ -228,28 +231,28 @@
 
 	&.dense {
 		input {
-			padding: $text-field-dense-padding;
+			padding: variables.$text-field-dense-padding;
 		}
 
 		.s-text-field__wrapper {
 
 			&.outlined,
 			&.filled {
-				min-height: $text-field-filled-outlined-dense-min-height;
+				min-height: variables.$text-field-filled-outlined-dense-min-height;
 			}
 
 			&.outlined {
 				label {
-					top: $text-field-outlined-dense-label-top;
+					top: variables.$text-field-outlined-dense-label-top;
 
 					&.active {
-						transform: $text-field-outlined-dense-label-active-transform;
+						transform: variables.$text-field-outlined-dense-label-active-transform;
 					}
 				}
 			}
 
 			&.solo {
-				min-height: $text-field-solo-dense-min-height;
+				min-height: variables.$text-field-solo-dense-min-height;
 			}
 
 			&.filled {
@@ -260,10 +263,10 @@
 				}
 
 				label {
-					top: $text-field-filled-dense-label-top;
+					top: variables.$text-field-filled-dense-label-top;
 
 					&.active {
-						transform: $text-field-filled-dense-label-active-transform;
+						transform: variables.$text-field-filled-dense-label-active-transform;
 					}
 				}
 			}

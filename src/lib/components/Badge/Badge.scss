@@ -1,27 +1,29 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-badge {
 	display: inline-flex;
-	line-height: $badge-line-height;
+	line-height: variables.$badge-line-height;
 	position: relative;
 
 	.s-badge__badge {
-		color: $badge-color;
+		color: variables.$badge-color;
 		display: inline-block;
-		font-size: $badge-font-size;
-		height: $badge-height;
-		letter-spacing: $badge-letter-spacing;
+		font-size: variables.$badge-font-size;
+		height: variables.$badge-height;
+		letter-spacing: variables.$badge-letter-spacing;
 		line-height: 1;
-		min-width: $badge-min-width;
-		padding: $badge-padding;
+		min-width: variables.$badge-min-width;
+		padding: variables.$badge-padding;
 		pointer-events: auto;
 		position: absolute;
 		text-align: center;
 		text-indent: 0;
-		top: $badge-top;
-		transition: $primary-transition;
+		top: variables.$badge-top;
+		transition: styles-variables.$primary-transition;
 		white-space: nowrap;
-		right: $badge-right;
+		right: variables.$badge-right;
 
 		&::after {
 			color: var(--theme-cards);
@@ -29,13 +31,13 @@
 
 		.s-icon {
 			color: inherit;
-			font-size: $badge-font-size;
-			margin: $badge-icon-margin;
+			font-size: variables.$badge-font-size;
+			margin: variables.$badge-icon-margin;
 		}
 
 		.s-img {
-			height: $badge-font-size;
-			width: $badge-font-size;
+			height: variables.$badge-font-size;
+			width: variables.$badge-font-size;
 		}
 
 		&:not(.bottom) {
@@ -57,13 +59,13 @@
 		}
 
 		&:not(.tile) {
-			border-radius: $badge-border-radius;
+			border-radius: variables.$badge-border-radius;
 		}
 
 		&.bordered {
 			&::after {
 				border-radius: inherit;
-				border-width: $badge-bordered-width;
+				border-width: variables.$badge-bordered-width;
 				border-style: solid;
 				bottom: 0;
 				pointer-events: none;
@@ -77,14 +79,14 @@
 		}
 
 		&.dot {
-			border-radius: $badge-dot-border-radius;
-			height: $badge-dot-height;
+			border-radius: variables.$badge-dot-border-radius;
+			height: variables.$badge-dot-height;
 			min-width: 0;
 			padding: 0;
-			width: $badge-dot-width;
+			width: variables.$badge-dot-width;
 
 			&::after {
-				border-width: $badge-dot-border-width;
+				border-width: variables.$badge-dot-border-width;
 			}
 		}
 	}

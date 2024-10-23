@@ -1,12 +1,12 @@
-@import './variables';
+@use 'variables';
 
 .s-table-cell:nth-of-type(2) {
-	padding-left: calc($tbl-expand-width * var(--tbl-level));
+	padding-left: calc(variables.$tbl-expand-width * var(--tbl-level));
 }
 
 .s-table-expand {
 	position: relative;
-	left: calc($tbl-expand-width * var(--tbl-level));
+	left: calc(variables.$tbl-expand-width * var(--tbl-level));
 }
 .s-table-sorter {
 	cursor: pointer;

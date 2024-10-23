@@ -1,5 +1,6 @@
 @use '../tools/colors';
 @use '../variables' as *;
+@use 'theme/material-theme' as *;
 
 @each $color,
 $value in ('primary': $primary-color,

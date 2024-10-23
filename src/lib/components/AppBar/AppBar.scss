@@ -1,4 +1,6 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/tools/elevation";
+
 
 .s-app-bar {
 	background-color: var(--theme-app-bar);
@@ -8,7 +10,7 @@
 	max-width: 100%;
 	position: relative;
 	z-index: 5;
-	transition: $app-bar-transition;
+	transition: variables.$app-bar-transition;
 
 	.s-app-bar__wrapper {
 		height: var(--s-app-bar-height);
@@ -37,7 +39,7 @@
 	}
 
 	&:not(.flat) {
-		@include elevation($app-bar-elevation);
+		@include elevation.elevation(variables.$app-bar-elevation);
 	}
 
 	&.dense {

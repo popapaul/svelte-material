@@ -1,4 +1,4 @@
-@import './variables';
+@use 'variables';
 
 .s-window-item {
 	position: relative;
@@ -8,7 +8,7 @@
 	float: left;
 	margin-right: -100%;
 	backface-visibility: hidden;
-	transition: 0.3s $window-transition-function;
+	transition: 0.3s variables.$window-transition-function;
 
 	&.active,
 	&.next,

@@ -1,10 +1,13 @@
-@import './variables';
+@use "sass:map";
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-progress-linear {
 	background: transparent;
 	overflow: hidden;
 	position: relative;
-	transition: 0.2s map-get($transitions, 'ease-in-out');
+	transition: 0.2s map.get(styles-variables.$transitions, 'ease-in-out');
 	width: 100%;
 	color: var(--theme-text-primary);
 
@@ -13,7 +16,7 @@
 	}
 
 	&.rounded {
-		border-radius: $progress-linear-border-radius;
+		border-radius: variables.$progress-linear-border-radius;
 	}
 
 	.background,
@@ -27,8 +30,8 @@
 
 	.determinate {
 		&.striped {
-			background-image: $progress-linear-stripe-gradient;
-			background-size: $progress-linear-stripe-background-size;
+			background-image: variables.$progress-linear-stripe-gradient;
+			background-size: variables.$progress-linear-stripe-background-size;
 			background-repeat: repeat;
 		}
 	}
@@ -54,11 +57,11 @@
 		background: transparent !important;
 		animation: stream linear 0.25s infinite;
 		bottom: 0;
-		opacity: $progress-linear-stream-opacity;
+		opacity: variables.$progress-linear-stream-opacity;
 		pointer-events: none;
 		position: absolute;
-		border-top: $progress-linear-stream-border-width dotted;
-		top: calc(50% - #{$progress-linear-stream-border-width * 0.5});
+		border-top: variables.$progress-linear-stream-border-width dotted;
+		top: calc(50% - #{variables.$progress-linear-stream-border-width * 0.5});
 		transition: inherit;
 	}
 
@@ -88,7 +91,7 @@
 
 		.stream {
 			left: auto;
-			right: -$progress-linear-stream-border-width * 2;
+			right: -(variables.$progress-linear-stream-border-width) * 2;
 		}
 	}
 }

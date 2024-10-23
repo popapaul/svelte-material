@@ -1,3 +1,5 @@
+@use "sass:map";
+@use "sass:meta";
 @use './variables' as *;
 
 @function -flatten($map, $prefix: '') {
@@ -5,12 +7,12 @@
 	);
 
 @each $x, $y in $map {
-	@if type-of($y)=='map' {
-		$output: map-merge($output, -flatten($y, $prefix + '-' + $x));
+	@if meta.type-of($y)=='map' {
+		$output: map.merge($output, -flatten($y, $prefix + '-' + $x));
 	}
 
 	@else {
-		$output: map-merge($output,
+		$output: map.merge($output,
 				('--theme#{$prefix}-#{$x}': $y));
 	}
 }
@@ -26,9 +28,5 @@
 
 		background-color: var(--theme-background);
 		color: var(--theme-text-primary);
-
-		a {
-			color: map-deep-get($material, 'text', 'link');
-		}
 	}
 }

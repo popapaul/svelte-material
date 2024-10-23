@@ -1,8 +1,10 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-tabs-bar {
 	border-radius: inherit;
-	height: $tabs-bar-height;
+	height: variables.$tabs-bar-height;
 	display: flex;
 	background-color: var(--theme-cards);
 
@@ -33,13 +35,13 @@
 	}
 
 	&.icons {
-		height: $tabs-icons-and-text-bar-height;
+		height: variables.$tabs-icons-and-text-bar-height;
 
 		.s-tab {
 			flex-direction: column;
 
 			> .s-icon {
-				margin-bottom: $tabs-icons-and-text-first-tab-margin-bottom;
+				margin-bottom: variables.$tabs-icons-and-text-first-tab-margin-bottom;
 			}
 		}
 	}
@@ -60,7 +62,7 @@
 	bottom: 0;
 	margin: 0 !important;
 	position: absolute;
-	transition: $primary-transition;
+	transition: styles-variables.$primary-transition;
 	z-index: 1;
 	background-color: currentColor;
 	height: 2px;
@@ -92,12 +94,12 @@
 			}
 
 			.s-tab {
-				height: $tabs-item-vertical-height;
+				height: variables.$tabs-item-vertical-height;
 			}
 
 			&.icons {
 				.s-tab {
-					height: $tabs-item-vertical-icons-and-text-height;
+					height: variables.$tabs-item-vertical-icons-and-text-height;
 				}
 			}
 		}

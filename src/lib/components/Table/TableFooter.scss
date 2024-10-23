@@ -1,14 +1,14 @@
-@import './variables';
+@use 'variables';
 .s-table-footer {
 	position: sticky;
 	bottom: 0;
 	.s-table-row {
-		border-top-color: $tbl-border-color;
+		border-top-color: variables.$tbl-border-color;
 		border-top-style: solid;
-		border-top-width: $tbl-border-width;
+		border-top-width: variables.$tbl-border-width;
 
 		&:hover {
-			background-color: $tbl-background-hover;
+			background-color: variables.$tbl-background-hover;
 		}
 	}
 }

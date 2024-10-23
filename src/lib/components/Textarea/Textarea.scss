@@ -1,4 +1,4 @@
-@import './variables';
+@use 'variables';
 
 .s-textarea {
 	.s-text-field__wrapper {
@@ -6,36 +6,36 @@
 			[slot='prepend'],
 			[slot='append'] {
 				align-self: flex-start;
-				margin-top: $textarea-icon-margin-top;
+				margin-top: variables.$textarea-icon-margin-top;
 			}
 		}
 
 		&.filled {
 			[slot='prepend'],
 			[slot='append'] {
-				margin-top: $textarea-filled-icon-margin-top;
+				margin-top: variables.$textarea-filled-icon-margin-top;
 			}
 		}
 
 		&.outlined {
 			[slot='prepend'],
 			[slot='append'] {
-				margin-top: $textarea-outlined-icon-margin-top + 2;
+				margin-top: variables.$textarea-outlined-icon-margin-top + 2;
 			}
 
 			textarea {
-				margin-top: $textarea-outlined-icon-margin-top;
+				margin-top: variables.$textarea-outlined-icon-margin-top;
 			}
 		}
 
 		&.solo {
 			[slot='prepend'],
 			[slot='append'] {
-				margin-top: $textarea-solo-icon-margin-top;
+				margin-top: variables.$textarea-solo-icon-margin-top;
 			}
 
 			textarea {
-				margin-top: $textarea-solo-icon-margin-top;
+				margin-top: variables.$textarea-solo-icon-margin-top;
 			}
 		}
 

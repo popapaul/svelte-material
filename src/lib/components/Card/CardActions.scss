@@ -1,7 +1,7 @@
-@import './variables';
+@use 'variables';
 
 .s-card-actions {
 	align-items: center;
 	display: flex;
-	padding: $card-actions-padding;
+	padding: variables.$card-actions-padding;
 }

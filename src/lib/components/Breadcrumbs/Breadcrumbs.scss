@@ -1,13 +1,13 @@
-@import './variables';
+@use 'variables';
 
 .s-breadcrumbs {
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	flex: $breadcrumbs-flex;
+	flex: variables.$breadcrumbs-flex;
 	list-style-type: none;
-	margin: $breadcrumbs-margin;
-	padding: $breadcrumbs-padding;
+	margin: variables.$breadcrumbs-margin;
+	padding: variables.$breadcrumbs-padding;
 
 	.s-breadcrumb-item {
 		align-items: center;
@@ -23,14 +23,14 @@
 	li {
 		align-items: center;
 		display: inline-flex;
-		font-size: $breadcrumbs-item-font-size;
+		font-size: variables.$breadcrumbs-item-font-size;
 
 		.s-icon {
-			font-size: $breadcrumbs-item-large-font-size;
+			font-size: variables.$breadcrumbs-item-large-font-size;
 		}
 
 		&:nth-child(even) {
-			padding: $breadcrumbs-even-child-padding;
+			padding: variables.$breadcrumbs-even-child-padding;
 		}
 
 		&.divider {
@@ -40,10 +40,10 @@
 
 	&.large {
 		li {
-			font-size: $breadcrumbs-item-large-font-size;
+			font-size: variables.$breadcrumbs-item-large-font-size;
 
 			.s-icon {
-				font-size: $breadcrumbs-item-large-font-size;
+				font-size: variables.$breadcrumbs-item-large-font-size;
 			}
 		}
 	}

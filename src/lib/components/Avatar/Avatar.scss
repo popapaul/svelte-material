@@ -1,4 +1,8 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/tools/colors";
+@use "../../styles/tools/functions";
+@use "../../styles/variables" as styles-variables;
+
 
 .s-avatar {
 	align-items: center;
@@ -12,12 +16,12 @@
 	width: var(--s-avatar-size);
 	height: var(--s-avatar-size);
 
-	@include has-theme-bg {
-		color: map-deep-get($material-dark-theme, 'text', 'primary');
+	@include colors.has-theme-bg {
+		color: functions.map-deep-get(styles-variables.$material-dark-theme, 'text', 'primary');
 	}
 
 	&:not(.tile) {
-		border-radius: $avatar-border-radius;
+		border-radius: variables.$avatar-border-radius;
 	}
 
 	.s-icon,

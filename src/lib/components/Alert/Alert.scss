@@ -1,15 +1,20 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/tools/colors";
+@use "../../styles/tools/elevation";
+@use "../../styles/tools/functions";
+@use "../../styles/variables" as styles-variables;
+
 
 .s-alert {
 	display: block;
-	font-size: $alert-font-size;
-	margin-bottom: $alert-margin;
-	padding: $alert-padding;
+	font-size: variables.$alert-font-size;
+	margin-bottom: variables.$alert-margin;
+	padding: variables.$alert-padding;
 	position: relative;
 	color: var(--theme-text-primary);
 
-	@include has-theme-bg {
-		color: map-deep-get($material-dark-theme, 'text', 'primary');
+	@include colors.has-theme-bg {
+		color: functions.map-deep-get(styles-variables.$material-dark-theme, 'text', 'primary');
 	}
 
 	& .s-btn.top {
@@ -20,7 +25,7 @@
 
 	.s-alert__border {
 		border-style: solid;
-		border-width: $alert-border-width;
+		border-width: variables.$alert-border-width;
 		content: '';
 		position: absolute;
 
@@ -62,17 +67,17 @@
 	}
 
 	&.dense {
-		padding-top: $alert-padding * 0.5;
-		padding-bottom: $alert-padding * 0.5;
+		padding-top: variables.$alert-padding * 0.5;
+		padding-bottom: variables.$alert-padding * 0.5;
 
 		.s-alert__border {
-			border-width: $alert-dense-border-width;
+			border-width: variables.$alert-dense-border-width;
 		}
 	}
 
 	&.outlined {
 		background: transparent;
-		border: $alert-outline;
+		border: variables.$alert-outline;
 	}
 
 	&.text {
@@ -93,16 +98,16 @@
 	}
 
 	&:not(.tile) {
-		border-radius: $alert-border-radius;
+		border-radius: variables.$alert-border-radius;
 	}
 
 	&.colored-border {
-		@include elevation(2);
+		@include elevation.elevation(2);
 	}
 
 	&:not(.colored-border) {
 		.s-alert__border {
-			opacity: $alert-border-opacity;
+			opacity: variables.$alert-border-opacity;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-@import './variables';
+@use 'variables';
 
 .s-divider {
 	display: block;
@@ -12,8 +12,8 @@
 	transition: inherit;
 
 	&.inset:not(.vertical) {
-		max-width: calc(100% - #{$divider-inset-margin});
-		margin-left: $divider-inset-margin;
+		max-width: calc(100% - #{variables.$divider-inset-margin});
+		margin-left: variables.$divider-inset-margin;
 	}
 
 	&.vertical {
@@ -29,9 +29,9 @@
 		vertical-align: text-bottom;
 
 		&.inset {
-			margin-top: $divider-inset-margin-top;
+			margin-top: variables.$divider-inset-margin-top;
 			min-height: 0;
-			max-height: $divider-inset-max-height;
+			max-height: variables.$divider-inset-max-height;
 		}
 	}
 }

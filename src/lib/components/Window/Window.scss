@@ -1,10 +1,10 @@
-@import './variables';
+@use 'variables';
 
 .s-window {
 	position: relative;
 	width: 100%;
 	overflow: hidden;
-	transition: 0.3s $window-transition-function;
+	transition: 0.3s variables.$window-transition-function;
 
 	&.horizontal {
 		.s-window-item {

@@ -1,5 +1,5 @@
-@import '../../styles/variables';
+@use '../../styles/variables';
 
-$menu-content-border-radius: $border-radius-root !default;
+$menu-content-border-radius: variables.$border-radius-root !default;
 $menu-content-elevation: 8 !default;
 $menu-max-height: 400px;

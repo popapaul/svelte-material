@@ -1,11 +1,11 @@
-@import './variables';
+@use 'variables';
 
 .s-btn-group-item {
 	border-radius: 0;
 	border-style: solid;
 	border-width: thin;
-	opacity: $btn-group-btn-opacity;
-	padding: $btn-group-btn-padding;
+	opacity: variables.$btn-group-btn-opacity;
+	padding: variables.$btn-group-btn-padding;
 
 	&:first-child {
 		border-top-left-radius: inherit;

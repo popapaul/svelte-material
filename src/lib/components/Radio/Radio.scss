@@ -1,4 +1,7 @@
-@import './variables';
+@use "sass:map";
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-radio {
 	display: flex;
@@ -24,9 +27,9 @@
 	pointer-events: none;
 
 	&::before {
-		transition: 60ms map-get($transitions, 'ease-in-out');
-		width: $radio-size - 8;
-		height: $radio-size - 8;
+		transition: 60ms map.get(styles-variables.$transitions, 'ease-in-out');
+		width: variables.$radio-size - 8;
+		height: variables.$radio-size - 8;
 		border-radius: 100%;
 		content: '';
 		background-color: currentColor;
@@ -41,8 +44,8 @@
 	justify-content: center;
 	align-items: center;
 	flex: 0 0 auto;
-	height: $radio-size;
-	width: $radio-size;
+	height: variables.$radio-size;
+	width: variables.$radio-size;
 	position: relative;
 	user-select: none;
 	border-radius: 100%;
@@ -77,8 +80,8 @@
 
 	input {
 		position: absolute;
-		width: $radio-size * 2;
-		height: $radio-size * 2;
+		width: variables.$radio-size * 2;
+		height: variables.$radio-size * 2;
 		cursor: inherit;
 		opacity: 0;
 		margin: 0;

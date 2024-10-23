@@ -1,15 +1,17 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/tools/elevation";
+
 
 .s-menu {
 	padding: 0;
 	background-color: var(--theme-surface);
 	contain: content;
-	max-height: $menu-max-height;
+	max-height: variables.$menu-max-height;
 	overflow: auto;
-	@include elevation($menu-content-elevation);
+	@include elevation.elevation(variables.$menu-content-elevation);
 
 	&:not(.tile) {
-		border-radius: $menu-content-border-radius;
+		border-radius: variables.$menu-content-border-radius;
 	}
 }
 

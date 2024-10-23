@@ -1,6 +1,6 @@
-@import '../../styles/variables';
+@use '../../styles/variables';
 
-$progress-linear-border-radius: $border-radius-root !default;
+$progress-linear-border-radius: variables.$border-radius-root !default;
 $progress-linear-stream-opacity: 0.3 !default;
 $progress-linear-stream-border-width: 4px !default;
 $progress-linear-stripe-gradient: linear-gradient(

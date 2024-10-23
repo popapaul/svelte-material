@@ -1,3 +1,4 @@
+@use "sass:map";
 // Adapted from: https://github.com/vuetifyjs/vuetify/blob/master/packages/vuetify/src/styles/settings/_elevations.scss
 $_shadow-key-umbra-opacity: rgba(0, 0, 0, 0.2) !default;
 $_shadow-key-penumbra-opacity: rgba(0, 0, 0, 0.14) !default;
@@ -239,7 +240,7 @@ $_shadow-key-ambient: (
 
 @mixin elevation($z, $important: false) {
 	/* prettier-ignore */
-	box-shadow: map-get($_shadow-key-umbra, $z),
-    map-get($_shadow-key-penumbra, $z),
-    map-get($_shadow-key-ambient, $z) if($important, !important, null);
+	box-shadow: map.get($_shadow-key-umbra, $z),
+    map.get($_shadow-key-penumbra, $z),
+    map.get($_shadow-key-ambient, $z) if($important, !important, null);
 }

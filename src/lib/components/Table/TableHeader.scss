@@ -1,4 +1,4 @@
-@import './variables';
+@use 'variables';
 
 .s-table-head {
 	background-color: var(--theme-surface);
@@ -11,6 +11,6 @@
 	.s-table-row {
 		border-top-width: 0;
 		height: 56px;
-		font-weight: $tbl-head-font-weight;
+		font-weight: variables.$tbl-head-font-weight;
 	}
 }

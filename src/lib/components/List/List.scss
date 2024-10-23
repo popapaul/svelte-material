@@ -1,14 +1,14 @@
-@import './variables';
+@use 'variables';
 
 .s-list {
 	color: var(--theme-text-primary);
 	display: block;
-	padding: $list-padding;
-	padding-top: $list-padding-top;
+	padding: variables.$list-padding;
+	padding-top: variables.$list-padding-top;
 	position: static;
 
 	.s-subheader {
-		padding-top: $list-subheader-padding-top;
+		padding-top: variables.$list-subheader-padding-top;
 	}
 
 	.s-list-item.active {
@@ -21,9 +21,9 @@
 
 	&.dense {
 		.s-subheader {
-			font-size: $list-dense-subheader-font-size;
-			height: $list-dense-subheader-height;
-			padding: $list-dense-subheader-padding;
+			font-size: variables.$list-dense-subheader-font-size;
+			height: variables.$list-dense-subheader-height;
+			padding: variables.$list-dense-subheader-padding;
 		}
 	}
 
@@ -36,15 +36,15 @@
 	}
 
 	&.nav {
-		padding-left: $list-nav-padding-left;
-		padding-right: $list-nav-padding-right;
+		padding-left: variables.$list-nav-padding-left;
+		padding-right: variables.$list-nav-padding-right;
 
 		.s-list-item {
-			padding: $list-nav-item-padding;
-			border-radius: $list-nav-border-radius;
+			padding: variables.$list-nav-item-padding;
+			border-radius: variables.$list-nav-border-radius;
 
 			&::before {
-				border-radius: $list-nav-border-radius;
+				border-radius: variables.$list-nav-border-radius;
 			}
 		}
 	}
@@ -52,11 +52,11 @@
 	&.nav,
 	&.rounded {
 		.s-list-item:not(:last-child):not(:only-child) {
-			margin-bottom: $list-nav-rounded-item-margin-bottom;
+			margin-bottom: variables.$list-nav-rounded-item-margin-bottom;
 		}
 
 		.s-list-item.dense:not(:last-child):not(:only-child) {
-			margin-bottom: $list-nav-rounded-dense-item-margin-bottom;
+			margin-bottom: variables.$list-nav-rounded-dense-item-margin-bottom;
 		}
 	}
 

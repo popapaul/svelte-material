@@ -1,4 +1,4 @@
-@import './variables';
+@use 'variables';
 
 .s-select {
 	max-width: 100%;
@@ -24,7 +24,7 @@
 		//   width: 0px;
 		// }
 		.s-chip {
-			margin: $select-chip-margin;
+			margin: variables.$select-chip-margin;
 		}
 	}
 }

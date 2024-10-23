@@ -1,4 +1,6 @@
-@import './variables';
+@use 'variables';
+@use "../../styles/variables" as styles-variables;
+
 
 .s-checkbox {
 	display: flex;
@@ -24,7 +26,7 @@
 	border-radius: 2px;
 	color: inherit;
 	background-color: transparent;
-	transition: background-color $primary-transition;
+	transition: background-color styles-variables.$primary-transition;
 	pointer-events: none;
 }
 
@@ -34,8 +36,8 @@
 	justify-content: center;
 	align-items: center;
 	flex: 0 0 auto;
-	height: $checkbox-size;
-	width: $checkbox-size;
+	height: variables.$checkbox-size;
+	width: variables.$checkbox-size;
 	position: relative;
 	user-select: none;
 	border-radius: 100%;
@@ -65,14 +67,14 @@
 	}
 
 	&.disabled {
-		opacity: $checkbox-disabled-opacity;
+		opacity: variables.$checkbox-disabled-opacity;
 		color: var(--theme-controls-disabled) !important;
 	}
 
 	input {
 		position: absolute;
-		width: $checkbox-size * 2;
-		height: $checkbox-size * 2;
+		width: variables.$checkbox-size * 2;
+		height: variables.$checkbox-size * 2;
 		cursor: inherit;
 		opacity: 0;
 		margin: 0;
