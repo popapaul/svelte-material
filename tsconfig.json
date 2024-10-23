@@ -7,7 +7,7 @@
 		"target": "ES2021",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"noImplicitAny": false,
 		"strictNullChecks": false,
 		"skipLibCheck": true,
