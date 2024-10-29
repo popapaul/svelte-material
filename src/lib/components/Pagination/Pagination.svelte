@@ -43,12 +43,10 @@
 </script>
 
 <div class="s-pagination {klass}">
-	<span style="width:120px; {style}"
-		>{page * pageSize + 1}-{Math.min((Number(page) + 1) * pageSize, count)} din {count}</span
-	>
+	<span style="width:120px; {style}">{page * pageSize + 1}-{Math.min((Number(page) + 1) * pageSize, count)} din {count}</span>
 	{#if pageSelect}
 		<Select
-			style="width:60px;"
+			style="max-width:120px;"
 			mandatory
 			items={pageSizes.map((size) => ({ name: size?.toString(), value: size }))}
 			bind:value={pageSize}
