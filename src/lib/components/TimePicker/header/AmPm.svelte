@@ -1,12 +1,14 @@
 <script lang="ts">
+	import { stopPropagation } from 'svelte/legacy';
+
 	import { createEventDispatcher } from 'svelte';
 	import { isAm } from '../scripts/dates';
 
 	const dispatch = createEventDispatcher();
 </script>
 
-<button class="_tp-part" on:click|stopPropagation={() => dispatch('am')}> AM </button>
-<button class="_tp-part" on:click|stopPropagation={() => dispatch('pm')}> PM </button>
+<button class="_tp-part" onclick={stopPropagation(() => dispatch('am'))}> AM </button>
+<button class="_tp-part" onclick={stopPropagation(() => dispatch('pm'))}> PM </button>
 
 <style>
 	._tp-part {

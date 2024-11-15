@@ -3,6 +3,9 @@
 </script>
 
 <script lang="ts">
+	import { run, createBubbler, handlers } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import './Radio.scss';
 	import TextColor from '../../internal/TextColor';
 	import { ripple as Ripple } from '../../actions/Ripple';
@@ -12,37 +15,54 @@
 	const context = getContext<FormContext>(FORM_FIELDS);
 
 	// Add class to radio wrapper.
-	let klass = '';
-	export { klass as class };
+	
 
 	// Color of the radio when active.
-	export let color = 'primary';
 
 	// Disables the radio.
-	export let disabled = false;
 
 	// Bind radio to a group.
-	export let group: string | number | string[] | boolean = null;
 
 	// Value for the radio.
-	export let value: string | number | string[] | boolean = null;
 
 	// Id for the checkbox.
-	export let id = null;
 
 	// Styles for the radio wrapper.
-	export let style = null;
 
-	/**
+	
+
+	// The <input/> element of the radio.
+	interface Props {
+		class?: string;
+		color?: string;
+		disabled?: boolean;
+		group?: string | number | string[] | boolean;
+		value?: string | number | string[] | boolean;
+		id?: any;
+		style?: any;
+		/**
 	 * A list of validator functions that take the radio field value and return an error
 	 * message, or `true` otherwise.
 	 */
-	export let rules: ((value: any) => string)[] = [];
+		rules?: ((value: any) => string)[];
+		inputElement?: any;
+		children?: import('svelte').Snippet;
+	}
 
-	// The <input/> element of the radio.
-	export let inputElement = null;
+	let {
+		class: klass = '',
+		color = 'primary',
+		disabled = false,
+		group = $bindable(null),
+		value = null,
+		id = $bindable(null),
+		style = null,
+		rules = [],
+		inputElement = $bindable(null),
+		children
+	}: Props = $props();
 
-	let errorMessages: string[] = [];
+	let errorMessages: string[] = $state([]);
 
 	export function validate() {
 		errorMessages = rules.map((r) => r(group)).filter((r) => typeof r === 'string');
@@ -53,12 +73,14 @@
 		if (!rules.map((r) => r(group)).filter((r) => typeof r === 'string').length) errorMessages = [];
 	};
 
-	$: check(group);
+	run(() => {
+		check(group);
+	});
 
 	context?.register({ id, validate });
 
 	id = id || `s-radio-${uid(5)}`;
-	$: active = group === value;
+	let active = $derived(group === value);
 </script>
 
 <div class="s-radio {klass}" {style}>
@@ -72,22 +94,21 @@
 			type="radio"
 			bind:this={inputElement}
 			bind:group
-			on:change
-			on:change={validate}
+			onchange={handlers(bubble('change'), validate)}
 			{id}
 			{value}
 			{disabled}
 		/>
-		<div class="s-radio__background" />
+		<div class="s-radio__background"></div>
 	</div>
 	<div
 		style="display:flex;flex-direction:column"
 		use:TextColor={!!errorMessages.length ? 'error' : color}
 	>
 		<label for={id}>
-			<slot />
+			{@render children?.()}
 		</label>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label>
 			{#each errorMessages.slice(0, 1) as message}<span>{message}</span>{/each}
 		</label>

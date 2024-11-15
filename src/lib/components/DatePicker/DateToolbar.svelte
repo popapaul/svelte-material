@@ -1,21 +1,25 @@
 <script lang="ts">
 	import { isDate } from '../../internal/Date/date';
-	export let value: Date;
-	export let locale: string;
 	import { createEventDispatcher } from 'svelte';
+	interface Props {
+		value: Date;
+		locale: string;
+	}
+
+	let { value, locale }: Props = $props();
 	const dispatch = createEventDispatcher();
 </script>
 
 <div class="header">
 	{#if isDate(value)}
-		<button class="year" on:click={() => dispatch('mode', 'year')}
+		<button class="year" onclick={() => dispatch('mode', 'year')}
 			>{('000' + value.getFullYear()).slice(-4)}</button
 		>
 		<div class="date">
-			<button on:click={() => dispatch('mode', 'days')}>
+			<button onclick={() => dispatch('mode', 'days')}>
 				{new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric' }).format(value)}
 			</button>
-			<button on:click={() => dispatch('mode', 'month')}>
+			<button onclick={() => dispatch('mode', 'month')}>
 				{new Intl.DateTimeFormat(locale, { month: 'short' }).format(value)}
 			</button>
 		</div>

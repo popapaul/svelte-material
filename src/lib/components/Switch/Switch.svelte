@@ -3,42 +3,49 @@
 </script>
 
 <script>
+	import { createBubbler, handlers } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import './Switch.scss';
 	import TextColor from '../../internal/TextColor';
 
 	// Add class to switch wrapper.
-	let klass = '';
-	export { klass as class };
+	
 
 	// Color of the switch when active.
-	export let color = 'primary';
 
 	// The value for the switch.
-	export let value = null;
 
 	// Combines components into a single group.
-	export let group = [];
 
 	// Get/Set checked state.
-	export let checked = false;
 
 	// make switch inset.
-	export let inset = false;
 
 	// Makes the switch dense.
-	export let dense = false;
 
 	// Disables the switch.
-	export let disabled = false;
 
 	// Id for switch.
-	export let id = null;
 
 	// Styles to add to switch.
-	export let style = null;
 
 	// The <input/> element of the switch.
-	export let inputElement = null;
+	/** @type {{class?: string, color?: string, value?: any, group?: any, checked?: boolean, inset?: boolean, dense?: boolean, disabled?: boolean, id?: any, style?: any, inputElement?: any, children?: import('svelte').Snippet}} */
+	let {
+		class: klass = '',
+		color = 'primary',
+		value = null,
+		group = $bindable([]),
+		checked = $bindable(false),
+		inset = false,
+		dense = false,
+		disabled = false,
+		id = $bindable(null),
+		style = null,
+		inputElement = $bindable(null),
+		children
+	} = $props();
 
 	id = id || `s-switch-${uid(5)}`;
 
@@ -77,13 +84,12 @@
 			{id}
 			{disabled}
 			{value}
-			on:change={groupUpdate}
-			on:change
+			onchange={handlers(groupUpdate, bubble('change'))}
 		/>
-		<div class="s-switch__track" />
-		<div class="s-switch__thumb" />
+		<div class="s-switch__track"></div>
+		<div class="s-switch__thumb"></div>
 	</div>
 	<label for={id}>
-		<slot />
+		{@render children?.()}
 	</label>
 </div>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run, preventDefault, stopPropagation, passive } from 'svelte/legacy';
+
 	import Hand, { type TimeMode } from './Hand.svelte';
 	import HoursPane from './HoursPane.svelte';
 	import MinutesPane from './MinutesPane.svelte';
@@ -13,20 +15,33 @@
 	/* The class used to animate the hand when the pane change */
 	const TRANSITION_CLASS = '_tp-hasTransition';
 
-	export let clockClassName = '';
-	export let is24h = false;
-	export let minutesIncrement = 1;
-	export let zIndex = 0;
-	export let value = new Date();
-	export let mode: TimeMode = 'hour';
+	interface Props {
+		clockClassName?: string;
+		is24h?: boolean;
+		minutesIncrement?: number;
+		zIndex?: number;
+		value?: any;
+		mode?: TimeMode;
+	}
+
+	let {
+		clockClassName = '',
+		is24h = false,
+		minutesIncrement = 1,
+		zIndex = 0,
+		value = $bindable(new Date()),
+		mode = 'hour'
+	}: Props = $props();
 
 	/* Local variables */
-	let amSelected;
-	$: amSelected = isAm(value);
+	let amSelected = $state();
+	run(() => {
+		amSelected = isAm(value);
+	});
 	let currentPosition = { x: 0, y: 0 };
 	let currentWidth = 0;
 	let mouseDown = false;
-	let transitionClass = TRANSITION_CLASS;
+	let transitionClass = $state(TRANSITION_CLASS);
 	/* Handles the mouse down and touchstart event */
 	const handleMouseDown = (event) => {
 		event.target.style.cursor = 'move';
@@ -93,15 +108,15 @@
 		<!-- The hidden canvas used to manage the mouse events and positions -->
 		<canvas
 			style="z-index:{zIndex + 10};"
-			on:mousedown|stopPropagation|preventDefault={handleMouseDown}
-			on:touchstart|passive|stopPropagation={handleMouseDown}
-			on:mouseenter|stopPropagation|preventDefault={handleMouseEnter}
-			on:mouseleave|stopPropagation|preventDefault={handleMouseLeave}
-			on:touchcancel|stopPropagation|preventDefault={handleMouseLeave}
-			on:mousemove|stopPropagation|preventDefault={handleMouseMove}
-			on:touchmove|passive|stopPropagation={handleMouseMove}
-			on:mouseup|stopPropagation|preventDefault={handleMouseUp}
-			on:touchend|stopPropagation|preventDefault={handleMouseUp}
+			onmousedown={stopPropagation(preventDefault(handleMouseDown))}
+			use:passive={['touchstart', () => stopPropagation(handleMouseDown)]}
+			onmouseenter={stopPropagation(preventDefault(handleMouseEnter))}
+			onmouseleave={stopPropagation(preventDefault(handleMouseLeave))}
+			ontouchcancel={stopPropagation(preventDefault(handleMouseLeave))}
+			onmousemove={stopPropagation(preventDefault(handleMouseMove))}
+			use:passive={['touchmove', () => stopPropagation(handleMouseMove)]}
+			onmouseup={stopPropagation(preventDefault(handleMouseUp))}
+			ontouchend={stopPropagation(preventDefault(handleMouseUp))}
 		>
 		</canvas>
 		<!-- The clock hand -->

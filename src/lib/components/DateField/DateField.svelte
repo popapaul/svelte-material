@@ -9,16 +9,31 @@
 		focus: CustomEvent<any>;
 	};
 
-	export let value: Date = null;
-	export let locale: string = 'ro';
-	export let readonly = false;
-	export let weekStart: number = 1;
-	export let onRender: (date: Date) => { disabled?: boolean; message?: string } = () => ({});
-	export let noDateText: string = 'No Date';
+	interface Props {
+		value?: Date;
+		locale?: string;
+		readonly?: boolean;
+		weekStart?: number;
+		onRender?: (date: Date) => { disabled?: boolean; message?: string };
+		noDateText?: string;
+		children?: import('svelte').Snippet;
+		[key: string]: any
+	}
+
+	let {
+		value = $bindable(null),
+		locale = 'ro',
+		readonly = false,
+		weekStart = 1,
+		onRender = () => ({}),
+		noDateText = 'No Date',
+		children,
+		...rest
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher();
-	let elm;
-	let active = false;
+	let elm = $state();
+	let active = $state(false);
 
 	function open() {
 		active = true;
@@ -54,30 +69,27 @@
 </script>
 
 <Menu closeOnClick={false} bind:active placement="bottom-start">
-	<TextField
-		slot="activator"
-		value={value instanceof Date && !isNaN(value.getTime())
-			? new Intl.DateTimeFormat(locale, {
-					month: 'short',
-					day: 'numeric',
-					year: 'numeric',
-					weekday: 'long'
-			  }).format(value)
-			: ''}
-		{...$$restProps}
-		on:keydown={onkeydown}
-		on:click={onfocus}
-		on:clear={() => (value = null)}
-		on:blur
-		readonly
-		bind:inputElement={elm}
-	>
-		<slot />
-		<slot slot="append" name="append" />
-		<slot slot="prepend-outer" name="prepend-outer" />
-		<slot slot="append-outer" name="append-outer" />
-		<slot slot="prepend" name="prepend" />
-	</TextField>
+	{#snippet activator()}
+		<TextField
+			value={value instanceof Date && !isNaN(value.getTime())
+				? new Intl.DateTimeFormat(locale, {
+						month: 'short',
+						day: 'numeric',
+						year: 'numeric',
+						weekday: 'long'
+				  }).format(value)
+				: ''}
+			{...rest}
+			on:keydown={onkeydown}
+			on:click={onfocus}
+			on:clear={() => (value = null)}
+			on:blur
+			readonly
+			bind:inputElement={elm}
+		>
+			{@render children?.()}
+		</TextField>
+	{/snippet}
 	<DatePicker
 		on:change
 		on:change={handleChange}

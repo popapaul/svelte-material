@@ -3,17 +3,23 @@
 </script>
 
 <script>
+	import { run } from 'svelte/legacy';
+
 	import { onMount, setContext } from 'svelte';
 	import './Window.scss';
-	let klass = '';
-	export { klass as class };
-	export let activeClass = 'active';
-	export let value = 0;
-	export let vertical = false;
-	export let reverse = false;
-	export let continuous = true;
+	
+	/** @type {{class?: string, activeClass?: string, value?: number, vertical?: boolean, reverse?: boolean, continuous?: boolean, children?: import('svelte').Snippet}} */
+	let {
+		class: klass = '',
+		activeClass = 'active',
+		value = $bindable(0),
+		vertical = false,
+		reverse = false,
+		continuous = true,
+		children
+	} = $props();
 
-	let container;
+	let container = $state();
 	const windowItems = [];
 	let moving = false;
 
@@ -61,7 +67,9 @@
 		}
 	}
 
-	$: set(value);
+	run(() => {
+		set(value);
+	});
 
 	export function next() {
 		if (value === windowItems.length - 1) {
@@ -92,5 +100,5 @@
 	class:vertical
 	class:reverse
 >
-	<slot />
+	{@render children?.()}
 </div>

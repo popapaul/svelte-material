@@ -3,42 +3,60 @@
 	import './ButtonGroup.scss';
 
 	// Classes to add to button group.
-	let klass: string = '';
-	export { klass as class };
+	
 
 	// Does not remove box shadow.
-	export let elevated: boolean = false;
 
 	// Remove border.
-	export let borderless: boolean = false;
 
 	// Remove border radius.
-	export let tile: boolean = false;
 
 	// Add border radius to the first and last button.
-	export let rounded: boolean = false;
 
 	// Identifies buttons as active with this class.
-	export let activeClass: string = 'active';
 
 	// Array or string with the active button(s) value.
-	export let value: any | any[];
 
 	// Forces a value to always be selected (if available).
-	export let mandatory: boolean = false;
 
 	// Allow multiple selections, makes the value prop an array.
-	export let multiple: boolean = false;
 
 	// Maximun number of selections.
-	export let max: number = Infinity;
 
 	// Styles to apply to button group.
-	export let style: string = null;
+	interface Props {
+		class?: string;
+		elevated?: boolean;
+		borderless?: boolean;
+		tile?: boolean;
+		rounded?: boolean;
+		activeClass?: string;
+		value: any | any[];
+		mandatory?: boolean;
+		multiple?: boolean;
+		max?: number;
+		style?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		elevated = false,
+		borderless = false,
+		tile = false,
+		rounded = false,
+		activeClass = 'active',
+		value = $bindable(),
+		mandatory = false,
+		multiple = false,
+		max = Infinity,
+		style = null,
+		children
+	}: Props = $props();
 </script>
 
 <ItemGroup on:change bind:value {activeClass} {multiple} {mandatory} {max}>
 	<div class="s-btn-group {klass}" class:elevated class:borderless class:tile class:rounded {style}>
-		<slot />
+		{@render children?.()}
 	</div>
 </ItemGroup>

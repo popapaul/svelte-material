@@ -7,10 +7,19 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let timeClassName: string = '';
-	export let is24h: boolean = true;
-	export let value: Date;
-	export let mode: TimeMode = 'hour';
+	interface Props {
+		timeClassName?: string;
+		is24h?: boolean;
+		value: Date;
+		mode?: TimeMode;
+	}
+
+	let {
+		timeClassName = '',
+		is24h = true,
+		value = $bindable(),
+		mode = 'hour'
+	}: Props = $props();
 
 	/* Handles the AM choice event */
 	function handleAm() {

@@ -76,8 +76,8 @@
 
 	&> {
 
-		[slot='prepend-outer'],
-		[slot='append-outer'] {
+		[slot='prependOuter'],
+		[slot='appendOuter'] {
 			align-self: flex-start;
 			display: inline-flex;
 			margin-bottom: 4px;
@@ -85,12 +85,12 @@
 			line-height: 1;
 		}
 
-		[slot='prepend-outer'] {
-			margin-right: variables.$input-prepend-append-outer-margin;
+		[slot='prependOuter'] {
+			margin-right: variables.$input-prepend-appendOuter-margin;
 		}
 
-		[slot='append-outer'] {
-			margin-left: variables.$input-prepend-append-outer-margin;
+		[slot='appendOuter'] {
+			margin-left: variables.$input-prepend-appendOuter-margin;
 		}
 	}
 

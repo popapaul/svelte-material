@@ -6,6 +6,9 @@
 </script>
 
 <script lang="ts">
+	import { run, createBubbler, handlers } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import './Checkbox.scss';
 	import { ripple as Ripple } from '../../actions/Ripple';
 	import TextColor from '../../internal/TextColor';
@@ -21,53 +24,79 @@
 	}
 
 	// Add class to checkbox wrapper.
-	let klass: string = '';
-	export { klass as class };
+	
 
 	// Class to add to checkbox when it is checked or indeterminate.
-	export let color: string = 'primary';
 
 	// Get/Set checked state.
-	export let checked: boolean = false;
 
 	// Get/Set indeterminate state.
-	export let indeterminate: boolean = false;
 
 	// Make the checkbox disabled.
-	export let disabled: boolean = false;
 
-	export let errorCount = 1;
-	/**
+	
+
+	// The value for the checkbox.
+
+	// Combines components into a single group.
+
+	
+
+	// Id for the checkbox, defaults to a random uid.
+
+	// Styles to add to checkbox.
+
+	// The <input/> element of the checkbox.
+
+
+	interface Props {
+		class?: string;
+		color?: string;
+		checked?: boolean;
+		indeterminate?: boolean;
+		disabled?: boolean;
+		errorCount?: number;
+		/**
 	 * A list of validator functions that take the text field value and return an error
 	 * message, or `true` otherwise.
 	 */
-	export let rules: ((value: string) => string)[] = [];
+		rules?: ((value: string) => string)[];
+		value?: any | any[];
+		group?: any[];
+		/** Hint text. */
+		hint?: string;
+		id?: string;
+		style?: string;
+		inputElement?: HTMLInputElement;
+		messages?: string[];
+		error?: boolean;
+		children?: import('svelte').Snippet;
+		[key: string]: any
+	}
 
-	// The value for the checkbox.
-	export let value: any | any[] = null;
-
-	// Combines components into a single group.
-	export let group: any[] = null;
-
-	/** Hint text. */
-	export let hint = '';
-
-	// Id for the checkbox, defaults to a random uid.
-	export let id: string = null;
-
-	// Styles to add to checkbox.
-	export let style: string = null;
-
-	// The <input/> element of the checkbox.
-	export let inputElement: HTMLInputElement = null;
-
-	export let messages: string[] = [];
-
-	export let error: boolean = false;
+	let {
+		class: klass = '',
+		color = 'primary',
+		checked = $bindable(false),
+		indeterminate = $bindable(false),
+		disabled = false,
+		errorCount = 1,
+		rules = [],
+		value = null,
+		group = $bindable(null),
+		hint = '',
+		id = $bindable(null),
+		style = null,
+		inputElement = $bindable(null),
+		messages = [],
+		error = $bindable(false),
+		children,
+		...rest
+	}: Props = $props();
 
 	id = id || `s-checkbox-${uid(5)}`;
 
-	let errorMessages: string[] = [];
+	let errorMessages: string[] = $state([]);
 
 	export function validate() {
 		errorMessages = rules.map((r) => r(checked ? 'true' : '')).filter((r) => typeof r === 'string');
@@ -77,10 +106,12 @@
 
 	context?.register({ id, validate });
 
-	$: hasValidGroup = Array.isArray(group);
-	$: if (hasValidGroup && value != null) {
-		checked = group.indexOf(value) >= 0;
-	}
+	let hasValidGroup = $derived(Array.isArray(group));
+	run(() => {
+		if (hasValidGroup && value != null) {
+			checked = group.indexOf(value) >= 0;
+		}
+	});
 
 	function groupUpdate() {
 		if (!hasValidGroup) group = [];
@@ -106,7 +137,7 @@
 		use:TextColor={checked || indeterminate ? color : false}
 	>
 		<input
-			{...$$restProps}
+			{...rest}
 			type="checkbox"
 			bind:this={inputElement}
 			aria-checked={checked}
@@ -115,9 +146,7 @@
 			{id}
 			{disabled}
 			{value}
-			on:change={groupUpdate}
-			on:change={validate}
-			on:change
+			onchange={handlers(groupUpdate, validate, bubble('change'))}
 		/>
 		<div class="s-checkbox__background" aria-hidden="true">
 			{#if checked || indeterminate}
@@ -129,9 +158,9 @@
 	</div>
 	<div style="display:flex;flex-direction:column" use:TextColor={error ? 'error' : color}>
 		<label for={id}>
-			<slot />
+			{@render children?.()}
 		</label>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<div style="padding-left:12px">
 			<span>{hint ?? ''}</span>
 			{#each messages ?? [] as message}<span style="margin-right:8px;">{message}</span>{/each}

@@ -9,19 +9,31 @@
 	import Month from './Month.svelte';
 	import Year from './Year.svelte';
 
-	export let locale: string = 'ro';
-	export let onRender: (date: Date) => { disabled?: boolean; message?: string } = () => ({});
-	export let header: boolean = true;
-	export let weekStart: number;
-	export let value: Date = null;
-	export let noDateText: string = 'No Date';
-	export let mode: DateMode = 'days';
+	interface Props {
+		locale?: string;
+		onRender?: (date: Date) => { disabled?: boolean; message?: string };
+		header?: boolean;
+		weekStart: number;
+		value?: Date;
+		noDateText?: string;
+		mode?: DateMode;
+	}
+
+	let {
+		locale = 'ro',
+		onRender = () => ({}),
+		header = true,
+		weekStart,
+		value = $bindable(null),
+		noDateText = 'No Date',
+		mode = $bindable('days')
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher();
 
-	let month;
-	let year;
-	let elm;
+	let month = $state();
+	let year = $state();
+	let elm = $state();
 
 	let d = isDate(value) ? new Date(value?.getTime?.() || value) : new Date();
 

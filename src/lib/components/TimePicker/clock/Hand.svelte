@@ -6,15 +6,24 @@
 <script lang="ts">
 	import { getAmPm, hourToDegrees, minuteToDegrees } from '../scripts/dates';
 
-	export let is24h: boolean;
 
-	export let value = new Date();
-	export let mode: TimeMode;
-	export let transitionClass: string = null;
+	interface Props {
+		is24h: boolean;
+		value?: any;
+		mode: TimeMode;
+		transitionClass?: string;
+	}
 
-	$: ampm = mode == 'hour' ? (is24h ? getAmPm(value) : 'am') : 'am';
+	let {
+		is24h,
+		value = new Date(),
+		mode,
+		transitionClass = null
+	}: Props = $props();
 
-	$: degrees = mode == 'hour' ? hourToDegrees(value) : minuteToDegrees(value);
+	let ampm = $derived(mode == 'hour' ? (is24h ? getAmPm(value) : 'am') : 'am');
+
+	let degrees = $derived(mode == 'hour' ? hourToDegrees(value) : minuteToDegrees(value));
 </script>
 
 <div

@@ -1,14 +1,26 @@
 <script lang="ts">
 	import './Divider.scss';
-	let klass: string = '';
 	/** classes added to the divider */
-	export { klass as class };
-	/** inset moves divider 72px to the right */
-	export let inset: boolean = false;
-	/** vertical makes divider to a vertical divider */
-	export let vertical: boolean = false;
-	/** styles added to the divider */
-	export let style: string = null;
+	
+	
+	
+	
+	interface Props {
+		class?: string;
+		/** inset moves divider 72px to the right */
+		inset?: boolean;
+		/** vertical makes divider to a vertical divider */
+		vertical?: boolean;
+		/** styles added to the divider */
+		style?: string;
+	}
+
+	let {
+		class: klass = '',
+		inset = false,
+		vertical = false,
+		style = null
+	}: Props = $props();
 </script>
 
 <hr

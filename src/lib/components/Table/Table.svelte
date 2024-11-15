@@ -1,27 +1,41 @@
 <script lang="ts">
 	import './Table.scss';
-	let klass = '';
-	export { klass as class };
-	export let elevation: number = 1;
-	export let fixed = false;
+	
+	interface Props {
+		class?: string;
+		elevation?: number;
+		fixed?: boolean;
+		toolbar?: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
+		footer?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		elevation = 1,
+		fixed = false,
+		toolbar,
+		children,
+		footer
+	}: Props = $props();
 </script>
 
 <div class="s-table elevation-{elevation} {klass}">
-	{#if $$slots.toolbar}
+	{#if toolbar}
 		<div class="toolbar">
-			<slot name="toolbar" />
+			{@render toolbar?.()}
 		</div>
 	{/if}
 
 	<div class="s-table-container">
 		<table class:layout-fixed={fixed}>
-			<slot />
+			{@render children?.()}
 		</table>
 	</div>
 
-	{#if $$slots.footer}
+	{#if footer}
 		<div class="s-table-footer">
-			<slot name="footer" />
+			{@render footer?.()}
 		</div>
 	{/if}
 </div>

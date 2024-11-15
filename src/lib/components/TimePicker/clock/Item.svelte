@@ -1,17 +1,27 @@
 <script lang="ts">
-	/* Copyright (c) 2020-2022 Jacques Desodt */
-	export let ampm = 'am';
-	export let degrees = 0;
-	export let label = '';
-	export let selectedAmpm = 'am';
-	export let selectedDegrees = 0;
+	
+	interface Props {
+		/* Copyright (c) 2020-2022 Jacques Desodt */
+		ampm?: string;
+		degrees?: number;
+		label?: string;
+		selectedAmpm?: string;
+		selectedDegrees?: number;
+	}
+
+	let {
+		ampm = 'am',
+		degrees = 0,
+		label = '',
+		selectedAmpm = 'am',
+		selectedDegrees = 0
+	}: Props = $props();
 
 	/* Local variables */
-	let translation;
-	$: translation = ampm === 'am' || !ampm ? '6.7' : '4.5';
-	let selectClass;
-	$: selectClass =
-		degrees === selectedDegrees && (ampm === selectedAmpm || !ampm) ? '_tp-selected' : '';
+	let translation = $derived(ampm === 'am' || !ampm ? '6.7' : '4.5');
+	
+	let selectClass = $derived(degrees === selectedDegrees && (ampm === selectedAmpm || !ampm) ? '_tp-selected' : '');
+	
 </script>
 
 <div

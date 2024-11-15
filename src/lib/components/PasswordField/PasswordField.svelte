@@ -1,23 +1,25 @@
-<script>
+<script lang="ts">
 	import TextField from '../TextField/TextField.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import icons from '../../internal/Icons';
-	let klass = '';
-	export { klass as class };
-	export let value = '';
-	export let showPassword = false;
+	
+	/** @type {{class?: string, value?: string, showPassword?: boolean, children?: import('svelte').Snippet, [key: string]: any}} */
+	let {
+		class: klass = '',
+		value = $bindable(),
+		showPassword = $bindable(false),
+		children,
+		...rest
+	} = $props();
 </script>
 
-<TextField {...$$restProps} class={klass} type={!showPassword ? 'password' : 'text'} bind:value>
-	<Icon
-		on:click={() => (showPassword = !showPassword)}
-		style="cursor:pointer"
-		slot="append"
-		path={showPassword ? icons.visibility_off : icons.visibility}
-	/>
-
-	<slot slot="prepend-outer" name="prepend-outer" />
-	<slot slot="prepend" name="prepend" />
-	<slot />
-	<slot slot="append-outer" name="append-outer" />
+<TextField {...rest} class={klass} type={!showPassword ? 'password' : 'text'} bind:value>
+	{#snippet append()}
+		<Icon
+			on:click={() => (showPassword = !showPassword)}
+			style="cursor:pointer"
+			path={showPassword ? icons.visibility_off : icons.visibility}
+		/>
+	{/snippet}
+	{@render children?.()}
 </TextField>

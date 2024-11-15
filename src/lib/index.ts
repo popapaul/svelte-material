@@ -72,5 +72,3 @@ export {
 	TableCell,
 	TableFooter
 } from './components/Table';
-
-export { DataGrid, Column } from './components/DataGrid';

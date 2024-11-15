@@ -5,18 +5,32 @@
 	import TimePicker from '../TimePicker/TimePicker.svelte';
 	import Menu from '../Menu/Menu.svelte';
 
-	let klass: string = '';
-	export { klass as class };
-	export let hourOnly: boolean = false;
-	export let value: Date;
-	export let locale: string = 'ro';
-	export let readonly: boolean = false;
+	
+	interface Props {
+		class?: string;
+		hourOnly?: boolean;
+		value: Date;
+		locale?: string;
+		readonly?: boolean;
+		children?: import('svelte').Snippet;
+		[key: string]: any
+	}
+
+	let {
+		class: klass = '',
+		hourOnly = false,
+		value = $bindable(),
+		locale = 'ro',
+		readonly = false,
+		children,
+		...rest
+	}: Props = $props();
 
 	if (!isDate(value)) value = new Date();
 
 	const dispatch = createEventDispatcher();
-	let elm;
-	let active = false;
+	let elm = $state();
+	let active = $state(false);
 
 	function open() {
 		active = true;
@@ -52,26 +66,26 @@
 	}
 </script>
 
-<Menu closeOnClick={false} {...$$restProps} bind:active placement="bottom-start">
-	<TextField
-		slot="activator"
-		value={value &&
-			new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(value)}
-		{...$$restProps}
-		class={klass}
-		on:keydown={onkeydown}
-		on:click={onfocus}
-		on:change
-		on:clear={() => (value = null)}
-		on:blur
-		bind:inputElement={elm}
-		readonly
-	>
-		<slot />
-		<slot slot="append" name="append" />
-		<slot slot="prepend-outer" name="prepend-outer" />
-		<slot slot="append-outer" name="append-outer" />
-		<slot slot="prepend" name="prepend" />
-	</TextField>
-	<TimePicker {hourOnly} on:hour={handleHour} {...$$restProps} bind:value />
+<Menu closeOnClick={false} {...rest} bind:active placement="bottom-start">
+	{#snippet activator()}
+		<TextField
+			value={value && new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(value)}
+			{...rest}
+			class={klass}
+			on:keydown={onkeydown}
+			on:click={onfocus}
+			on:change
+			on:clear={() => (value = null)}
+			on:blur
+			bind:inputElement={elm}
+			readonly
+		>
+			{@render children?.()}
+			<!-- <slot slot="append" name="append" />
+			<slot slot="prependOuter" name="prependOuter" />
+			<slot slot="appendOuter" name="appendOuter" />
+			<slot slot="prepend" name="prepend" /> -->
+		</TextField>
+	{/snippet}
+	<TimePicker {hourOnly} on:hour={handleHour} {...rest} bind:value />
 </Menu>

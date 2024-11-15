@@ -1,64 +1,107 @@
 <script lang="ts">
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import './NavigationDrawer.scss';
 	import { fade, type TransitionConfig } from 'svelte/transition';
 	import { format } from '../../internal/Style';
-	let klass: string = '';
 	/** classes added to the drawer */
-	export { klass as class };
-	/** width of the drawer */
-	export let width: string | number = '256px';
-	/** sets the state of the drawer */
-	export let active = true;
-	/** changes position of drawer to fixed */
-	export let fixed = false;
-	/** changes position of drawer to absolute */
-	export let absolute = false;
-	/** places the navigation drawer on the right */
-	export let right = false;
-	/** condenses navigation drawer width */
-	export let mini = false;
-	/** a clipped drawer rests under the AppBar */
-	export let clipped = false;
-	/** removes the border */
-	export let borderless = false;
-	/** width assigned when the mini prop is turned on */
-	export let miniWidth = '56px';
-	/** height assigned when the clipped prop is turned on */
-	export let clippedHeight = '56px';
-	/** transiton function for the drawer */
-	export let transition: (node: Element, options: any) => TransitionConfig = fade;
-	/** options for the transition */
-	export let transitionOpts: any = {};
-	/** The z-index of the drawer */
-	export let index = 4;
-	/** styles added to the drawer */
-	export let style: string = null;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	interface Props {
+		class?: string;
+		/** width of the drawer */
+		width?: string | number;
+		/** sets the state of the drawer */
+		active?: boolean;
+		/** changes position of drawer to fixed */
+		fixed?: boolean;
+		/** changes position of drawer to absolute */
+		absolute?: boolean;
+		/** places the navigation drawer on the right */
+		right?: boolean;
+		/** condenses navigation drawer width */
+		mini?: boolean;
+		/** a clipped drawer rests under the AppBar */
+		clipped?: boolean;
+		/** removes the border */
+		borderless?: boolean;
+		/** width assigned when the mini prop is turned on */
+		miniWidth?: string;
+		/** height assigned when the clipped prop is turned on */
+		clippedHeight?: string;
+		/** transiton function for the drawer */
+		transition?: (node: Element, options: any) => TransitionConfig;
+		/** options for the transition */
+		transitionOpts?: any;
+		/** The z-index of the drawer */
+		index?: number;
+		/** styles added to the drawer */
+		style?: string;
+		prepend?: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
+		append?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		width = '256px',
+		active = true,
+		fixed = false,
+		absolute = false,
+		right = false,
+		mini = false,
+		clipped = false,
+		borderless = false,
+		miniWidth = '56px',
+		clippedHeight = '56px',
+		transition = fade,
+		transitionOpts = {},
+		index = 4,
+		style = null,
+		prepend,
+		children,
+		append
+	}: Props = $props();
 </script>
 
 <aside
 	class="s-navigation-drawer {klass}"
 	transition:transition|local={transitionOpts}
-	on:introstart
-	on:outrostart
-	on:introend
-	on:outroend
-	on:focus
+	onintrostart={bubble('introstart')}
+	onoutrostart={bubble('outrostart')}
+	onintroend={bubble('introend')}
+	onoutroend={bubble('outroend')}
+	onfocus={bubble('focus')}
 	class:active
 	class:fixed
 	class:absolute
 	class:right
 	class:mini
 	class:clipped
-	on:mouseover
+	onmouseover={bubble('mouseover')}
 	style="--s-nav-width:{format(width)};--s-nav-min-width:{format(
 		miniWidth
 	)};--s-nav-clipped-height:{clippedHeight};z-index:{index};{style}"
 >
-	<slot name="prepend" />
+	{@render prepend?.()}
 	<div class="s-navigation-drawer__content">
-		<slot />
+		{@render children?.()}
 	</div>
-	<slot name="append" />
+	{@render append?.()}
 	{#if !borderless}
 		<div class="s-navigation-drawer__border" ></div>
 	{/if}

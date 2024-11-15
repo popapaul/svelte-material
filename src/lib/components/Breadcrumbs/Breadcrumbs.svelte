@@ -8,15 +8,31 @@
 		props?: object;
 	}
 
-	let klass = '';
 	/** classes added to the component */
-	export { klass as class };
-	/** makes the breadcrumb large */
-	export let large = false;
-	/** array of objects for each breadcrumb */
-	export let items: Breadcrumb[] = [];
-	/** styles to add to the breadcrumb */
-	export let style = null;
+	
+	
+	
+	
+	interface Props {
+		class?: string;
+		/** makes the breadcrumb large */
+		large?: boolean;
+		/** array of objects for each breadcrumb */
+		items?: Breadcrumb[];
+		/** styles to add to the breadcrumb */
+		style?: any;
+		divider?: import('svelte').Snippet;
+		children?: import('svelte').Snippet<[any]>;
+	}
+
+	let {
+		class: klass = '',
+		large = false,
+		items = $bindable([]),
+		style = null,
+		divider,
+		children
+	}: Props = $props();
 
 	const defaults: Breadcrumb = {
 		disabled: false,
@@ -34,11 +50,11 @@
 		{#if i !== 0}
 			<li class="divider">
 				<!-- The slot used for divider -->
-				<slot name="divider">/</slot>
+				{#if divider}{@render divider()}{:else}/{/if}
 			</li>
 		{/if}
 		<li>
-			<slot {item}>
+			{#if children}{@render children({ item, })}{:else}
 				<svelte:element
 					this={item.href ? 'a' : 'span'}
 					href={item.href}
@@ -48,7 +64,7 @@
 				>
 					{item.text}
 				</svelte:element>
-			</slot>
+			{/if}
 		</li>
 	{/each}
 </ul>

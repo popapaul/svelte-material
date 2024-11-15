@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { run, createBubbler, handlers } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import Input from '../Input/Input.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import uid from '../../internal/uid';
@@ -15,66 +18,111 @@
 		clear: CustomEvent;
 	}
 
-	let klass = '';
 	/** Classes to add to text field wrapper. */
-	export { klass as class };
-	/** Value of the textarea. */
-	export let value: string = '';
-	/** Color class of the textarea when active. */
-	export let color = 'primary';
-	/** Whether textarea is the `filled` material design variant. */
-	export let filled = false;
-	/** Whether textarea is outlined by elevation. */
-	export let solo = false;
-	/** Whether textarea is the `outlined` material design variant. */
-	export let outlined = false;
-	/** Whether textarea do not have elevation. */
-	export let flat = false;
-	/** Whether textarea has rounded corners. */
-	export let rounded = false;
-	/** Whether textarea has a clear button. */
-	export let clearable = false;
-	/** Whether textarea is read-only. */
-	export let readonly = false;
-	/** Number of initial textarea lines. Defaults to 5. */
-	export let rows = 1;
-	/** Whether textarea is allowed to grow with the text. */
-	export let autogrow = false;
-	/** Whether textarea is not allowed to grow with the text. */
-	export let noResize = false;
-	/** Whether textarea is disabled. */
-	export let disabled = false;
-	/** Placeholder content for textarea. */
-	export let placeholder = null;
-	/** Hint text. */
-	export let hint = '';
-	/** Display a counter set to a desired input length. */
-	export let counter = false;
-	/**
+
+	interface Props {
+		class?: string;
+		/** Value of the textarea. */
+		value?: string;
+		/** Color class of the textarea when active. */
+		color?: string;
+		/** Whether textarea is the `filled` material design variant. */
+		filled?: boolean;
+		/** Whether textarea is outlined by elevation. */
+		solo?: boolean;
+		/** Whether textarea is the `outlined` material design variant. */
+		outlined?: boolean;
+		/** Whether textarea do not have elevation. */
+		flat?: boolean;
+		/** Whether textarea has rounded corners. */
+		rounded?: boolean;
+		/** Whether textarea has a clear button. */
+		clearable?: boolean;
+		/** Whether textarea is read-only. */
+		readonly?: boolean;
+		/** Number of initial textarea lines. Defaults to 5. */
+		rows?: number;
+		/** Whether textarea is allowed to grow with the text. */
+		autogrow?: boolean;
+		/** Whether textarea is not allowed to grow with the text. */
+		noResize?: boolean;
+		/** Whether textarea is disabled. */
+		disabled?: boolean;
+		/** Placeholder content for textarea. */
+		placeholder?: any;
+		/** Hint text. */
+		hint?: string;
+		/** Display a counter set to a desired input length. */
+		counter?: boolean;
+		/**
 	 * A list of validator functions that take the textarea value and return an error
 	 * message, or `true` otherwise.
 	 */
-	export let rules: ((value: string | number | string[]) => string | true)[] = [];
-	/** Number of error messages to display. Defaults to one. */
-	export let errorCount = 1;
-	/** Error messages to display. */
-	export let messages = [];
-	/** Whether to delay validation until blur. */
-	export let validateOnBlur = false;
-	/** Whether textarea has error. */
-	export let error = false;
-	/** Whether textarea wrapper has `success` class. */
-	export let success = false;
-	/** Id of the textarea. Defaults to a random uid. */
-	export let id = `s-input-${uid(5)}`;
-	/** Styles to add to textarea wrapper. */
-	export let style = null;
-	/** Reference to textarea element in the DOM. */
-	export let textarea: HTMLTextAreaElement = null;
-	export let underline = true;
+		rules?: ((value: string | number | string[]) => string | true)[];
+		/** Number of error messages to display. Defaults to one. */
+		errorCount?: number;
+		/** Error messages to display. */
+		messages?: any;
+		/** Whether to delay validation until blur. */
+		validateOnBlur?: boolean;
+		/** Whether textarea has error. */
+		error?: boolean;
+		/** Whether textarea wrapper has `success` class. */
+		success?: boolean;
+		/** Id of the textarea. Defaults to a random uid. */
+		id?: any;
+		/** Styles to add to textarea wrapper. */
+		style?: any;
+		/** Reference to textarea element in the DOM. */
+		textarea?: HTMLTextAreaElement;
+		underline?: boolean;
+		children?: import('svelte').Snippet;
+		append?: import('svelte').Snippet;
+		prepend?: import('svelte').Snippet;
+		prependOuter?: import('svelte').Snippet;
+		appendOuter?: import('svelte').Snippet;
+		[key: string]: any
+	}
 
-	let labelActive = !!placeholder || !!value;
-	let errorMessages = [];
+	let {
+		class: klass = '',
+		value = $bindable(),
+		color = 'primary',
+		filled = false,
+		solo = false,
+		outlined = false,
+		flat = false,
+		rounded = false,
+		clearable = false,
+		readonly = false,
+		rows = 1,
+		autogrow = false,
+		noResize = false,
+		disabled = false,
+		placeholder = null,
+		hint = '',
+		counter = false,
+		rules = [],
+		errorCount = 1,
+		messages = [],
+		validateOnBlur = false,
+		error = $bindable(false),
+		success = false,
+		id = `s-input-${uid(5)}`,
+		style = null,
+		textarea = $bindable(),
+		underline = true,
+		dense = false,
+		children,
+		prependOuter,
+		appendOuter,
+		prepend,
+		append,
+		...rest
+	}: Props = $props();
+	let focused = $state(false);
+	let labelActive = $derived(placeholder || value || focused);
+	let errorMessages = $state([]);
 
 	function checkRules() {
 		errorMessages = rules.map((r) => r(value)).filter((r) => typeof r === 'string');
@@ -85,17 +133,16 @@
 	}
 
 	function onFocus() {
-		labelActive = true;
+		focused = true;
 	}
 
 	function onBlur() {
-		if (!value && !placeholder) labelActive = false;
+		focused = false;
 		if (validateOnBlur) checkRules();
 	}
 
 	function clear() {
 		value = '';
-		if (!placeholder) labelActive = false;
 	}
 
 	function handleHeight() {
@@ -104,18 +151,17 @@
 			textarea.style.height = `${textarea.scrollHeight}px`;
 		}
 	}
-	onMount(handleHeight);
-
-	$: value && handleHeight();
+	$effect(()=>{
+		value;
+		 handleHeight()
+		})
 
 	function onInput() {
 		if (!validateOnBlur) checkRules();
 	}
 </script>
 
-<Input class="s-text-field {klass}" {color} {readonly} {disabled} {error} {success} {style}>
-	<!-- Slot for prepend outside the input. -->
-	<slot slot="prepend-outer" name="prepend-outer" />
+<Input class="s-text-field  {klass}" {prependOuter} {appendOuter} {color} {dense} {readonly} {disabled} {error} {success} {style}>
 	<div
 		class="s-text-field__wrapper"
 		class:filled
@@ -128,11 +174,11 @@
 		class:no-resize={noResize || autogrow}
 	>
 		<!-- Slot for prepend inside the input. -->
-		<slot name="prepend" />
+		{@render prepend?.()}
 
 		<div class="s-text-field__input">
 			<label for={id} class:active={labelActive}>
-				<slot />
+				{@render children?.()}
 			</label>
 			<textarea
 				aria-invalid={error}
@@ -143,40 +189,33 @@
 				{id}
 				{readonly}
 				{disabled}
-				on:focus={onFocus}
-				on:blur={onBlur}
-				on:input={onInput}
-				on:focus
-				on:blur
-				on:input
-				on:change
-				{...$$restProps}
+				onfocus={handlers(onFocus, bubble('focus'))}
+				onblur={handlers(onBlur, bubble('blur'))}
+				oninput={handlers(onInput, bubble('input'))}
+				onchange={bubble('change')}
+				{...rest}
 			></textarea>
 		</div>
 
 		{#if clearable && value !== ''}
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div on:click={clear} on:keydown={clear} style="cursor:pointer">
-				<!-- Slot for the icon when `clearable` is true. -->
-				<slot name="clear-icon">
-					<Icon path={clearIcon} />
-				</slot>
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div onclick={clear} style="cursor:pointer">
+				<Icon size={20} path={clearIcon} />
 			</div>
 		{/if}
 
 		<!-- Slot for append inside the input. -->
-		<slot name="append" />
+		{@render append?.()}
 	</div>
 
-	<div slot="messages">
+	{#snippet messages()}
 		<div>
-			<span>{hint}</span>
-			{#each messages ?? [] as message}<span>{message}</span>{/each}
-			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
+			<div>
+				<span>{hint}</span>
+				{#each messages ?? [] as message}<span>{message}</span>{/each}
+				{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
+			</div>
+			{#if counter}<span>{value.length} / {counter}</span>{/if}
 		</div>
-		{#if counter}<span>{value.length} / {counter}</span>{/if}
-	</div>
-
-	<!-- Slot for append outside the input. -->
-	<slot slot="append-outer" name="append-outer" />
+	{/snippet}
 </Input>

@@ -10,50 +10,74 @@
 </script>
 
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import './ExpansionPanels.scss';
 	import { createEventDispatcher, setContext } from 'svelte';
 	import { type Writable, writable } from 'svelte/store';
 
 	// Classes to add to panel container.
-	let klass = '';
-	export { klass as class };
+	
 
 	// 0 based indices of the active panels.
-	export let value: number[] = [];
 
 	// Make multiple panels active at the same time.
-	export let multiple: boolean = false;
 
 	// Make is necessary for at least one panel to be selected.
-	export let mandatory: boolean = false;
 
 	// Accordion style panels.
-	export let accordion: boolean = false;
 
 	// Make panels popout when active.
-	export let popout: boolean = false;
 
 	// Make panels inset when active.
-	export let inset: boolean = false;
 
 	// Remove shadow from panels.
-	export let flat: boolean = false;
 
 	// Remove border radius from panels.
-	export let tile: boolean = false;
 
 	// Disable all the panels.
-	export let disabled: boolean = null;
 
 	// Styles to add to the panel container.
-	export let style: string = null;
+	interface Props {
+		class?: string;
+		value?: number[];
+		multiple?: boolean;
+		mandatory?: boolean;
+		accordion?: boolean;
+		popout?: boolean;
+		inset?: boolean;
+		flat?: boolean;
+		tile?: boolean;
+		disabled?: boolean;
+		style?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		value = $bindable([]),
+		multiple = false,
+		mandatory = false,
+		accordion = false,
+		popout = false,
+		inset = false,
+		flat = false,
+		tile = false,
+		disabled = null,
+		style = null,
+		children
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher();
 	const values = writable(value);
 	const Disabled = writable(disabled);
 
-	$: values.set(value);
-	$: Disabled.set(disabled);
+	run(() => {
+		values.set(value);
+	});
+	run(() => {
+		Disabled.set(disabled);
+	});
 
 	let startIndex = -1;
 
@@ -93,5 +117,5 @@
 	class:tile
 	{style}
 >
-	<slot />
+	{@render children?.()}
 </div>

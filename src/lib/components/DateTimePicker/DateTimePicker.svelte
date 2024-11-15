@@ -6,13 +6,27 @@
 	import DateToolbar from '../DatePicker/DateToolbar.svelte';
 	import type { TimeMode } from '../TimePicker/clock/Hand.svelte';
 
-	export let value: Date;
-	export let locale: string = 'ro';
-	export let hourOnly: boolean = false;
-	export let mode: Mode = 'days';
-	export let weekStart: number = 1;
-	export let onRender: (date: Date) => { disabled?: boolean; message?: string } = () => ({});
-	export let noDateText: string = 'No Date';
+	interface Props {
+		value: Date;
+		locale?: string;
+		hourOnly?: boolean;
+		mode?: Mode;
+		weekStart?: number;
+		onRender?: (date: Date) => { disabled?: boolean; message?: string };
+		noDateText?: string;
+		[key: string]: any
+	}
+
+	let {
+		value = $bindable(),
+		locale = 'ro',
+		hourOnly = false,
+		mode = $bindable('days'),
+		weekStart = 1,
+		onRender = () => ({}),
+		noDateText = 'No Date',
+		...rest
+	}: Props = $props();
 
 	type Mode = 'days' | 'month' | 'year' | 'hour' | 'minute';
 
@@ -62,12 +76,12 @@
 </script>
 
 <div class="datepicker">
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div class="header">
 		{#if mode === 'days' || mode === 'month' || mode === 'year'}
-			<DateToolbar {value} on:mode={toggleDate} {locale} {...$$restProps} />
+			<DateToolbar {value} on:mode={toggleDate} {locale} {...rest} />
 		{:else}
-			<TimeToolbar bind:mode on:mode={toggleTime} {value} {...$$restProps} />
+			<TimeToolbar bind:mode on:mode={toggleTime} {value} {...rest} />
 		{/if}
 	</div>
 	<div class="body">
@@ -76,7 +90,7 @@
 				{weekStart}
 				{onRender}
 				{noDateText}
-				{...$$restProps}
+				{...rest}
 				bind:mode
 				{locale}
 				{value}
@@ -85,7 +99,7 @@
 			/>
 		{:else}
 			<TimePicker
-				{...$$restProps}
+				{...rest}
 				hasToolbar={false}
 				bind:mode
 				{value}

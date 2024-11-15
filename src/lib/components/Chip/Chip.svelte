@@ -1,33 +1,64 @@
 <script lang="ts">
+	import { createBubbler, stopPropagation } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import './Chip.scss';
 	import { ripple as Ripple } from '../../actions/Ripple';
 	import Icon from '../Icon/Icon.svelte';
 	import closeIcon from '../../internal/Icons/close';
 	import { createEventDispatcher } from 'svelte';
 
-	let klass: string = '';
 	/** Classes to add to chip. */
-	export { klass as class };
-	/** Styles to add to chip. */
-	export let style: string = '';
-	/** Determines whether the chip is visible or not. */
-	export let active: boolean = true;
-	/** Determines whether the chip is selected or not. */
-	export let selected: boolean = false;
-	/** Specifies the size of chip. */
-	export let size: 'x-small' | 'small' | 'default' | 'large' | 'x-large' = 'default';
-	/** specifies if the chip is outlined */
-	export let outlined: boolean = false;
-	/** specifies if the avatar will fill the chip in height */
-	export let pill: boolean = false;
-	/** makes chip an anchor */
-	export let href: string = null;
-	/** determines if the chip is a link, making it clickable */
-	export let link: boolean = !!href;
-	/** specifies if the chip is a label, making it less rounded */
-	export let label: boolean = false;
-	/** determines if a close button will appear */
-	export let close: boolean = false;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	interface Props {
+		class?: string;
+		/** Styles to add to chip. */
+		style?: string;
+		/** Determines whether the chip is visible or not. */
+		active?: boolean;
+		/** Determines whether the chip is selected or not. */
+		selected?: boolean;
+		/** Specifies the size of chip. */
+		size?: 'x-small' | 'small' | 'default' | 'large' | 'x-large';
+		/** specifies if the chip is outlined */
+		outlined?: boolean;
+		/** specifies if the avatar will fill the chip in height */
+		pill?: boolean;
+		/** makes chip an anchor */
+		href?: string;
+		/** determines if the chip is a link, making it clickable */
+		link?: boolean;
+		/** specifies if the chip is a label, making it less rounded */
+		label?: boolean;
+		/** determines if a close button will appear */
+		close?: boolean;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		style = '',
+		active = true,
+		selected = false,
+		size = 'default',
+		outlined = false,
+		pill = false,
+		href = null,
+		link = !!href,
+		label = false,
+		close = false,
+		children
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher();
 
@@ -37,7 +68,7 @@
 </script>
 
 {#if active}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<span
 		class="s-chip {klass} size-{size}"
 		{style}
@@ -47,17 +78,17 @@
 		class:link
 		class:label
 		class:selected
-		on:keydown
-		on:click
+		onkeydown={bubble('keydown')}
+		onclick={bubble('click')}
 	>
-		<slot />
+		{@render children?.()}
 		{#if close}
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div class="s-chip__close" on:click|stopPropagation={onClose}>
-				<slot name="close-icon">
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="s-chip__close" onclick={stopPropagation(onClose)}>
+				<!-- <slot name="close-icon">
 					<Icon path={closeIcon} />
-				</slot>
+				</slot> -->
 			</div>
 		{/if}
 	</span>

@@ -5,12 +5,16 @@
 
 	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
-	export let colors: string[] = [];
-	export let color: string;
 	import { flip } from 'svelte/animate';
 	import Menu from '../Menu/Menu.svelte';
 	import ListItem from '../List/ListItem.svelte';
 	import List from '../List/List.svelte';
+	interface Props {
+		colors?: string[];
+		color: string;
+	}
+
+	let { colors = $bindable([]), color }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 	const addColor = () => {
@@ -29,16 +33,18 @@
 	{#each colors as color (color)}
 		<div transition:fade animate:flip>
 			<Menu rightClick>
-				<Button
-					slot="activator"
-					on:click={() => selectColor(color)}
-					icon
-					fab
-					size="x-small"
-					style="color:{color};"
-				>
-					<div class="swatch" style="background-color:{color};"></div>
-				</Button>
+				{#snippet activator()}
+								<Button
+						
+						on:click={() => selectColor(color)}
+						icon
+						fab
+						size="x-small"
+						style="color:{color};"
+					>
+						<div class="swatch" style="background-color:{color};"></div>
+					</Button>
+							{/snippet}
 				<List>
 					<ListItem on:click={() => (colors = colors.filter((x) => x != color))}>remove</ListItem>
 				</List>

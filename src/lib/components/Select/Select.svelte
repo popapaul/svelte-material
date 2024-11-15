@@ -1,6 +1,7 @@
+
 <script lang="ts">
 	import './Select.scss';
-	import { createEventDispatcher } from 'svelte';
+	import { type Snippet, createEventDispatcher } from 'svelte';
 	type TValue = $$Generic;
 	type T = TValue extends Array<infer U> ? U : TValue;
 	type TItem = $$Generic<TItem extends object ? { name: string; value: T } : T>;
@@ -13,6 +14,7 @@
 	import Icon from '../Icon/Icon.svelte';
 	import DOWN_ICON from '../../internal/Icons/down';
 
+
 	interface $$Events {
 		clear: CustomEvent;
 		change: CustomEvent<TValue>;
@@ -21,76 +23,112 @@
 	}
 	const dispatch = createEventDispatcher();
 
-	export let getValue = (item: TItem): T => (item as any)?.value ?? item;
-
-	export let getName = (item: TItem): string => (item as any)?.name ?? item;
-
-	let klass: string = '';
 	/** Classes to add to select wrapper. */
-	export { klass as class };
-	/** Styles to add to select wrapper. */
-	export let style: string = '';
-	/** Whether select is opened. */
-	export let active: boolean = false;
-	/**
+
+	interface Props {
+		getValue?: any;
+		getName?: any;
+		class?: string;
+		/** Styles to add to select wrapper. */
+		style?: string;
+		/** Whether select is opened. */
+		active?: boolean;
+		/**
 	 * Value of the select.
 	 * If multiple is true, this will be an array; otherwise a single value.
 	 */
-	export let value: TValue = null;
-	/** List of items to select from. */
-	export let items: TItem[] = [];
-	/** Whether select is the `filled` material design variant. */
-	export let filled: boolean = false;
-	/** Whether select is the `outlined` material design variant. */
-	export let outlined: boolean = false;
-	/** Whether select is outlined by elevation. */
-	export let solo: boolean = false;
-	/** Whether select's height is reduced. */
-	export let dense: boolean = false;
-	/** Placeholder content for select. */
-	export let placeholder: string = '';
-	/** Hint text. */
-	export let hint: string = '';
-	/** Whether at least one T must be selected. */
-	export let mandatory: boolean = false;
-	/** Whether you can select multiple options. */
-	export let multiple: boolean = false;
-	/** Maximum number of selectable options. Defaults to unlimited. */
-	export let max: number = Infinity;
-	/** Whether selected options appear as chips. */
-	export let chips: boolean = false;
-	/** Whether select is disabled. */
-	export let disabled: boolean = false;
-	/** Class to add to the select list div. */
-	export let itemsPanelClass: string = '';
-	export let fullWidth: boolean = true;
-	/**
+		value?: TValue;
+		/** List of items to select from. */
+		items?: TItem[];
+		/** Whether select is the `filled` material design variant. */
+		filled?: boolean;
+		/** Whether select is the `outlined` material design variant. */
+		outlined?: boolean;
+		/** Whether select is outlined by elevation. */
+		solo?: boolean;
+		/** Whether select's height is reduced. */
+		dense?: boolean;
+		/** Placeholder content for select. */
+		placeholder?: string;
+		/** Hint text. */
+		hint?: string;
+		/** Whether at least one T must be selected. */
+		mandatory?: boolean;
+		/** Whether you can select multiple options. */
+		multiple?: boolean;
+		/** Maximum number of selectable options. Defaults to unlimited. */
+		max?: number;
+		/** Whether selected options appear as chips. */
+		chips?: boolean;
+		/** Whether select is disabled. */
+		disabled?: boolean;
+		/** Class to add to the select list div. */
+		itemsPanelClass?: string;
+		fullWidth?: boolean;
+		/**
 	 * Whether select closes on selection. Defaults to `true` on single select and `false`
 	 * on multiple select or when select is filterable.
 	 */
-	export let closeOnClick: boolean = !multiple;
-	/** Select values not in the list. */
-	export let acceptValue = false;
-	/** Convert the selected value for the underlying text field. */
-	export let filter: boolean = !acceptValue;
-	export let emptyString = '';
-	export let inputElement = null;
-	export let menuClass = '';
+		closeOnClick?: boolean;
+		/** Select values not in the list. */
+		acceptValue?: boolean;
+		/** Convert the selected value for the underlying text field. */
+		filter?: boolean;
+		emptyString?: string;
+		inputElement?: any;
+		menuClass?: string;
+		filterValue?: string;
+		validateOnBlur?: boolean;
+		isActive?: any;
+		children?: Snippet;
+		options?: Snippet
+		option?: Snippet;
+	}
 
-	export let filterValue: string = '';
-	export let validateOnBlur = false;
-
-	export let isActive = (value: TValue, item: TItem) =>
+	let {
+		getValue = (item: TItem): T => (item as any)?.value ?? item,
+		getName = (item: TItem): string => (item as any)?.name ?? item,
+		class: klass = '',
+		style = '',
+		active = $bindable(),
+		value = $bindable(),
+		items = [],
+		filled = false,
+		outlined = false,
+		solo = false,
+		dense = false,
+		placeholder = '',
+		hint = '',
+		mandatory = false,
+		multiple = false,
+		max = Infinity,
+		chips = false,
+		disabled = false,
+		itemsPanelClass = '',
+		fullWidth = true,
+		closeOnClick = !multiple,
+		acceptValue = false,
+		filter = !acceptValue,
+		emptyString = '',
+		inputElement = $bindable(),
+		menuClass = '',
+		filterValue = $bindable(),
+		validateOnBlur = false,
+		isActive = (value: TValue, item: TItem) =>
 		value && Array.isArray(value)
 			? value.includes(getValue(item))
 			: typeof value === 'string'
-				? value?.toString().includes(getValue(item)?.toString())
-				: value == getValue(item);
+			? value?.toString().includes(getValue(item)?.toString())
+			: value == getValue(item),
+		children,
+		options,
+		option,
+		...rest
+	}: Props = $props();
 
 	export function getSelectString(v: TValue) {
 		// We could also use `return items[0].value ? find.. : v` or provide a `basic` prop
-		const item = items.find((i) => getValue(i) == v);
-
+		const item = items.find((i) => getValue(i) ==  $state.snapshot(v));
 		return (item && getName(item)) || emptyString;
 	}
 	export function format(val: TValue) {
@@ -113,7 +151,7 @@
 		);
 	};
 
-	$: filteredItems = getFilteredItems(items, filterValue);
+	let filteredItems = $derived(getFilteredItems(items, filterValue));
 
 	const removeItem = (itemValue: T) => {
 		if (Array.isArray(value)) value = value.filter((x) => x != itemValue) as TValue;
@@ -136,38 +174,36 @@
 	on:close={() => (filterValue = '')}
 	on:open={() => setTimeout(() => inputElement.focus(), 1)}
 >
-	<TextField
-		slot="activator"
-		class="s-select-input {klass}"
-		{style}
-		{...$$restProps}
-		{filled}
-		labelActive={active || !!value}
-		{outlined}
-		{solo}
-		{validateOnBlur}
-		readonly={!filter && !acceptValue}
-		on:keydown
-		on:clear={() => (value = null)}
-		on:clear
-		{dense}
-		bind:inputElement
-		{disabled}
-		on:input={(event) => {
-			if (acceptValue) {
-				value = event.target.value;
-				return;
-			}
-			filterValue = event.target.value;
-			dispatch('search', filterValue);
-		}}
-		value={(active || chips) && filter ? filterValue : acceptValue ? value : format(value)}
-		{placeholder}
-		{hint}
-	>
-		<slot slot="prepend-outer" name="prepend-outer" />
-		<slot />
-		<div slot="content">
+	{#snippet activator()}
+		<TextField
+			class="s-select-input {klass}"
+			{style}
+			{...rest}
+			{filled}
+			labelActive={active || !!value}
+			{outlined}
+			{solo}
+			{validateOnBlur}
+			readonly={!filter && !acceptValue}
+			on:keydown
+			on:clear={() => (value = null)}
+			on:clear
+			{dense}
+			bind:inputElement
+			{disabled}
+			on:input={(event) => {
+				if (acceptValue) {
+					value = event.target.value;
+					return;
+				}
+				filterValue = event.target.value;
+				dispatch('search', filterValue);
+			}}
+			value={(active || chips) && filter ? filterValue : acceptValue ? value : format(value)}
+			{placeholder}
+			{hint}
+		>
+			{@render children?.()}
 			{#if chips && !!value}
 				{#each (Array.isArray(value) ? value : [value]).filter(Boolean) as val}
 					<Chip size="small" close on:close={() => removeItem(val)}>
@@ -177,38 +213,41 @@
 					</Chip>
 				{/each}
 			{/if}
-		</div>
-		<Icon
-			slot="append"
-			on:click={() => active && setTimeout(() => (active = false), 2)}
-			path={DOWN_ICON}
-			rotate={active ? 180 : 0}
-		/>
-		<slot slot="append-outer" name="append-outer" />
-	</TextField>
+			 {#snippet append()}
+				<Icon
+					on:click={() => active && setTimeout(() => (active = false), 2)}
+					path={DOWN_ICON}
+					rotate={active ? 180 : 0}
+				/>
+			 {/snippet}
+		</TextField>
+	{/snippet}
 
 	<ListItemGroup bind:value on:change on:change={handleChange} {mandatory} {multiple} {max}>
-		<slot name="items">
-			<div class={itemsPanelClass}>
-				{#if filteredItems.length}
-					{#each filteredItems as item}
-						{@const active = isActive(value, item)}
-						<slot name="item" {item} {active}>
-							<ListItem {dense} value={getValue(item)} {active}>
-								<span slot="prepend">
-									{#if multiple}
-										<Checkbox checked={active} />
-									{/if}
-								</span>
-
-								{getName(item)}
-							</ListItem>
-						</slot>
-					{/each}
-				{:else}
-					Nu au fost gasite optiuni
-				{/if}
-			</div>
-		</slot>
+		 {#if options}
+		 	{@render options()}
+		 {:else}
+		<div class={itemsPanelClass}>
+			{#if filteredItems.length}
+				{#each filteredItems as item}
+					{@const active = isActive(value, item)}
+					{#if option}
+						{@render option({item, active})}
+					{:else}
+						<ListItem {dense} value={getValue(item)} {active}>
+							{#snippet prepend()}
+								{#if multiple}
+									<Checkbox checked={active} />
+								{/if}
+							{/snippet}
+							{getName(item)}
+						</ListItem>
+					{/if}
+				{/each}
+			{:else}
+				Nu au fost gasite optiuni
+			{/if}
+		</div>
+		{/if}
 	</ListItemGroup>
 </Menu>

@@ -1,11 +1,21 @@
 <script lang="ts">
 	import './TableRow.scss';
-	export let style = '';
-	let klass = '';
-	export { klass as class };
-	export let level: number = 0;
+	
+	interface Props {
+		style?: string;
+		class?: string;
+		level?: number;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		style = '',
+		class: klass = '',
+		level = 0,
+		children
+	}: Props = $props();
 </script>
 
 <tr class="s-table-row {klass}" style="--tbl-level:{level}; {style}">
-	<slot />
+	{@render children?.()}
 </tr>

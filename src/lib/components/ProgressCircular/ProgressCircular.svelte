@@ -2,15 +2,19 @@
 	import TextColor from '../../internal/TextColor';
 	import './ProgressCircular.scss';
 
-	let klass = '';
-	export { klass as class };
-	export let indeterminate = false;
-	export let color = 'secondary';
-	export let rotate = 0;
-	export let size = 32;
-	export let value = 0;
-	export let width = 4;
-	export let style = '';
+	
+	/** @type {{class?: string, indeterminate?: boolean, color?: string, rotate?: number, size?: number, value?: number, width?: number, style?: string, children?: import('svelte').Snippet}} */
+	let {
+		class: klass = '',
+		indeterminate = false,
+		color = 'secondary',
+		rotate = 0,
+		size = 32,
+		value = 0,
+		width = 4,
+		style = '',
+		children
+	} = $props();
 
 	const radius = 20;
 	const circumference = 2 * 3.1416 * radius;
@@ -54,6 +58,6 @@
 	</svg>
 
 	<div class="s-progress-circular__content">
-		<slot />
+		{@render children?.()}
 	</div>
 </div>

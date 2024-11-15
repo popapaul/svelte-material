@@ -2,25 +2,40 @@
 	import { setContext, getContext } from 'svelte';
 	import './List.scss';
 
-	let klass = '';
 	/** classes added to the list */
-	export { klass as class };
-	/** reduces padding of list items */
-	export let dense: boolean = false;
-	/** disables the list */
-	export let disabled: boolean = null;
-	/** removes box shadow from the list */
-	export let flat: boolean = false;
-	/** adds border radius to the list */
-	export let rounded: boolean = false;
-	/** makes the list items navigation style */
-	export let nav: boolean = false;
-	/** adds a thin outline to the list */
-	export let outlined: boolean = false;
-	/** styles to add to the list */
-	export let style: string = null;
+	
+	interface Props {
+		class?: string;
+		/** reduces padding of list items */
+		dense?: boolean;
+		/** disables the list */
+		disabled?: boolean;
+		/** removes box shadow from the list */
+		flat?: boolean;
+		/** adds border radius to the list */
+		rounded?: boolean;
+		/** makes the list items navigation style */
+		nav?: boolean;
+		/** adds a thin outline to the list */
+		outlined?: boolean;
+		/** styles to add to the list */
+		style?: string;
+		children?: import('svelte').Snippet;
+	}
 
-	let role = null;
+	let {
+		class: klass = '',
+		dense = false,
+		disabled = null,
+		flat = false,
+		rounded = false,
+		nav = false,
+		outlined = false,
+		style = null,
+		children
+	}: Props = $props();
+
+	let role = $state(null);
 	if (!getContext('S_ListItemRole')) {
 		setContext('S_ListItemRole', 'listitem');
 		role = 'list';
@@ -39,5 +54,5 @@
 	class:rounded
 	{style}
 >
-	<slot />
+	{@render children?.()}
 </div>

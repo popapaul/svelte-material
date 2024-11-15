@@ -2,29 +2,59 @@
 	import './Card.scss';
 	import ProgressLinear from '../ProgressLinear/ProgressLinear.svelte';
 
-	let klass: string = '';
 	/** classes added to the card */
-	export { klass as class };
-	/** remove box shadow from card */
-	export let flat: boolean = false;
-	/** remove border radius */
-	export let tile: boolean = false;
-	/** adds a thin border */
-	export let outlined: boolean = false;
-	/** makes the card more elevated */
-	export let raised: boolean = false;
-	/** add border radius to opposite corners */
-	export let shaped: boolean = false;
-	/** more elevation on hover */
-	export let hover: boolean = false;
-	/** card with button-like functionality */
-	export let link: boolean = false;
-	/** shows the linear progress bar */
-	export let loading: boolean = false;
-	/** disables the card and lowers opacity */
-	export let disabled: boolean = false;
-	/** styles added the card */
-	export let style: string = null;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	interface Props {
+		class?: string;
+		/** remove box shadow from card */
+		flat?: boolean;
+		/** remove border radius */
+		tile?: boolean;
+		/** adds a thin border */
+		outlined?: boolean;
+		/** makes the card more elevated */
+		raised?: boolean;
+		/** add border radius to opposite corners */
+		shaped?: boolean;
+		/** more elevation on hover */
+		hover?: boolean;
+		/** card with button-like functionality */
+		link?: boolean;
+		/** shows the linear progress bar */
+		loading?: boolean;
+		/** disables the card and lowers opacity */
+		disabled?: boolean;
+		/** styles added the card */
+		style?: string;
+		progress?: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		flat = false,
+		tile = false,
+		outlined = false,
+		raised = false,
+		shaped = false,
+		hover = false,
+		link = false,
+		loading = false,
+		disabled = false,
+		style = null,
+		progress,
+		children
+	}: Props = $props();
 </script>
 
 <div
@@ -40,9 +70,9 @@
 	{style}
 >
 	{#if loading}
-		<slot name="progress">
+		{#if progress}{@render progress()}{:else}
 			<ProgressLinear indeterminate />
-		</slot>
+		{/if}
 	{/if}
-	<slot />
+	{@render children?.()}
 </div>

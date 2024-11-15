@@ -1,7 +1,10 @@
 <script>
+	import { stopPropagation } from 'svelte/legacy';
+
 	import { onMount, createEventDispatcher } from 'svelte';
-	export let year;
-	let viewElm;
+	/** @type {{year: any}} */
+	let { year } = $props();
+	let viewElm = $state();
 	const dispatch = createEventDispatcher();
 	onMount(() => {
 		if (viewElm) {
@@ -15,10 +18,10 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<ul bind:this={viewElm} on:click|stopPropagation={onClick}>
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<ul bind:this={viewElm} onclick={stopPropagation(onClick)}>
 	{#each Array(100) as _, i}
 		{#if year - 100 + i > 0}
 			<li>{year - 100 + i}</li>

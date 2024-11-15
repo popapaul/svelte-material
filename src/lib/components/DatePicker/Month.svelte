@@ -3,11 +3,10 @@
 	import { fly, fade } from 'svelte/transition';
 	import Icon from '../Icon/Icon.svelte';
 	import Button from '../Button/Button.svelte';
-	export let locale;
-	export let year;
-	export let value; // Date
-	let legacy = false;
-	let direction = 0;
+	/** @type {{locale: any, year: any, value: any}} */
+	let { locale, year = $bindable(), value } = $props();
+	let legacy = $state(false);
+	let direction = $state(0);
 	const dispatch = createEventDispatcher();
 	onMount(() => {
 		legacy = typeof document.createElement('div').style.grid !== 'string';
@@ -77,7 +76,7 @@
 				in:fly|local={{ x: direction * 50, duration: 200, delay: 80 }}
 				out:fade|local={{ duration: direction === 0 ? 0 : 160 }}
 			>
-				<button class="title" tabindex="0" on:keydown={onKeydown} on:click={onYear}>
+				<button class="title" tabindex="0" onkeydown={onKeydown} onclick={onYear}>
 					{('000' + year).slice(-4)}
 				</button>
 				<div class="months">
@@ -92,8 +91,8 @@
 											new Date(new Date().setFullYear(year, row * 3 + cell, 1)),
 											isNaN(value) ? new Date(0) : value
 										)}
-										on:keydown={onKeydown}
-										on:click={() => {
+										onkeydown={onKeydown}
+										onclick={() => {
 											onMonth(row * 3 + cell);
 										}}
 									>

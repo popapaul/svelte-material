@@ -10,31 +10,52 @@
 </script>
 
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import './ItemGroup.scss';
 	import { setContext, createEventDispatcher, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 
-	let klass = '';
 	/** classes added to item group */
-	export { klass as class };
-	/** class to add to item when active */
-	export let activeClass = '';
-	/** value of the group */
-	export let value = [];
-	/** allows to select multiple items */
-	export let multiple = false;
-	/** makes sure atleast one item is selected */
-	export let mandatory = false;
-	/** max number of selection */
-	export let max = Infinity;
-	/** roles of item */
-	export let role: string = null;
-	/** styles added to item group */
-	export let style: string = null;
+
+	
+	
+	interface Props {
+		class?: string;
+		/** class to add to item when active */
+		activeClass?: string;
+		/** value of the group */
+		value?: any;
+		/** allows to select multiple items */
+		multiple?: boolean;
+		/** makes sure atleast one item is selected */
+		mandatory?: boolean;
+		/** max number of selection */
+		max?: any;
+		/** roles of item */
+		role?: string;
+		/** styles added to item group */
+		style?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		activeClass = '',
+		value = $bindable(),
+		multiple = false,
+		mandatory = false,
+		max = Infinity,
+		role = null,
+		style = null,
+		children
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher();
 	const valueStore = writable(value);
-	$: valueStore.set(value);
+	run(() => {
+		valueStore.set(value);
+	});
 
 	let startIndex = -1;
 	setContext(ITEM_GROUP, {
@@ -66,5 +87,5 @@
 </script>
 
 <div class="s-item-group {klass}" {role} {style}>
-	<slot />
+	{@render children?.()}
 </div>

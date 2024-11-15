@@ -7,19 +7,33 @@
 
 	const ITEM = getContext<ItemGroupContext>(ITEM_GROUP);
 
-	let active: boolean = false;
+	let active: boolean = $state(false);
 
-	let klass: string = '';
 	// Classes to add to button.
-	export { klass as class };
+	
 	// Styles to add to button.
-	export let style: string = '';
 	// Value of button.
-	export let value: any = ITEM.index();
 	// Identifies button as active with this class.
-	export let activeClass: string = ITEM.activeClass;
 	// Disable button.
-	export let disabled: boolean = null;
+	interface Props {
+		class?: string;
+		style?: string;
+		value?: any;
+		activeClass?: string;
+		disabled?: boolean;
+		children?: import('svelte').Snippet;
+		[key: string]: any
+	}
+
+	let {
+		class: klass = '',
+		style = '',
+		value = ITEM.index(),
+		activeClass = ITEM.activeClass,
+		disabled = null,
+		children,
+		...rest
+	}: Props = $props();
 
 	ITEM.register((values) => {
 		active = values.includes(value);
@@ -36,9 +50,9 @@
 	{style}
 	{active}
 	{disabled}
-	{...$$restProps}
+	{...rest}
 	on:click={click}
 	on:click
 >
-	<slot />
+	{@render children?.()}
 </Button>

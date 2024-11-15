@@ -7,26 +7,40 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let value: Date;
 
-	export let clockClassName: string = '';
 
 	// Shows/hides the footer buttons bar
-	export let hasButtons: boolean = false;
 	// Shows/hides the header time toolbar
-	export let hasToolbar: boolean = true;
 
 	// Toggles on AM/PM or 24h mode
-	export let is24h: boolean = true;
 
 	// step increment for minutes
-	export let minutesIncrement: number = 1;
 	// Starts by displaying the hours/minutes
-	export let zIndex: number = 10;
 
-	export let mode: TimeMode = 'hour';
 
-	export let hourOnly: boolean = false;
+	interface Props {
+		value: Date;
+		clockClassName?: string;
+		hasButtons?: boolean;
+		hasToolbar?: boolean;
+		is24h?: boolean;
+		minutesIncrement?: number;
+		zIndex?: number;
+		mode?: TimeMode;
+		hourOnly?: boolean;
+	}
+
+	let {
+		value = $bindable(),
+		clockClassName = '',
+		hasButtons = false,
+		hasToolbar = true,
+		is24h = true,
+		minutesIncrement = 1,
+		zIndex = 10,
+		mode = $bindable('hour'),
+		hourOnly = false
+	}: Props = $props();
 
 	const handleMode = ({ detail }: CustomEvent<TimeMode>) => {
 		if (hourOnly) return (mode = 'hour');

@@ -1,168 +1,115 @@
 <script lang="ts">
+	import { run, preventDefault } from 'svelte/legacy';
+
 	import './RangeSlider.css';
 	import { spring } from 'svelte/motion';
 	import { createEventDispatcher } from 'svelte';
 	import RangePips from './RangePips.svelte';
 
-	/** Minimum allowed value. */
-	export let min: number = 0;
-	/** Maximum allowed value. */
-	export let max: number = 100;
-	/** Value of the slider. */
-	export let values: number[] = [(max + min) / 2];
-	/** Slider jump interval. By default, the slider slides fluently. */
-	export let step: number = 1;
-	/**
+	
+	
+	
+	
+	
+	
+	// dom references
+	// range slider props
+
+
+	// range pips / values props
+
+	// formatting props
+
+	// stylistic props
+	interface Props {
+		/** Minimum allowed value. */
+		min?: number;
+		/** Maximum allowed value. */
+		max?: number;
+		/** Value of the slider. */
+		values?: number[];
+		/** Slider jump interval. By default, the slider slides fluently. */
+		step?: number;
+		/**
 	 * Whether slider's orientation is vertical. Defaults to `false`.
 	 * Vertical sliders don't assume a default `height`, so a height needs to be set.
 	 */
-	export let vertical: boolean = false;
-	/** Whether slider is disabled. */
-	export let disabled: boolean = false;
-	// dom references
-	export let slider = undefined;
-	// range slider props
-	export let range: 'min' | 'max' | boolean = false;
-	export let pushy = false;
+		vertical?: boolean;
+		/** Whether slider is disabled. */
+		disabled?: boolean;
+		slider?: any;
+		range?: 'min' | 'max' | boolean;
+		pushy?: boolean;
+		float?: boolean;
+		reversed?: boolean;
+		hoverable?: boolean;
+		pips?: boolean;
+		pipstep?: any;
+		all?: any;
+		first?: any;
+		last?: any;
+		rest?: any;
+		id?: any;
+		prefix?: string;
+		suffix?: string;
+		formatter?: any;
+		handleFormatter?: any;
+		precision?: number;
+		springValues?: any;
+	}
 
-	export let float = false;
-	export let reversed = false;
-	export let hoverable = true;
-
-	// range pips / values props
-	export let pips = false;
-	export let pipstep = undefined;
-	export let all = undefined;
-	export let first = undefined;
-	export let last = undefined;
-	export let rest = undefined;
-
-	// formatting props
-	export let id = undefined;
-	export let prefix = '';
-	export let suffix = '';
-	export let formatter = (value: number, index: number, procentage: number) => value;
-	export let handleFormatter = formatter;
-
-	// stylistic props
-	export let precision = 2;
-	export let springValues = { stiffness: 0.15, damping: 0.4 };
+	let {
+		min = 0,
+		max = 100,
+		values = $bindable([(max + min) / 2]),
+		step = 1,
+		vertical = false,
+		disabled = false,
+		slider = $bindable(undefined),
+		range = false,
+		pushy = false,
+		float = false,
+		reversed = false,
+		hoverable = true,
+		pips = false,
+		pipstep = undefined,
+		all = undefined,
+		first = undefined,
+		last = undefined,
+		rest = undefined,
+		id = undefined,
+		prefix = '',
+		suffix = '',
+		formatter = (value: number, index: number, procentage: number) => value,
+		handleFormatter = formatter,
+		precision = 2,
+		springValues = { stiffness: 0.15, damping: 0.4 }
+	}: Props = $props();
 
 	// prepare dispatched events
 	const dispatch = createEventDispatcher();
 
 	// state management
-	let valueLength = 0;
-	let focus = false;
+	let valueLength = $state(0);
+	let focus = $state(false);
 	let handleActivated = false;
-	let handlePressed = false;
+	let handlePressed = $state(false);
 	let keyboardActive = false;
-	let activeHandle = values.length - 1;
+	let activeHandle = $state(values.length - 1);
 	let startValue;
 	let previousValue;
 
 	// copy the initial values in to a spring function which
 	// will update every time the values array is modified
 
-	let springPositions;
+	let springPositions = $state();
 
 	const fixFloat = (v) => parseFloat(v.toFixed(precision));
 
-	$: {
-		// check that "values" is an array, or set it as array
-		// to prevent any errors in springs, or range trimming
-		if (!Array.isArray(values)) {
-			values = [(max + min) / 2];
-			console.error(
-				"'values' prop should be an Array (https://github.com/simeydotme/svelte-range-slider-pips#slider-props)"
-			);
-		}
-		// trim the range so it remains as a min/max (only 2 handles)
-		// and also align the handles to the steps
-		values = trimRange(values.map((v) => alignValueToStep(v)));
 
-		// check if the valueLength (length of values[]) has changed,
-		// because if so we need to re-seed the spring function with the
-		// new values array.
-		if (valueLength !== values.length) {
-			// set the initial spring values when the slider initialises,
-			// or when values array length has changed
-			springPositions = spring(
-				values.map((v) => percentOf(v)),
-				springValues
-			);
-		} else {
-			// update the value of the spring function for animated handles
-			// whenever the values has updated
-			springPositions.set(values.map((v) => percentOf(v)));
-		}
-		// set the valueLength for the next check
-		valueLength = values.length;
-	}
 
-	/**
-	 * take in a value, and then calculate that value's percentage
-	 * of the overall range (min-max);
-	 * @param {number} val the value we're getting percent for
-	 * @return {number} the percentage value
-	 **/
-	$: percentOf = function (val) {
-		let perc = ((val - min) / (max - min)) * 100;
-		if (isNaN(perc) || perc <= 0) {
-			return 0;
-		} else if (perc >= 100) {
-			return 100;
-		} else {
-			return fixFloat(perc);
-		}
-	};
 
-	/**
-	 * clamp a value from the range so that it always
-	 * falls within the min/max values
-	 * @param {number} val the value to clamp
-	 * @return {number} the value after it's been clamped
-	 **/
-	$: clampValue = function (val) {
-		// return the min/max if outside of that range
-		return val <= min ? min : val >= max ? max : val;
-	};
 
-	/**
-	 * align the value with the steps so that it
-	 * always sits on the closest (above/below) step
-	 * @param {number} val the value to align
-	 * @return {number} the value after it's been aligned
-	 **/
-	$: alignValueToStep = function (val) {
-		// sanity check for performance
-		if (val <= min) {
-			return fixFloat(min);
-		} else if (val >= max) {
-			return fixFloat(max);
-		}
-		// find the middle-point between steps
-		// and see if the value is closer to the
-		// next step, or previous step
-		let remainder = (val - min) % step;
-		let aligned = val - remainder;
-		if (Math.abs(remainder) * 2 >= step) {
-			aligned += remainder > 0 ? step : -step;
-		}
-		// make sure the value is within acceptable limits
-		aligned = clampValue(aligned);
-		// make sure the returned value is set to the precision desired
-		// this is also because javascript often returns weird floats
-		// when dealing with odd numbers and percentages
-		return fixFloat(aligned);
-	};
-
-	/**
-	 * the orientation of the handles/pips based on the
-	 * input values of vertical and reversed
-	 **/
-	$: orientationStart = vertical ? (reversed ? 'top' : 'bottom') : reversed ? 'right' : 'left';
-	$: orientationEnd = vertical ? (reversed ? 'bottom' : 'top') : reversed ? 'left' : 'right';
 
 	/**
 	 * helper func to get the index of an element in it's DOM container
@@ -588,9 +535,100 @@
 				values: values.map((v) => alignValueToStep(v))
 			});
 	}
+	/**
+	 * clamp a value from the range so that it always
+	 * falls within the min/max values
+	 * @param {number} val the value to clamp
+	 * @return {number} the value after it's been clamped
+	 **/
+	let clampValue = $derived(function (val) {
+		// return the min/max if outside of that range
+		return val <= min ? min : val >= max ? max : val;
+	});
+	/**
+	 * align the value with the steps so that it
+	 * always sits on the closest (above/below) step
+	 * @param {number} val the value to align
+	 * @return {number} the value after it's been aligned
+	 **/
+	let alignValueToStep = $derived(function (val) {
+		// sanity check for performance
+		if (val <= min) {
+			return fixFloat(min);
+		} else if (val >= max) {
+			return fixFloat(max);
+		}
+		// find the middle-point between steps
+		// and see if the value is closer to the
+		// next step, or previous step
+		let remainder = (val - min) % step;
+		let aligned = val - remainder;
+		if (Math.abs(remainder) * 2 >= step) {
+			aligned += remainder > 0 ? step : -step;
+		}
+		// make sure the value is within acceptable limits
+		aligned = clampValue(aligned);
+		// make sure the returned value is set to the precision desired
+		// this is also because javascript often returns weird floats
+		// when dealing with odd numbers and percentages
+		return fixFloat(aligned);
+	});
+	/**
+	 * take in a value, and then calculate that value's percentage
+	 * of the overall range (min-max);
+	 * @param {number} val the value we're getting percent for
+	 * @return {number} the percentage value
+	 **/
+	let percentOf = $derived(function (val) {
+		let perc = ((val - min) / (max - min)) * 100;
+		if (isNaN(perc) || perc <= 0) {
+			return 0;
+		} else if (perc >= 100) {
+			return 100;
+		} else {
+			return fixFloat(perc);
+		}
+	});
+	run(() => {
+		// check that "values" is an array, or set it as array
+		// to prevent any errors in springs, or range trimming
+		if (!Array.isArray(values)) {
+			values = [(max + min) / 2];
+			console.error(
+				"'values' prop should be an Array (https://github.com/simeydotme/svelte-range-slider-pips#slider-props)"
+			);
+		}
+		// trim the range so it remains as a min/max (only 2 handles)
+		// and also align the handles to the steps
+		values = trimRange(values.map((v) => alignValueToStep(v)));
+
+		// check if the valueLength (length of values[]) has changed,
+		// because if so we need to re-seed the spring function with the
+		// new values array.
+		if (valueLength !== values.length) {
+			// set the initial spring values when the slider initialises,
+			// or when values array length has changed
+			springPositions = spring(
+				values.map((v) => percentOf(v)),
+				springValues
+			);
+		} else {
+			// update the value of the spring function for animated handles
+			// whenever the values has updated
+			springPositions.set(values.map((v) => percentOf(v)));
+		}
+		// set the valueLength for the next check
+		valueLength = values.length;
+	});
+	/**
+	 * the orientation of the handles/pips based on the
+	 * input values of vertical and reversed
+	 **/
+	let orientationStart = $derived(vertical ? (reversed ? 'top' : 'bottom') : reversed ? 'right' : 'left');
+	let orientationEnd = $derived(vertical ? (reversed ? 'bottom' : 'top') : reversed ? 'left' : 'right');
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	{id}
 	bind:this={slider}
@@ -605,10 +643,10 @@
 	class:max={range === 'max'}
 	class:pips
 	class:pip-labels={all === 'label' || first === 'label' || last === 'label' || rest === 'label'}
-	on:mousedown={sliderInteractStart}
-	on:mouseup={sliderInteractEnd}
-	on:touchstart|preventDefault={sliderInteractStart}
-	on:touchend|preventDefault={sliderInteractEnd}
+	onmousedown={sliderInteractStart}
+	onmouseup={sliderInteractEnd}
+	ontouchstart={preventDefault(sliderInteractStart)}
+	ontouchend={preventDefault(sliderInteractEnd)}
 >
 	{#each values as value, index}
 		<span
@@ -617,9 +655,9 @@
 			class:active={focus && activeHandle === index}
 			class:press={handlePressed && activeHandle === index}
 			data-handle={index}
-			on:blur={sliderBlurHandle}
-			on:focus={sliderFocusHandle}
-			on:keydown={sliderKeydown}
+			onblur={sliderBlurHandle}
+			onfocus={sliderFocusHandle}
+			onkeydown={sliderKeydown}
 			style="{orientationStart}: {$springPositions[index]}%; z-index: {activeHandle === index
 				? 3
 				: 2};"
@@ -631,7 +669,7 @@
 			aria-disabled={disabled}
 			tabindex={disabled ? -1 : 0}
 		>
-			<span class="rangeNub" />
+			<span class="rangeNub"></span>
 			{#if float}
 				<span class="rangeFloat">
 					{#if prefix}<span class="rangeFloat-prefix">{prefix}</span>{/if}{handleFormatter(
@@ -679,11 +717,11 @@
 </div>
 
 <svelte:window
-	on:mousedown={bodyInteractStart}
-	on:touchstart={bodyInteractStart}
-	on:mousemove={bodyInteract}
-	on:touchmove={bodyInteract}
-	on:mouseup={bodyMouseUp}
-	on:touchend={bodyTouchEnd}
-	on:keydown={bodyKeyDown}
+	onmousedown={bodyInteractStart}
+	ontouchstart={bodyInteractStart}
+	onmousemove={bodyInteract}
+	ontouchmove={bodyInteract}
+	onmouseup={bodyMouseUp}
+	ontouchend={bodyTouchEnd}
+	onkeydown={bodyKeyDown}
 />

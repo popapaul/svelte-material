@@ -1,12 +1,18 @@
 <script lang="ts">
 	import './CardActions.scss';
-	let klass: string = '';
 	/** classes added to the card actions */
-	export { klass as class };
-	/** styles added the card actions */
-	export let style: string = null;
+	
+	
+	interface Props {
+		class?: string;
+		/** styles added the card actions */
+		style?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let { class: klass = '', style = null, children }: Props = $props();
 </script>
 
 <div class="s-card-actions {klass}" {style}>
-	<slot />
+	{@render children?.()}
 </div>

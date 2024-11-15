@@ -3,13 +3,24 @@
 	import { fly, fade } from 'svelte/transition';
 	import Icon from '../Icon/Icon.svelte';
 	import Button from '../Button/Button.svelte';
-	export let locale: string;
-	export let onRender: (date: Date) => { disabled?: boolean; message?: string };
-	export let value: Date = new Date();
-	export let month: number;
-	export let year: number;
-	export let weekStart = 1; // Number
-	let direction = 0;
+	interface Props {
+		locale: string;
+		onRender: (date: Date) => { disabled?: boolean; message?: string };
+		value?: Date;
+		month: number;
+		year: number;
+		weekStart?: number;
+	}
+
+	let {
+		locale = $bindable(),
+		onRender,
+		value = $bindable(new Date()),
+		month = $bindable(),
+		year = $bindable(),
+		weekStart = 1
+	}: Props = $props();
+	let direction = $state(0);
 	const dispatch = createEventDispatcher();
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
@@ -118,8 +129,8 @@
 			in:fly|local={{ x: direction * 50, duration: 200, delay: 80 }}
 			out:fade|local={{ duration: direction === 0 ? 0 : 160 }}
 		>
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div class="title" on:keydown={onKeydown} on:click={onMonth}>
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="title" onkeydown={onKeydown} onclick={onMonth}>
 				{new Intl.DateTimeFormat(locale, { month: 'long' }).format(new Date(year, month, 1))}
 				{('000' + year).slice(-4)}
 			</div>
@@ -147,8 +158,8 @@
 									class:today={isEqualDate(date, today)}
 									class:selected={isEqualDate(date, isNaN(value?.getTime()) ? new Date(0) : value)}
 									class:disabled={attrs.disabled}
-									on:keydown={onKeydown}
-									on:click={() => !attrs.disabled && onDay(date)}
+									onkeydown={onKeydown}
+									onclick={() => !attrs.disabled && onDay(date)}
 								>
 									{day}
 								</button>

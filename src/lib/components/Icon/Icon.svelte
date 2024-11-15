@@ -1,28 +1,46 @@
 <script lang="ts">
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { format } from '../../internal/Style';
 	import './Icon.scss';
-	let klass = '';
 	/** classes added to the icon */
-	export { klass as class };
-	/** size of the icon */
-	export let size: string | number = '24px';
-	/** degress by which to rotate the icon */
-	export let rotate: number = 0;
-	/** makes the icon spin */
-	export let spin: boolean = false;
-	/** disables the icon */
-	export let disabled: boolean = false;
-	/** svg path for the icon */
-	export let path: string = null;
-	/** label for the icon */
-	export let label: string = null;
-	/** styles added to the icon */
-	export let style: string = null;
+	
+	interface Props {
+		class?: string;
+		/** size of the icon */
+		size?: string | number;
+		/** degress by which to rotate the icon */
+		rotate?: number;
+		/** makes the icon spin */
+		spin?: boolean;
+		/** disables the icon */
+		disabled?: boolean;
+		/** svg path for the icon */
+		path?: string;
+		/** label for the icon */
+		label?: string;
+		/** styles added to the icon */
+		style?: string;
+		[key: string]: any
+	}
+
+	let {
+		class: klass = '',
+		size = '24px',
+		rotate = 0,
+		spin = false,
+		disabled = false,
+		path = null,
+		label = null,
+		style = null,
+		...rest
+	}: Props = $props();
 </script>
 
 <i
-	{...$$restProps}
-	on:click
+	{...rest}
+	onclick={bubble('click')}
 	aria-hidden="true"
 	class="s-icon {klass}"
 	class:spin

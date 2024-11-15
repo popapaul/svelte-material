@@ -17,12 +17,19 @@
 </script>
 
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { onDestroy, setContext } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	let klass = '';
-	export { klass as class };
-	export let style = null;
+	
+	interface Props {
+		class?: string;
+		style?: any;
+		children?: import('svelte').Snippet;
+	}
+
+	let { class: klass = '', style = null, children }: Props = $props();
 
 	interface $$Events {
 		submit: CustomEvent;
@@ -62,6 +69,6 @@
 	}
 </script>
 
-<form on:submit|preventDefault={onSubmit} class={klass} {style}>
-	<slot />
+<form onsubmit={preventDefault(onSubmit)} class={klass} {style}>
+	{@render children?.()}
 </form>

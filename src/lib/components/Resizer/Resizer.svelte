@@ -5,14 +5,25 @@
 <script lang="ts">
 	import './Resizer.scss';
 	// Add class to resizer wrapper.
-	let klass = '';
-	export { klass as class };
+	
 
 	// Styles to add to resizer.
-	export let style: string = null;
 
-	export let width: string | number = null;
-	export let x = 20;
+	interface Props {
+		class?: string;
+		style?: string;
+		width?: string | number;
+		x?: number;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		style = null,
+		width = $bindable(null),
+		x = $bindable(20),
+		children
+	}: Props = $props();
 
 	const dispath = createEventDispatcher();
 	let expanding = null;
@@ -51,10 +62,10 @@
 	}
 </script>
 
-<svelte:window on:mouseup={stopExpand} on:mousemove={expand} />
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<svelte:window onmouseup={stopExpand} onmousemove={expand} />
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div bind:clientWidth={width} class="s-resizer {klass}" {style}>
-	<div class="s-resize-handle resize-left" on:mousedown={(event) => startExpand('left', event)} />
-	<slot />
-	<div class="s-resize-handle resize-right" on:mousedown={(event) => startExpand('right', event)} />
+	<div class="s-resize-handle resize-left" onmousedown={(event) => startExpand('left', event)}></div>
+	{@render children?.()}
+	<div class="s-resize-handle resize-right" onmousedown={(event) => startExpand('right', event)}></div>
 </div>

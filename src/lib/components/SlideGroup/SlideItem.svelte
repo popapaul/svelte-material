@@ -6,14 +6,25 @@
 	const moveGroup = getContext<(item: any) => void>(SLIDE_GROUP);
 	const ITEM = getContext<ItemGroupContext>(ITEM_GROUP);
 
-	let active = false;
-	let itemElement: HTMLElement;
+	let active = $state(false);
+	let itemElement: HTMLElement = $state();
 
-	let klass = '';
-	export { klass as class };
-	export let activeClass = ITEM.activeClass;
-	export let value = ITEM.index();
-	export let disabled = null;
+	
+	interface Props {
+		class?: string;
+		activeClass?: any;
+		value?: any;
+		disabled?: any;
+		children?: import('svelte').Snippet<[any]>;
+	}
+
+	let {
+		class: klass = '',
+		activeClass = ITEM.activeClass,
+		value = ITEM.index(),
+		disabled = null,
+		children
+	}: Props = $props();
 
 	ITEM.register((values) => {
 		active = values.includes(value);
@@ -27,14 +38,14 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	bind:this={itemElement}
 	class="s-slide-item {active ? activeClass : ''} {klass}"
-	on:click={selectItem}
+	onclick={selectItem}
 >
-	<slot {active} />
+	{@render children?.({ active, })}
 </div>
 
 <style>

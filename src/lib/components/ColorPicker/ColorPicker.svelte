@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run, passive } from 'svelte/legacy';
+
 	import './ColorPicker.scss';
 	import { createEventDispatcher } from 'svelte';
 	import RangeSlider from '../RangeSlider/RangeSlider.svelte';
@@ -6,21 +8,25 @@
 	import { clickOutside } from '../../actions/ClickOutside';
 	import Swatches from './Swatches.svelte';
 
-	export let value: string = '#FF0000';
 
-	export let colors: string[] = [];
+	interface Props {
+		value?: string;
+		colors?: string[];
+	}
+
+	let { value = $bindable('#FF0000'), colors = $bindable([]) }: Props = $props();
 
 	const dispatch = createEventDispatcher();
-	let tracked;
-	let h = 1;
+	let tracked = $state();
+	let h = $state(1);
 	let s = 1;
 	let v = 1;
 	let a = 1;
-	let r = 255;
-	let g = 0;
-	let b = 0;
-	let top: string = '5px';
-	let left: string = '5px';
+	let r = $state(255);
+	let g = $state(0);
+	let b = $state(0);
+	let top: string = $state('5px');
+	let left: string = $state('5px');
 
 	let hexValue;
 	function setStartColor(value) {
@@ -209,28 +215,30 @@
 		value = color ? color : RGBAToHex();
 		colorChangeCallback();
 	};
-	$: setStartColor(value);
+	run(() => {
+		setStartColor(value);
+	});
 </script>
 
 <svelte:window
-	on:touchmove|passive={handleMove}
-	on:mousemove|passive={handleMove}
-	on:touchend={() => (tracked = null)}
-	on:mouseup={() => (tracked = null)}
+	use:passive={['touchmove', () => handleMove]}
+	use:passive={['mousemove', () => handleMove]}
+	ontouchend={() => (tracked = null)}
+	onmouseup={() => (tracked = null)}
 />
 
 <div class="main-container">
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div class="colorsquare size" style="background-color:rgba({hsvToRgb(h, 1, 1).join(',')});">
 		<div class="saturation-gradient">
 			<div class="value-gradient">
-				<div id="colorsquare-picker" style="top:{top};left:{left};" />
+				<div id="colorsquare-picker" style="top:{top};left:{left};"></div>
 				<div
 					id="colorsquare-event"
 					use:clickOutside
-					on:clickOutside={() => (tracked = null)}
-					on:mousedown={handleDown}
-					on:touchstart={handleDown}
+					onclickOutside={() => (tracked = null)}
+					onmousedown={handleDown}
+					ontouchstart={handleDown}
 				></div>
 			</div>
 		</div>

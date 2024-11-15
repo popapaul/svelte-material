@@ -4,7 +4,19 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let value = new Date();
+	interface Props {
+		value?: any;
+		now?: import('svelte').Snippet;
+		ok?: import('svelte').Snippet;
+		cancel?: import('svelte').Snippet;
+	}
+
+	let {
+		value = $bindable(new Date()),
+		now,
+		ok,
+		cancel
+	}: Props = $props();
 
 	const handleCancel = () => {
 		dispatch('cancel');
@@ -24,20 +36,20 @@
 </script>
 
 <div class="tp-wrapper">
-	<button on:click={handleNow}>
-		<slot name="now">
+	<button onclick={handleNow}>
+		{#if now}{@render now()}{:else}
 			<Button>Now</Button>
-		</slot>
+		{/if}
 	</button>
-	<button on:click={handleOk}>
-		<slot name="ok">
+	<button onclick={handleOk}>
+		{#if ok}{@render ok()}{:else}
 			<Button>Ok</Button>
-		</slot>
+		{/if}
 	</button>
-	<button on:click={handleCancel}>
-		<slot name="cancel">
+	<button onclick={handleCancel}>
+		{#if cancel}{@render cancel()}{:else}
 			<Button>Cancel</Button>
-		</slot>
+		{/if}
 	</button>
 </div>
 

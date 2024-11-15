@@ -6,14 +6,28 @@
 	setContext('S_ListItemRole', 'option');
 	setContext('S_ListItemGroup', ITEM_GROUP);
 
-	let klass = 'primary-text';
-	export { klass as class };
-	export let value: any | any[] = [];
-	export let activeClass = 'active';
-	export let multiple = false;
-	export let mandatory = false;
-	export let max = Infinity;
-	export let style = null;
+	
+	interface Props {
+		class?: string;
+		value?: any | any[];
+		activeClass?: string;
+		multiple?: boolean;
+		mandatory?: boolean;
+		max?: any;
+		style?: any;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = 'primary-text',
+		value = $bindable(),
+		activeClass = 'active',
+		multiple = false,
+		mandatory = false,
+		max = Infinity,
+		style = null,
+		children
+	}: Props = $props();
 </script>
 
 <ItemGroup
@@ -27,5 +41,5 @@
 	{max}
 	{style}
 >
-	<slot />
+	{@render children?.()}
 </ItemGroup>

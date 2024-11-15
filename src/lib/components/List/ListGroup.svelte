@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import './ListGroup.scss';
 	import { slide, type TransitionConfig } from 'svelte/transition';
 	import { onMount, setContext } from 'svelte';
@@ -6,30 +9,54 @@
 	import { format } from '../../internal/Style';
 	import type { RippleOptions } from '../../actions/Ripple';
 
-	let klass = 'primary-text';
 	/** classes added to the listgroup */
-	export { klass as class };
-	export let activatorClass = '';
+	
+	interface Props {
+		class?: string;
+		activatorClass?: string;
+		activatorProps?: any;
+		/** toggle the active state */
+		active?: boolean;
+		/** will force the components content to render on mount */
+		eager?: boolean;
+		/** transition when open or close */
+		transition?: (node: Element, options: any) => TransitionConfig;
+		/** options for transiton */
+		transitionOpts?: any;
+		/** offset of the listgroup */
+		offset?: string | number;
+		/** disables the listgroup */
+		disabled?: boolean;
+		/** options for the ripple action */
+		ripple?: RippleOptions;
+		/** disable toggle */
+		disableToggle?: boolean;
+		/** styles added to the listgroup */
+		style?: any;
+		prepend?: import('svelte').Snippet<[any]>;
+		activator?: import('svelte').Snippet<[any]>;
+		append?: import('svelte').Snippet<[any]>;
+		children?: import('svelte').Snippet;
+	}
 
-	export let activatorProps = {};
-	/** toggle the active state */
-	export let active = false;
-	/** will force the components content to render on mount */
-	export let eager = false;
-	/** transition when open or close */
-	export let transition: (node: Element, options: any) => TransitionConfig = slide;
-	/** options for transiton */
-	export let transitionOpts = {};
-	/** offset of the listgroup */
-	export let offset: string | number = null;
-	/** disables the listgroup */
-	export let disabled: boolean = false;
-	/** options for the ripple action */
-	export let ripple: RippleOptions = {};
-	/** disable toggle */
-	export let disableToggle: boolean = false;
-	/** styles added to the listgroup */
-	export let style = null;
+	let {
+		class: klass = 'primary-text',
+		activatorClass = '',
+		activatorProps = {},
+		active = $bindable(),
+		eager = false,
+		transition = slide,
+		transitionOpts = {},
+		offset = null,
+		disabled = false,
+		ripple = {},
+		disableToggle = false,
+		style = null,
+		prepend,
+		activator,
+		append,
+		children
+	}: Props = $props();
 
 	setContext('S_ListItemRipple', ripple);
 
@@ -54,23 +81,27 @@
 		{...activatorProps}
 		on:click={toggle}
 	>
-		<slot slot="prepend" name="prepend" {active} toggle={()=>active=!active} />
-		<slot name="activator" toggle={()=>active=!active} />
-		<slot slot="append" name="append" {active} toggle={()=>active=!active} />
+		{#snippet prepend()}
+			{@render prepend?.({ active, toggle: ()=>active=!active, })}
+		{/snippet}
+		{@render activator?.({ toggle: ()=>active=!active, })}
+		{#snippet append()}
+			{@render append?.({ active, toggle: ()=>active=!active, })}
+		{/snippet}
 	</ListItem>
 	{#if active}
 		<div
 			transition:transition={transitionOpts}
-			on:introstart
-			on:outrostart
-			on:introend
-			on:outroend
+			onintrostart={bubble('introstart')}
+			onoutrostart={bubble('outrostart')}
+			onintroend={bubble('introend')}
+			onoutroend={bubble('outroend')}
 			aria-disabled={disabled}
 			class="s-list-group__items"
 			class:offset
 			style="--s-list-group-offset: {format(offset)}; {style}"
 		>
-			<slot />
+			{@render children?.()}
 		</div>
 	{/if}
 </div>

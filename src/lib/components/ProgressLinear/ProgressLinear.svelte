@@ -2,21 +2,42 @@
 	import BackgroundColor from '../../internal/BackgroundColor';
 	import './ProgressLinear.scss';
 
-	let klass = '';
-	export { klass as class };
-	export let value = 0;
-	export let active = true;
-	export let indeterminate = false;
-	export let height = '4px';
-	export let backgroundColor = 'primary';
-	export let backgroundOpacity = 0.3;
-	export let color = backgroundColor;
-	export let buffer = 100;
-	export let reversed = false;
-	export let stream = true;
-	export let rounded = false;
-	export let striped = true;
-	export let style = '';
+	
+	interface Props {
+		class?: string;
+		value?: number;
+		active?: boolean;
+		indeterminate?: boolean;
+		height?: string;
+		backgroundColor?: string;
+		backgroundOpacity?: number;
+		color?: any;
+		buffer?: number;
+		reversed?: boolean;
+		stream?: boolean;
+		rounded?: boolean;
+		striped?: boolean;
+		style?: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		class: klass = '',
+		value = 0,
+		active = true,
+		indeterminate = false,
+		height = '4px',
+		backgroundColor = 'primary',
+		backgroundOpacity = 0.3,
+		color = backgroundColor,
+		buffer = 100,
+		reversed = false,
+		stream = true,
+		rounded = false,
+		striped = true,
+		style = '',
+		children
+	}: Props = $props();
 </script>
 
 <div
@@ -46,7 +67,7 @@
 	{/if}
 
 	<div class="s-progress-linear__content">
-		<slot />
+		{@render children?.()}
 	</div>
 
 	{#if stream}

@@ -3,12 +3,12 @@
 	import { getContext, onMount } from 'svelte';
 	import { WINDOW } from './Window.svelte';
 
-	let window;
+	let window = $state();
 	const registerWindow = getContext(WINDOW);
 
-	let klass = '';
-	export { klass as class };
-	export let style = null;
+	
+	/** @type {{class?: string, style?: any, children?: import('svelte').Snippet}} */
+	let { class: klass = '', style = null, children } = $props();
 
 	onMount(() => {
 		registerWindow(window);
@@ -16,5 +16,5 @@
 </script>
 
 <div bind:this={window} class="s-window-item {klass}" {style}>
-	<slot />
+	{@render children?.()}
 </div>

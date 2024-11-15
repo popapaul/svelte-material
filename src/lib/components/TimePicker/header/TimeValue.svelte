@@ -1,17 +1,23 @@
 <script>
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { formatTime } from '../scripts/dates';
 
-	export let hour = true;
-	export let selected = false;
-	export let value = 0;
-	export let is24h;
+	/** @type {{hour?: boolean, selected?: boolean, value?: number, is24h: any}} */
+	let {
+		hour = true,
+		selected = false,
+		value = 0,
+		is24h
+	} = $props();
 
-	$: am = value >= 0 && value < 12;
+	let am = $derived(value >= 0 && value < 12);
 
-	$: pmHour = is24h ? value : value - 12 === 0 ? 12 : value - 12;
+	let pmHour = $derived(is24h ? value : value - 12 === 0 ? 12 : value - 12);
 </script>
 
-<button type="button" class="_tp-value" class:selected on:click>
+<button type="button" class="_tp-value" class:selected onclick={bubble('click')}>
 	{formatTime(hour ? (am ? value : pmHour) : value)}
 </button>
 

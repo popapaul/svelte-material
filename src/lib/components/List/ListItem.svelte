@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler, handlers } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import './ListItem.scss';
 	import { getContext } from 'svelte';
 	import { ripple as Ripple, type RippleOptions } from '../../actions/Ripple';
@@ -14,32 +17,68 @@
 	};
 	const ITEM = ITEM_GROUP ? getContext<ItemGroupContext>(ITEM_GROUP) : DEFAULTS;
 
-	let klass: string = '';
 	/** classes added to the listitem */
-	export { klass as class };
-	/** classes added when active */
-	export let activeClass: string = ITEM.activeClass;
-	/** value to use in ListItemGroup */
-	export let value: any = ITEM.index();
-	/** specify active state */
-	export let active = false;
-	/** makes the listitem dense */
-	export let dense = false;
-	/** disables the listitem */
-	export let disabled: boolean = false;
-	/** there is no word wrap */
-	export let multiline = false;
-	/** transforms listitem into anchor */
-	export let href: string = '';
+	
+	
+	
+	
+	
+	
+	
+	
 
-	export let link = role;
-	/** makes text selectable if true */
-	export let selectable = !link;
-	/** options for the ripple action */
-	export let ripple: RippleOptions | boolean =
-		getContext<RippleOptions>('S_ListItemRipple') || false;
-	/** styles added to listitem */
-	export let style: string = '';
+	
+	
+	
+	interface Props {
+		class?: string;
+		/** classes added when active */
+		activeClass?: string;
+		/** value to use in ListItemGroup */
+		value?: any;
+		/** specify active state */
+		active?: boolean;
+		/** makes the listitem dense */
+		dense?: boolean;
+		/** disables the listitem */
+		disabled?: boolean;
+		/** there is no word wrap */
+		multiline?: boolean;
+		/** transforms listitem into anchor */
+		href?: string;
+		link?: any;
+		/** makes text selectable if true */
+		selectable?: any;
+		/** options for the ripple action */
+		ripple?: RippleOptions | boolean;
+		/** styles added to listitem */
+		style?: string;
+		prepend?: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
+		subtitle?: import('svelte').Snippet;
+		append?: import('svelte').Snippet;
+		[key: string]: any
+	}
+
+	let {
+		class: klass = '',
+		activeClass = ITEM.activeClass,
+		value = ITEM.index(),
+		active = $bindable(false),
+		dense = false,
+		disabled = false,
+		multiline = false,
+		href = '',
+		link = role,
+		selectable = !link,
+		ripple = getContext<RippleOptions>('S_ListItemRipple') || false,
+		style = '',
+		prepend,
+		children,
+		subtitle,
+		append,
+		...rest
+	}: Props = $props();
 
 	ITEM.register((values) => {
 		active = values?.includes(value);
@@ -50,7 +89,7 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <svelte:element
 	this={href ? 'a' : 'span'}
 	{href}
@@ -63,21 +102,20 @@
 	class:link
 	class:selectable
 	use:Ripple={ripple}
-	on:click={click}
-	on:click
-	on:keydown
-	on:dblclick
-	{...$$restProps}
+	onclick={handlers(click, bubble('click'))}
+	onkeydown={bubble('keydown')}
+	ondblclick={bubble('dblclick')}
+	{...rest}
 	{style}
 >
-	<slot name="prepend" />
+	{@render prepend?.()}
 	<div class="s-list-item__content" {role}>
 		<div class="s-list-item__title">
-			<slot />
+			{@render children?.()}
 		</div>
 		<div class="s-list-item__subtitle">
-			<slot name="subtitle" />
+			{@render subtitle?.()}
 		</div>
 	</div>
-	<slot name="append" />
+	{@render append?.()}
 </svelte:element>

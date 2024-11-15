@@ -1,39 +1,63 @@
+
 <script lang="ts">
+	import { preventDefault, createBubbler, handlers } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { createPopperActions, type NanoPopPosition } from '../../actions/Popper';
 	import { setContext, createEventDispatcher, onMount, tick } from 'svelte';
 	import './Menu.scss';
 	import { clickOutside } from '../../actions/ClickOutside';
 	import { fade } from 'svelte/transition';
 
-	let klass: string = '';
 	/** Classes to add to menu. */
-	export { klass as class };
-	/** The menu's active state. */
-	export let active = false;
-	/** Designates whether menu should open and close on activator hover. */
-	export let hover = false;
-	/** Designates if menu should close when its content is clicked. */
-	export let closeOnClick = true;
+	
 	/** Aligns the component with respect to its bottom. */
-	/** Removes the border radius. */
-	export let tile = false;
-	/** Disables the menu. */
-	export let disabled = false;
-	/** The desired position of the menu */
-	export let placement: NanoPopPosition = 'bottom-middle';
-	/** Styles for the menu. */
-	export let style = '';
 
-	export let rightClick = false;
-	export let fullWidth: boolean = false;
+	interface Props {
+		class?: string;
+		/** The menu's active state. */
+		active?: boolean;
+		/** Designates whether menu should open and close on activatorElem hover. */
+		hover?: boolean;
+		/** Designates if menu should close when its content is clicked. */
+		closeOnClick?: boolean;
+		/** Removes the border radius. */
+		tile?: boolean;
+		/** Disables the menu. */
+		disabled?: boolean;
+		/** The desired position of the menu */
+		placement?: NanoPopPosition;
+		/** Styles for the menu. */
+		style?: string;
+		rightClick?: boolean;
+		fullWidth?: boolean;
+		nudgeX?: number;
+		nudgeY?: number;
+		children?: import('svelte').Snippet;
+		activator?: import('svelte').Snippet;
+	}
 
-	export let nudgeX: number = 0;
-	export let nudgeY: number = 0;
+	let {
+		class: klass = '',
+		active = $bindable(),
+		hover = false,
+		closeOnClick = true,
+		tile = false,
+		disabled = false,
+		placement = 'bottom-middle',
+		style = '',
+		rightClick = false,
+		fullWidth = false,
+		nudgeX = 0,
+		nudgeY = 0,
+		children,
+		activator
+	}: Props = $props();
 
-	let activatorWidth = 0;
-	let activator: HTMLButtonElement;
-	let menu: HTMLDialogElement;
-	let clicked = false;
+	let activatorWidth = $state(0);
+	let activatorElem: HTMLButtonElement = $state();
+	let menu: HTMLDialogElement = $state();
+	let clicked = $state(false);
 	const dispatch = createEventDispatcher();
 
 	setContext('S_ListItemRole', 'menuitem');
@@ -41,24 +65,22 @@
 
 	const [popperRef, popperContent] = createPopperActions();
 
-	onMount(()=>{
-		const target = activator.firstElementChild as HTMLElement;
+	onMount(() => {
+		const target = activatorElem.firstElementChild as HTMLElement;
 
 		const { destroy } = popperRef(target);
 		return destroy;
-	})
-
-	
+	});
 
 	const close = () => {
 		active = false;
 		clicked = false;
 		dispatch('close');
 	};
-	
+
 	const open = async () => {
 		if (disabled) return;
-		activatorWidth = activator.firstElementChild.clientWidth;
+		activatorWidth = activatorElem.firstElementChild.clientWidth;
 
 		active = true;
 
@@ -70,47 +92,55 @@
 	};
 
 	const menuClick = () => {
-
 		closeOnClick && close();
 	};
-	const activatorClick=()=>{
-		clicked=true;
+	const activatorClick = () => {
+		clicked = true;
 		open();
-	}
+	};
 	//$: menu && active ? open() : close();
 </script>
 
-
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div use:clickOutside on:clickOutside={close} on:mouseleave={()=>!clicked && hover && close()} style="display:contents">
-	<div  bind:this={activator} on:mouseenter={()=> hover && open()} 
-		on:click={()=>!rightClick && activatorClick()}
-		on:keydown={()=>!rightClick && activatorClick()} 
-		on:contextmenu|preventDefault={()=>rightClick && activatorClick()}
-		popovertargetaction="show" style="display:contents;" >
-		<slot name="activator" />
+<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+	use:clickOutside
+	onclickOutside={close}
+	onmouseleave={() => !clicked && hover && close()}
+	style="display:contents"
+>
+	<div
+		bind:this={activatorElem}
+		onmouseenter={() => hover && open()}
+		onclick={() => !rightClick && activatorClick()}
+		onkeydown={() => !rightClick && activatorClick()}
+		oncontextmenu={preventDefault(() => rightClick && activatorClick())}
+		popovertargetaction="show"
+		style="display:contents;"
+	>
+		{@render activator?.()}
 	</div>
 
 	{#if active}
-		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		<dialog transition:fade={{duration:300}} bind:this={menu} on:close={close} on:close on:click={(event)=> (event.target== menu ) && close()}
-			use:popperContent={{position:placement}}
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+		<dialog
+			transition:fade={{ duration: 300 }}
+			bind:this={menu}
+			onclose={handlers(close, bubble('close'))}
+			onclick={handlers((event) => event.target == menu && close(), menuClick)}
+			use:popperContent={{ position: placement }}
 			popover="manual"
 			{style}
 			class="s-menu {klass}"
-			style:width={fullWidth ? activatorWidth+"px" : null}
+			style:width={fullWidth ? activatorWidth + 'px' : null}
 			style:margin-right="{nudgeX}px"
 			style:margin-top="{nudgeY}px"
 			style:margin-left="{0}px"
 			style:margin-bottom="{0}px"
-		
-
 			class:tile
-			on:click={menuClick}
-			on:keydown={menuClick}
+			onkeydown={menuClick}
 		>
-			<slot />
+			{@render children?.()}
 		</dialog>
 	{/if}
 </div>

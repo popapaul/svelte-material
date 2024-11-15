@@ -1,14 +1,18 @@
 <script>
 	import WindowItem from '../Window/WindowItem.svelte';
 
-	let klass = '';
-	export { klass as class };
-	export let style = '';
-	export let windowClass = '';
+	
+	/** @type {{class?: string, style?: string, windowClass?: string, children?: import('svelte').Snippet}} */
+	let {
+		class: klass = '',
+		style = '',
+		windowClass = '',
+		children
+	} = $props();
 </script>
 
 <div class="s-tab-content {klass}" role="tabpanel" {style}>
 	<WindowItem class={windowClass}>
-		<slot />
+		{@render children?.()}
 	</WindowItem>
 </div>

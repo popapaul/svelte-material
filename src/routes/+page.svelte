@@ -8,7 +8,7 @@
 		{ name: '3', value: 3 }
 	];
 
-	let value: string;
+	let value: string = $state();
 </script>
 
 <h1>Welcome to your library project</h1>
