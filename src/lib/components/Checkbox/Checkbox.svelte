@@ -77,7 +77,7 @@
 	let {
 		class: klass = '',
 		color = 'primary',
-		checked = $bindable(false),
+		checked = $bindable(),
 		indeterminate = $bindable(false),
 		disabled = false,
 		errorCount = 1,
