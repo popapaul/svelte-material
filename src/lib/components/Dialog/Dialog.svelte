@@ -44,12 +44,13 @@
 	async function open() {
 		if (disabled) return;
 		await tick();
+		document.querySelector("body").style.overflow = "hidden";
 		dialog?.showModal();
 	}
 
 	function close() {
 		active = false;
-
+		document.querySelector("body").style.overflow = "";
 		//dialog?.close();
 		dispatch('close');
 	}

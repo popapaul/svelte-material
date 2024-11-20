@@ -2,10 +2,14 @@
 	transition: 0.3s;
 	outline: none;
 	background-color: var(--theme-surface);
-	position: relative;
+	position: fixed;
 	z-index: 1000;
 }
 
 .s-dialog::backdrop {
 	background: rgba(0, 0, 0, 0.4);
+}
+
+.no-scroll{
+	overflow: hidden !important;
 }
