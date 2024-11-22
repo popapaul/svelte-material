@@ -85,7 +85,6 @@
 		prependOuter?: import('svelte').Snippet;
 		appendOuter?: import('svelte').Snippet;
 		content?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {
@@ -169,7 +168,7 @@
 	});
 </script>
 
-<Input class="s-text-field  {klass}" {prependOuter} {appendOuter} {color} {dense} {readonly} {disabled} {error} {success} {style}>
+<Input class="s-text-field {klass}" {prependOuter} {appendOuter} {color} {dense} {readonly} {disabled} {error} {success} {style}>
 	<div
 		class="s-text-field__wrapper"
 		class:filled
@@ -198,7 +197,7 @@
 			<!-- <slot name="content" /> -->
 			<!-- keypress Event is deprecated. Use keydown or keyup instead -->
 				{#if content}
-				{@render content()}
+					{@render content()}
 				{:else}
 				
 			<input
@@ -236,11 +235,13 @@
 		 {@render append?.()}
 	</div>
 
-	{#snippet messages()}
-		<div >
+	{#snippet info()}
+		<div>
 			<div>
 				<span>{hint ?? ''}</span>
-				{#each messages ?? [] as message}<span style="margin-right:8px;">{message}</span>{/each}
+				{#each messages ?? [] as message}
+					<span style="margin-right:8px;">{message}</span>
+				{/each}
 				{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
 			</div>
 			{#if counter}<span>{value.length} / {counter}</span>{/if}

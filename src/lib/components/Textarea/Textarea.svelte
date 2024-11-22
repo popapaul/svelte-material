@@ -208,7 +208,7 @@
 		{@render append?.()}
 	</div>
 
-	{#snippet messages()}
+	{#snippet info()}
 		<div>
 			<div>
 				<span>{hint}</span>

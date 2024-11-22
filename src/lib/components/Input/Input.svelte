@@ -21,7 +21,7 @@
 		children?: import('svelte').Snippet;
 		prependOuter?: import('svelte').Snippet;
 		appendOuter?: import('svelte').Snippet;
-		messages?: import('svelte').Snippet;
+		info?: import('svelte').Snippet;
 	}
 
 	let {
@@ -36,8 +36,9 @@
 		children,
 		prependOuter,
 		appendOuter,
-		messages
+		info
 	}: Props = $props();
+
 </script>
 
 <div
@@ -56,7 +57,7 @@
 			{@render children?.()}
 		</div>
 		<div class="s-input__details">
-			<!-- {@render messages?.()} -->
+			{@render info?.()} 
 		</div>
 	</div>
 	{@render appendOuter?.()}
