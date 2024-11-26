@@ -22,7 +22,6 @@
 		label?: string;
 		/** styles added to the icon */
 		style?: string;
-		[key: string]: any
 	}
 
 	let {

@@ -154,7 +154,7 @@
 	}
 
 	&:not(.active) {
-		color: var(--theme-text-primary);
+		--color: var(--theme-text-primary);
 	}
 }
 

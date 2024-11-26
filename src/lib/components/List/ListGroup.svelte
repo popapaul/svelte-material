@@ -40,7 +40,7 @@
 	}
 
 	let {
-		class: klass = 'primary-text',
+		class: klass = '',
 		activatorClass = '',
 		activatorProps = {},
 		active = $bindable(),
@@ -66,11 +66,7 @@
 	}
 
 	if (eager) {
-		const tempActive = active;
 		active = true;
-		onMount(() => {
-			active = tempActive;
-		});
 	}
 </script>
 
