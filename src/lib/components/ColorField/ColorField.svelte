@@ -7,10 +7,9 @@
 		value?: string;
 		colors?: string[];
 		children?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
-	let { value = $bindable('#FFF'), colors = $bindable([]), children, ...rest }: Props = $props();
+	let { value = $bindable(), colors = $bindable(), children, ...rest }: Props = $props();
 
 	interface $$Events {
 		focus: CustomEvent;
@@ -51,14 +50,17 @@
 			readonly
 		>
 			{@render children?.()}
-			<!-- <slot slot="append" name="append" />
-			<slot slot="prependOuter" name="prependOuter">
+			{#snippet prependOuter()}
 				<button
 					type="button"
-					on:click={open}
+					
 					class="color-preview"
-					style="background-color:{value};"
+					style="background-color:{value??"black"};"
 				/>
+			{/snippet}
+			<!-- <slot slot="append" name="append" />
+			<slot slot="prependOuter" name="prependOuter">
+				
 			</slot>
 			<slot slot="appendOuter" name="appendOuter" />
 			<slot slot="prepend" name="prepend" /> -->

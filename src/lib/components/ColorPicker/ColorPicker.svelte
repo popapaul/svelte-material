@@ -14,7 +14,7 @@
 		colors?: string[];
 	}
 
-	let { value = $bindable('#FF0000'), colors = $bindable([]) }: Props = $props();
+	let { value = $bindable(), colors = $bindable() }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 	let tracked = $state();

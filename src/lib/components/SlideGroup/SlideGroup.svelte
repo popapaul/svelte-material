@@ -9,7 +9,7 @@
 	import { run, passive } from 'svelte/legacy';
 
 	import './SlideGroup.scss';
-	import { setContext, } from 'svelte';
+	import { setContext } from 'svelte';
 	import ItemGroup from '../ItemGroup/ItemGroup.svelte';
 	import prevIcon from '../../internal/Icons/prev';
 	import nextIcon from '../../internal/Icons/next';
@@ -58,10 +58,11 @@
 		}
 	});
 
-	// afterUpdate(() => {
-	// 	if (x + wrapperWidth > contentWidth) x = contentWidth - wrapperWidth;
-	// 	else if (x < 0) x = 0;
-	// });
+	$effect(() => {
+		if (x + wrapperWidth > contentWidth)
+			 x = contentWidth - wrapperWidth;
+		else if (x < 0) x = 0;
+	});
 
 	function next() {
 		x += wrapperWidth;

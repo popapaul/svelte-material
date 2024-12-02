@@ -14,11 +14,12 @@
 		color: string;
 	}
 
-	let { colors = $bindable([]), color }: Props = $props();
+	let { colors = $bindable(), color =  $bindable() }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 	const addColor = () => {
 		if (!color) return;
+		colors ??= []; 
 		colors.push(color);
 		colors = [...new Set(colors)];
 		dispatch('change', colors);
@@ -51,7 +52,7 @@
 			</Menu>
 		</div>
 	{/each}
-	{#if color && !colors.some((x) => x == color)}
+	{#if color && !colors?.some((x) => x == color)}
 		<div in:fade>
 			<Button disabled={!color} on:click={addColor} style="color:{color};" icon fab size="x-small">
 				<div class="swatch" style="background-color:{color};color:white;">

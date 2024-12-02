@@ -30,7 +30,7 @@
 		rotate = 0,
 		spin = false,
 		disabled = false,
-		path = null,
+		path ,
 		label = null,
 		style = null,
 		...rest
