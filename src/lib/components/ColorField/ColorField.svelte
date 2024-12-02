@@ -51,12 +51,7 @@
 		>
 			{@render children?.()}
 			{#snippet prependOuter()}
-				<button
-					type="button"
-					
-					class="color-preview"
-					style="background-color:{value??"black"};"
-				/>
+				<div class="color-preview" style="background-color:{value??"black"};"></div>
 			{/snippet}
 			<!-- <slot slot="append" name="append" />
 			<slot slot="prependOuter" name="prependOuter">

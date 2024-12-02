@@ -1,5 +1,5 @@
 {
-	"name": "@paulpopa/svelte-material",
+	"name": "@paulpopa/svelte-material2",
 	"author": "Paul Popa",
 	"version": "0.3.39",
 	"scripts": {
@@ -23,6 +23,7 @@
 		"./preprocessor": "./dist/preprocessor/index.js"
 	},
 	"files": [
+		
 		"dist",
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*"
