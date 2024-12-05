@@ -65,7 +65,7 @@
 		step = 1,
 		vertical = false,
 		disabled = false,
-		slider = $bindable(undefined),
+		slider = $bindable(),
 		range = false,
 		pushy = false,
 		float = false,

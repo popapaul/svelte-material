@@ -41,9 +41,9 @@
 		inset = false,
 		dense = false,
 		disabled = false,
-		id = $bindable(null),
+		id = $bindable(),
 		style = null,
-		inputElement = $bindable(null),
+		inputElement = $bindable(),
 		children
 	} = $props();
 

@@ -85,7 +85,7 @@
 		style = '',
 		href = null,
 		tag = href ? 'a' : 'button',
-		button = $bindable(null),
+		button = $bindable(),
 		children,
 		...rest
 	}: Props = $props();

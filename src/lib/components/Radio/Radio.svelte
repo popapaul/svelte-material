@@ -53,12 +53,12 @@
 		class: klass = '',
 		color = 'primary',
 		disabled = false,
-		group = $bindable(null),
+		group = $bindable(),
 		value = null,
-		id = $bindable(null),
+		id = $bindable(),
 		style = null,
 		rules = [],
-		inputElement = $bindable(null),
+		inputElement = $bindable(),
 		children
 	}: Props = $props();
 

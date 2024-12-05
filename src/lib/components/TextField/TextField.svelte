@@ -7,7 +7,7 @@
 	import Icon from '../Icon/Icon.svelte';
 	import uid from '../../internal/uid';
 	import clearIcon from '../../internal/Icons/close';
-	import { getContext, createEventDispatcher } from 'svelte';
+	import { getContext, createEventDispatcher, untrack } from 'svelte';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
 	import { Input } from '../Input';
 
@@ -163,8 +163,11 @@
 	function onInput() {
 		if (!validateOnBlur) validate();
 	}
-	run(() => {
-		touched && (value || !value) && validate();
+	$effect(() => {
+		untrack(()=>{
+			touched && (value || !value) && validate();
+		})
+		
 	});
 </script>
 

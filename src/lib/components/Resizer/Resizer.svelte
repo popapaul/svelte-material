@@ -20,7 +20,7 @@
 	let {
 		class: klass = '',
 		style = null,
-		width = $bindable(null),
+		width = $bindable(),
 		x = $bindable(20),
 		children
 	}: Props = $props();

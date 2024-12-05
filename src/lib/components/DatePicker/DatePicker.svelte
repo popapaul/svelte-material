@@ -24,7 +24,7 @@
 		onRender = () => ({}),
 		header = true,
 		weekStart,
-		value = $bindable(null),
+		value = $bindable(),
 		noDateText = 'No Date',
 		mode = $bindable('days')
 	}: Props = $props();

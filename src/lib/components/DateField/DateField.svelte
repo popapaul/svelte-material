@@ -17,11 +17,10 @@
 		onRender?: (date: Date) => { disabled?: boolean; message?: string };
 		noDateText?: string;
 		children?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {
-		value = $bindable(null),
+		value = $bindable(),
 		locale = 'ro',
 		readonly = false,
 		weekStart = 1,
