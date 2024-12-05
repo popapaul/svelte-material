@@ -30,7 +30,7 @@ export const portal = (el: HTMLElement, target: HTMLElement | string = '.s-app')
 
 	function destroy() {
 		if (el.parentNode) {
-			setTimeout(() => el?.parentNode?.removeChild?.(el), 10);
+			el?.parentNode?.removeChild?.(el)
 		}
 	}
 

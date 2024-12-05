@@ -49,6 +49,8 @@
 	};
 
 	function onfocus(e) {
+		e.preventDefault();
+		e.stopPropagation();
 		open();
 		dispatch('focus', e);
 	}
@@ -80,7 +82,6 @@
 				: ''}
 			{...rest}
 			on:keydown={onkeydown}
-			on:click={onfocus}
 			on:clear={() => (value = null)}
 			on:blur
 			readonly

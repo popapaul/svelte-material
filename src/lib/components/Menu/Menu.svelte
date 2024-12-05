@@ -1,12 +1,13 @@
 
 <script lang="ts">
 	import { preventDefault, createBubbler, handlers } from 'svelte/legacy';
-
+	import { debounce } from "../../internal/Debounce";
 	const bubble = createBubbler();
 	import { createPopperActions, type NanoPopPosition } from '../../actions/Popper';
 	import { setContext, createEventDispatcher, onMount, tick } from 'svelte';
 	import './Menu.scss';
 	import { clickOutside } from '../../actions/ClickOutside';
+	import { portal } from '../../actions/Portal';
 	import { fade } from 'svelte/transition';
 
 	/** Classes to add to menu. */
@@ -21,6 +22,8 @@
 		hover?: boolean;
 		/** Designates if menu should close when its content is clicked. */
 		closeOnClick?: boolean;
+
+		openOnClick?: boolean;
 		/** Removes the border radius. */
 		tile?: boolean;
 		/** Disables the menu. */
@@ -42,6 +45,7 @@
 		active = $bindable(),
 		hover = false,
 		closeOnClick = true,
+		openOnClick = true,
 		tile = false,
 		disabled = false,
 		placement = 'bottom-middle',
@@ -53,11 +57,12 @@
 		children,
 		activator
 	}: Props = $props();
-
+	
 	let activatorWidth = $state(0);
 	let activatorElem: HTMLButtonElement = $state();
 	let menu: HTMLDialogElement = $state();
-	let clicked = $state(false);
+	let hovered = $state(false);
+	let timeout;
 	const dispatch = createEventDispatcher();
 
 	setContext('S_ListItemRole', 'menuitem');
@@ -73,63 +78,78 @@
 	});
 
 	const close = () => {
-		active = false;
-		clicked = false;
 		dispatch('close');
 	};
 
 	const open = async () => {
 		if (disabled) return;
 		activatorWidth = activatorElem.firstElementChild.clientWidth;
-
-		active = true;
-
 		await tick();
-
-		menu?.showModal();
-
+		menu?.show();
 		dispatch('open');
 	};
 
 	const menuClick = () => {
 		closeOnClick && close();
 	};
-	const activatorClick = () => {
-		clicked = true;
-		open();
-	};
-	//$: menu && active ? open() : close();
+
+	$effect(()=>{
+		if(!menu) return;
+		if(active || hovered)  
+			open();
+		else
+		 	close();
+	})
+	
+	const handleMouseLeave = (event) => {
+		if(!hover) return;
+		// Check if the mouse left both the dialog and activator
+		if ([menu, activatorElem].some(el => el?.contains(event.relatedTarget))) return;
+
+		timeout = setTimeout(()=>hovered= false, 100);
+	}
+	const handleMouseEnter = (event) => {
+		if(!hover) return;
+		clearTimeout(timeout);
+		hovered = true;
+	}
+	
 </script>
 
-<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div
-	use:clickOutside
-	onclickOutside={close}
-	onmouseleave={() => !clicked && hover && close()}
-	style="display:contents"
->
+	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		bind:this={activatorElem}
-		onmouseenter={() => hover && open()}
-		onclick={() => !rightClick && activatorClick()}
-		onkeydown={() => !rightClick && activatorClick()}
-		oncontextmenu={preventDefault(() => rightClick && activatorClick())}
+		onpointerenter={handleMouseEnter}
+		onpointerleave={handleMouseLeave}
+		onclick={() => openOnClick && (active = !active)}
+		onkeydown={() => openOnClick && (active = !active)}
+		oncontextmenu={preventDefault(() => rightclick && (active = true)  && (hovered=false))}
 		popovertargetaction="show"
 		style="display:contents;"
 	>
 		{@render activator?.()}
 	</div>
 
-	{#if active}
+	{#if active || hovered}
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<dialog
-			transition:fade={{ duration: 300 }}
+			use:portal
+			use:clickOutside
+			onclickOutside={()=>(active = false) && (hovered = false)}
+			transition:fade|global={{ duration: 300 }}
 			bind:this={menu}
+
+			onpointerenter={handleMouseEnter}
+			onpointerleave={handleMouseLeave}
+
 			onclose={handlers(close, bubble('close'))}
-			onclick={handlers((event) => event.target == menu && close(), menuClick)}
+			onclick={menuClick}
+			onkeydown={menuClick}
 			use:popperContent={{ position: placement }}
 			popover="manual"
+
 			{style}
 			class="s-menu {klass}"
 			style:width={fullWidth ? activatorWidth + 'px' : null}
@@ -138,9 +158,7 @@
 			style:margin-left="{0}px"
 			style:margin-bottom="{0}px"
 			class:tile
-			onkeydown={menuClick}
 		>
 			{@render children?.()}
 		</dialog>
 	{/if}
-</div>
