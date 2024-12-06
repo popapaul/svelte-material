@@ -32,7 +32,7 @@ const getDateFromHoursPosition = (
 		}
 	}
 	date.setHours(hour);
-	return date;
+	return new Date(date);
 };
 /* Gets the new date computed with the minutes position.
  (0, 0) = center, 0deg = 15m */

@@ -144,7 +144,7 @@
 			onpointerenter={handleMouseEnter}
 			onpointerleave={handleMouseLeave}
 
-			onclose={handlers(close, bubble('close'))}
+			onclose={(event)=> {event.stopPropagation(); close()}}
 			onclick={menuClick}
 			onkeydown={menuClick}
 			use:popperContent={{ position: placement }}

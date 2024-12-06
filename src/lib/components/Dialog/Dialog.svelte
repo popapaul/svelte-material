@@ -43,9 +43,10 @@
 
 	async function open() {
 		if (disabled) return;
-		await tick();
+		
 		document.querySelector("body").style.overflow = "hidden";
-		dialog?.showModal();
+		
+		dialog?.show();
 	}
 
 	function close() {
@@ -54,10 +55,8 @@
 		//dialog?.close();
 		dispatch('close');
 	}
-	run(() => {
-		if (dialog) {
+	$effect(() => {
 			active ? open() : close();
-		}
 	});
 </script>
 
@@ -73,14 +72,15 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if active}
 	<dialog
-		transition:fade
+		use:clickOutside
+		transition:fade|global={{ duration: 300 }}
 		class="s-dialog {klass}"
 		style:width
 		style:height
 		{style}
 		bind:this={dialog}
 		onmousedown={(event) => event.target === event.currentTarget && close()}
-		onclose={handlers(close, bubble('close'))}
+		onclose={(event)=> {event.stopPropagation(); close()}}
 	>
 		{@render children?.({ close, })}
 	</dialog>

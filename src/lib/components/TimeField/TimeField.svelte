@@ -13,7 +13,6 @@
 		locale?: string;
 		readonly?: boolean;
 		children?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {
@@ -39,7 +38,8 @@
 	function handleHour({ detail }: CustomEvent<Date>) {
 		value = detail;
 		dispatch('change', value);
-		if (hourOnly) close();
+		if(hourOnly)
+		close();
 	}
 
 	const close = () => {
@@ -73,19 +73,13 @@
 			{...rest}
 			class={klass}
 			on:keydown={onkeydown}
-			on:click={onfocus}
-			on:change
 			on:clear={() => (value = null)}
 			on:blur
 			bind:inputElement={elm}
 			readonly
 		>
 			{@render children?.()}
-			<!-- <slot slot="append" name="append" />
-			<slot slot="prependOuter" name="prependOuter" />
-			<slot slot="appendOuter" name="appendOuter" />
-			<slot slot="prepend" name="prepend" /> -->
 		</TextField>
 	{/snippet}
-	<TimePicker {hourOnly} on:hour={handleHour} {...rest} bind:value />
+	<TimePicker {hourOnly} on:hour={handleHour}  bind:value />
 </Menu>
