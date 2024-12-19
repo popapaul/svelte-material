@@ -59,7 +59,7 @@
 	}: Props = $props();
 	
 	let activatorWidth = $state(0);
-	let activatorElem: HTMLButtonElement = $state();
+	let activatorElem: HTMLDivElement = $state();
 	let menu: HTMLDialogElement = $state();
 	let hovered = $state(false);
 	let timeout;
@@ -85,12 +85,14 @@
 		if (disabled) return;
 		activatorWidth = activatorElem.firstElementChild.clientWidth;
 		await tick();
-		menu?.show();
+		menu?.showModal();
 		dispatch('open');
 	};
 
 	const menuClick = () => {
-		closeOnClick && close();
+		if(!closeOnClick) return
+		active = false;
+		close();
 	};
 
 	$effect(()=>{
@@ -121,11 +123,12 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		bind:this={activatorElem}
+		
 		onpointerenter={handleMouseEnter}
 		onpointerleave={handleMouseLeave}
-		onclick={() => openOnClick && (active = !active)}
-		onkeydown={() => openOnClick && (active = !active)}
-		oncontextmenu={preventDefault(() => rightclick && (active = true)  && (hovered=false))}
+		onclick={() => openOnClick && (active = true)}
+	
+		oncontextmenu={preventDefault(() => rightClick && (active = true)  && (hovered=false))}
 		popovertargetaction="show"
 		style="display:contents;"
 	>
@@ -135,8 +138,8 @@
 	{#if active || hovered}
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<dialog
-			use:portal
-			use:clickOutside
+			
+			use:clickOutside={{include:activatorElem}}
 			onclickOutside={()=>(active = false) && (hovered = false)}
 			transition:fade|global={{ duration: 300 }}
 			bind:this={menu}

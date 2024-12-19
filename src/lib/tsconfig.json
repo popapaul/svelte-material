@@ -5,6 +5,7 @@
 		"module": "esnext",
 		"target": "ESNext",
 		"esModuleInterop": true,
+		"allowArbitraryExtensions":true,
 		"forceConsistentCasingInFileNames": true,
 		"moduleResolution": "bundler",
 		"noImplicitAny": false,

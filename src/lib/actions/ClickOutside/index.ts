@@ -53,19 +53,23 @@ import { ClickOutsideParameter } from "./public";
  * @returns {import('./public').ClickOutsideActionReturn}
  */
 export function clickOutside(node: Element, param: ClickOutsideParameter = { enabled: true }) {
-	let { enabled, eventType, nodeForEvent, options, capture } = resolveConfig(param);
+	let { enabled, eventType, include, nodeForEvent, options, capture } = resolveConfig(param);
 
 
 	function handle(event: Event) {
-		if (!event.target) return;
+		if (!event.target || !node) return;
 
-		if (node && node != event.target && !node.contains((event.target as any)) && !event.defaultPrevented) {
-			node.dispatchEvent(new CustomEvent('clickOutside', { detail: event }));
-		}
+		if(node.contains((event.target as any)))
+			return;
+		
+		if(include?.contains(event.target as any))
+			return;
+	
+		node.dispatchEvent(new CustomEvent('clickOutside', { detail: event }));
 	}
 
 	if (param.enabled !== false) {
-		setTimeout(() => nodeForEvent.addEventListener(eventType, handle, options), 1);
+		setTimeout(() => nodeForEvent.addEventListener(eventType, handle, ), 1);
 	}
 
 	return {
@@ -85,6 +89,7 @@ export function resolveConfig(param: ClickOutsideParameter = {}) {
 	return {
 		enabled: param.enabled ?? true,
 		nodeForEvent: param.limit?.parent ?? document,
+		include: param.include,
 		eventType: param.event ?? 'click',
 		options: param.options,
 		capture: typeof param.options === 'object' ? param.options?.capture : param.options,

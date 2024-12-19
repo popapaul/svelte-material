@@ -17,7 +17,6 @@
 		noDateText?: string;
 		readonly?: boolean;
 		children?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {
@@ -66,8 +65,8 @@
 	}
 	function focusInputElm() {
 		if (readonly) return;
-		let inputs = elm.querySelectorAll('input');
-		inputs[0] && inputs[0].focus();
+		//let inputs = elm.querySelectorAll('input');
+		//inputs[0] && inputs[0].focus();
 	}
 
 	const format = (date: Date) => {

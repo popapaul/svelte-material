@@ -6,8 +6,7 @@
 	import Column from "./Column.svelte";
     import {slide} from "svelte/transition"
 	type ColumnComponent =   Component<ColumnDef<T>>;
-    let { data = $bindable(), footer, class:klass, header, expand, children }:{ class?:string, data:T[], footer?:Snippet, expand?:Snippet<[Row<T>, Datagrid<T>]>, children:Snippet<[ColumnComponent]>; header?:Snippet, }  = $props();
-    let columns:ColumnDef<T>[] = $state([]); 
+    let { data = $bindable(), columns = $bindable([]), footer, class:klass, header, expand, children }:{ columns?: ColumnDef<T>[]; class?:string, data:T[], footer?:Snippet, expand?:Snippet<[Row<T>, Datagrid<T>]>, children:Snippet<[ColumnComponent]>; header?:Snippet, }  = $props();
 	setContext("columns", columns);
 	let grid = new Datagrid({
 		data,
@@ -43,11 +42,9 @@
 		<div class="grid-body">
 			{#each grid.rows as row}
 				<div class="grid-row">
-
 					{#each grid.columnManager.getVisibleColumns() as column}
 						<CellData {grid} {row} {column} />
 					{/each}
-
 				</div>
 				{#if expand && grid.rowManager.isRowExpanded(String(row?.original?.id))}
 					<div transition:slide={{axis:"y"}} class="grid-row">
@@ -100,7 +97,7 @@
     /* Grid Content and Header */
         .grid-content {
             background-color: hsl(var(--grid-row-even-background));
-            height: 0;
+            
             flex-grow: 1;
             max-height: 100%;
             display: flex;
@@ -109,19 +106,164 @@
             position: relative;
         }
 
+      
+
         .grid-header {
             top: 0;
-            z-index: 99;
+            z-index: 11;
             background-color: hsl(var(--grid-header-row-background));
             position: sticky;
         }
-
+        :global(.grid-content .grid-content .grid-header){
+            z-index: 10;
+        }
         .grid-header-row {
             background-color: hsl(var(--grid-header-row-background));
             display: flex;
             border-bottom: 1px solid hsl(var(--grid-border));
             min-width: fit-content;
         }
+
+
+
+/* Grid Rows */
+.grid-row {
+    display: flex;
+    border-bottom: 1px solid hsl(var(--grid-border));
+    border-top: none;
+    min-width: fit-content;
+    transition: 150ms;
+}
+
+.grid-row:last-child {
+    border-bottom: none;
+}
+
+.grid-row:nth-child(odd) {
+    background-color: hsl(var(--grid-row-odd-background));
+}
+
+.grid-row:hover:nth-child(odd) {
+    background-color: hsl(var(--grid-row-odd-background-hover));
+}
+
+.grid-row:nth-child(even) {
+    background-color: hsl(var(--grid-row-even-background));
+}
+
+.grid-row:hover:nth-child(even) {
+    background-color: hsl(var(--grid-row-even-background-hover));
+}
+
+
+
+/* Sticky Offsets */
+.offset-left {
+    left: var(--offset);
+    position: sticky;
+}
+
+.offset-right {
+    right: var(--offset);
+    position: sticky;
+}
+
+/* Pagination */
+.pagination {
+    background-color: hsl(var(--grid-header-row-background));
+    padding: 0.75rem;
+    border: 1px solid hsl(var(--grid-border));
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .pagination {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Pagination Details */
+.pagination-details {
+    --tw-text-opacity: 1;
+    color: hsl(var(--muted-foreground) / var(--tw-text-opacity));
+    order: 2;
+    column-span: 2;
+    display: none;
+    text-align: center;
+    font-size: 0.75rem; /* 12px */
+    line-height: 1rem; /* 16px */
+}
+
+@media (min-width: 640px) {
+    .pagination-details {
+        order: 1;
+        grid-column: span 1 / span 1;
+        display: block;
+        text-align: left;
+    }
+}
+
+/* Pagination Navigation and Page Wrapper */
+.pagination-navigation-container {
+    order: 1;
+    display: flex;
+    gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+    .pagination-navigation-container {
+        order: 2;
+        justify-content: center;
+    }
+}
+
+.pagination-per-page-wrapper {
+    order: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (min-width: 640px) {
+    .pagination-per-page-wrapper {
+        order: 2;
+    }
+}
+
+/* Pagination Buttons */
+.pagination-button {
+    border: 1px solid hsl(var(--grid-border));
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pagination-button:hover:not(:disabled) {
+    background-color: theme('colors.orange.400');
+}
+
+/* Pagination Inputs and Select */
+.pagination-input,
+.pagination-select {
+    border-radius: 0.25rem;
+    border: 1px solid hsl(var(--grid-border));
+    padding: 0 0.5rem;
+    height: 2rem;
+}
+
+.pagination-input {
+    max-width: 5rem;
+}
 
 /* Label */
 label {

@@ -5,27 +5,8 @@
 	import { ripple as Ripple, type RippleOptions } from '../../actions/Ripple';
 	import './Button.scss';
 
-	/** classes added to the button */
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 	interface Props {
+		/** classes added to the button */
 		class?: string;
 		/** designates the button as a floating-action-button */
 		fab?: boolean;
@@ -63,7 +44,6 @@
 		tag?: string;
 		button?: HTMLElement;
 		children?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {

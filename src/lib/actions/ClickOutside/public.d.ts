@@ -44,6 +44,7 @@ export interface ClickOutsideConfig {
     enabled: boolean;
     /** limit to which the click event will trigger `clickoutside` */
     limit?: ClickOutsideLimit;
+    include?: HTMLElement;
     /** event to register callback. Default to `click` */
     event?: string;
     /** options to add to `addEventListener` */

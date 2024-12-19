@@ -46,7 +46,7 @@
 		
 		document.querySelector("body").style.overflow = "hidden";
 		
-		dialog?.show();
+		dialog?.showModal();
 	}
 
 	function close() {

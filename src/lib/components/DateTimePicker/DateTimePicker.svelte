@@ -14,7 +14,6 @@
 		weekStart?: number;
 		onRender?: (date: Date) => { disabled?: boolean; message?: string };
 		noDateText?: string;
-		[key: string]: any
 	}
 
 	let {
@@ -47,7 +46,7 @@
 			value.getMinutes()
 		);
 		dispatch('change', value);
-		mode = 'minute';
+		setTimeout(()=>mode = 'hour',0);
 	};
 
 	const handleHour = ({ detail: newTime }: CustomEvent<Date>) => {
@@ -60,6 +59,7 @@
 			hourOnly ? newTime.getMinutes() : 0
 		);
 		dispatch('change', value);
+		setTimeout(()=>mode = 'minute',0);
 		if (hourOnly) dispatch('close', value);
 	};
 

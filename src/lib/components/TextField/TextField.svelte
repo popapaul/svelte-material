@@ -1,31 +1,6 @@
-
-<script lang="ts">
-	import { run, createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
-	import './TextField.scss';
-	import Icon from '../Icon/Icon.svelte';
-	import uid from '../../internal/uid';
-	import clearIcon from '../../internal/Icons/close';
-	import { getContext, createEventDispatcher, untrack } from 'svelte';
-	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
-	import { Input } from '../Input';
-
-	const context = getContext<FormContext>(FORM_FIELDS);
-
-	type $$Events = {
-		input: KeyboardEvent & { target: EventTarget & HTMLInputElement };
-		blur: Event & { target: EventTarget & HTMLInputElement };
-		click: Event & { target: EventTarget & HTMLInputElement };
-		change: Event & { target: EventTarget & HTMLInputElement };
-		keydown: KeyboardEvent & { target: EventTarget & HTMLInputElement };
-		focus: Event & { target: EventTarget & HTMLInputElement };
-		clear: CustomEvent;
-	};
-
-	/** Classes to add to text field wrapper. */
-	
-	interface Props {
+<script module lang="ts">
+	export interface Props {
+		/** Classes to add to text field wrapper. */
 		class?: string;
 		/** Value of the text field. */
 		value?: number | string;
@@ -86,6 +61,33 @@
 		appendOuter?: import('svelte').Snippet;
 		content?: import('svelte').Snippet;
 	}
+</script>
+<script lang="ts">
+	import { run, createBubbler, handlers } from 'svelte/legacy';
+
+	const bubble = createBubbler();
+	import './TextField.scss';
+	import Icon from '../Icon/Icon.svelte';
+	import uid from '../../internal/uid';
+	import clearIcon from '../../internal/Icons/close';
+	import { getContext, createEventDispatcher, untrack } from 'svelte';
+	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
+	import { Input } from '../Input';
+
+	const context = getContext<FormContext>(FORM_FIELDS);
+
+	type $$Events = {
+		input: KeyboardEvent & { target: EventTarget & HTMLInputElement };
+		blur: Event & { target: EventTarget & HTMLInputElement };
+		click: Event & { target: EventTarget & HTMLInputElement };
+		change: Event & { target: EventTarget & HTMLInputElement };
+		keydown: KeyboardEvent & { target: EventTarget & HTMLInputElement };
+		focus: Event & { target: EventTarget & HTMLInputElement };
+		clear: CustomEvent;
+	};
+
+	
+	
 
 	let {
 		class: klass = '',
@@ -152,6 +154,7 @@
 	function clear(event: Event) {
 		event.preventDefault();
 		event.stopPropagation();
+		event.stopImmediatePropagation();
 		value = null;
 		dispatch('clear');
 	}
@@ -160,14 +163,11 @@
 		value = e.target.value;
 	};
 
-	function onInput() {
-		if (!validateOnBlur) validate();
-	}
+
 	$effect(() => {
 		untrack(()=>{
 			touched && (value || !value) && validate();
 		})
-		
 	});
 </script>
 
@@ -182,7 +182,13 @@
 		class:rounded
 	>
 		<!-- Slot for prepend inside the input. -->
-		{@render prepend?.()}
+
+		{#if prepend}
+			<div class="s-prepend">
+				{@render prepend()}
+			</div>
+		{/if}
+
 		<div class="s-text-field__input">
 			{#if children}
 				<label
@@ -235,7 +241,11 @@
 		{/if}
 
 		<!-- Slot for append inside the input. -->
-		 {@render append?.()}
+		 {#if append}
+			<div class="s-append">
+				{@render append()}
+			</div>
+		{/if}
 	</div>
 
 	{#snippet info()}

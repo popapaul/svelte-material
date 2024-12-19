@@ -30,6 +30,7 @@
 		readonly?: false;
 		disabled?: false;
 		style?: string;
+		title?: string;
 		header?: import('svelte').Snippet;
 		icon?: import('svelte').Snippet<[any]>;
 		children?: import('svelte').Snippet;
@@ -42,6 +43,7 @@
 		readonly = false,
 		disabled = $bindable(false),
 		style = null,
+		title,
 		header,
 		icon,
 		children
@@ -80,7 +82,12 @@
 		onclick={toggle}
 	>
 		<!-- Slot for the title of panel. -->
-		{@render header?.()}
+		 {#if header}
+		 	{@render header()}
+		 {:else}
+		 	{title}
+		 {/if}
+		
 		<div class="s-expansion-panel__icon">
 			<!-- Slot for the icon at the right of the header. -->
 			{#if icon}{@render icon({ active, })}{:else}

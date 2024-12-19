@@ -25,13 +25,11 @@
     style="{column.grow === false
         ? `--width:${column.width}px; --max-width:${column.width}px;`
         : 'flex-grow:1; width:50px;'} --min-width:{column.minWidth}px; 
-        {['left', 'right'].includes(column.pinning.position) && `background-color: black;`}
-        "
+        {['left', 'right'].includes(column.pinning.position) && `background-color: black;`}"
     class:offset-left={column.pinning.position === 'left'}
     class:offset-right={column.pinning.position === 'right'}
     style:--offset={`${column.pinning.offset}px`}
     >
-
     {#if column.header}
         {@render column.header({column, grid, toggleSort, sorter})}
     {:else}

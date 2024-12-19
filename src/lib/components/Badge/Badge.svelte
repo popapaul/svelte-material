@@ -5,16 +5,9 @@
 	import './Badge.scss';
 	import { scale, type TransitionConfig } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	/** classes to add to badge */
-	
-
-
-	
-	
-
-
 	
 	interface Props {
+		/** classes to add to badge */
 		class?: string;
 		value?: string | number;
 		active?: boolean;

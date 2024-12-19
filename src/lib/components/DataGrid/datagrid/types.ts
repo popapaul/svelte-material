@@ -54,6 +54,7 @@ export type CommonColumnProps<TData> = {
 
 
 export type ColumnDef<TData, TCustomKeys extends string = never> = {
+    id?:string;
     accessorKey?: AccessorKey<TData, TCustomKeys>;
     accessorFn?: AccessorFn<TData>;
     footer?: string;

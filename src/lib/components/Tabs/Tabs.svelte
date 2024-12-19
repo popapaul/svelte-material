@@ -98,6 +98,7 @@
 		class:right
 		class:icons
 	>
+	
 		<SlideGroup bind:value mandatory {centerActive} {showArrows} on:change={moveSlider} on:change>
 			{@render tabs?.()}
 			{#if slider}

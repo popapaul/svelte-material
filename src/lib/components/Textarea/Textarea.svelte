@@ -81,7 +81,6 @@
 		prepend?: import('svelte').Snippet;
 		prependOuter?: import('svelte').Snippet;
 		appendOuter?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {
@@ -174,7 +173,11 @@
 		class:no-resize={noResize || autogrow}
 	>
 		<!-- Slot for prepend inside the input. -->
-		{@render prepend?.()}
+		{#if prepend}
+			<div class="s-prepend">
+				{@render prepend()}
+			</div>
+		 {/if}
 
 		<div class="s-text-field__input">
 			<label for={id} class:active={labelActive}>
@@ -205,7 +208,11 @@
 		{/if}
 
 		<!-- Slot for append inside the input. -->
-		{@render append?.()}
+		{#if append}
+			<div class="s-append">
+				{@render append()}
+			</div>
+		{/if}
 	</div>
 
 	{#snippet info()}

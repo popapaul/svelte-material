@@ -10,7 +10,11 @@
 	flex-grow: 1;
 	max-width: 100%;
 	overflow: hidden;
-
+	flex-wrap: wrap;
+	align-items: center;
+	min-height: 36px;
+	padding: variables.$text-field-padding;
+	line-height: variables.$text-field-line-height;
 	// input[type='time'],
 	// input[type='date'],
 	// input[type='datetime-local'] {
@@ -46,11 +50,11 @@
 	&>textarea {
 		caret-color: inherit;
 		flex: 1 1 auto;
-		line-height: variables.$text-field-line-height;
-		padding: variables.$text-field-padding;
+		
+		
 		max-width: 100%;
 		min-width: 0;
-		width: 100%;
+		--width: 100%;
 		outline: none;
 	}
 }
@@ -117,12 +121,12 @@
 	}
 
 	&> {
-		[slot='prepend'] {
+		.s-prepend {
 			margin-right: variables.$text-field-prepend-append-margin;
 		}
 
-		[slot='append'] {
-			// margin-right: $text-field-prepend-append-margin;
+		.s-append {
+			margin-right: variables.$text-field-prepend-append-margin;
 		}
 	}
 

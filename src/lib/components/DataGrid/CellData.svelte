@@ -36,6 +36,7 @@
         border-right: 1px solid (var(--grid-border));
         cursor: pointer;
         width: var(--width);
+        margin:auto;
         max-width: var(--max-width);
         min-width: var(--min-width);
         overflow: hidden;

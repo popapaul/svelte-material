@@ -3,23 +3,22 @@
 .s-textarea {
 	.s-text-field__wrapper {
 		& > {
-			[slot='prepend'],
-			[slot='append'] {
+			.s-append {
 				align-self: flex-start;
 				margin-top: variables.$textarea-icon-margin-top;
 			}
 		}
 
 		&.filled {
-			[slot='prepend'],
-			[slot='append'] {
+			.s-prepend,
+			.s-append {
 				margin-top: variables.$textarea-filled-icon-margin-top;
 			}
 		}
 
 		&.outlined {
-			[slot='prepend'],
-			[slot='append'] {
+			.s-prepend,
+			.s-append {
 				margin-top: variables.$textarea-outlined-icon-margin-top + 2;
 			}
 
@@ -29,8 +28,8 @@
 		}
 
 		&.solo {
-			[slot='prepend'],
-			[slot='append'] {
+			.s-prepend,
+			.s-append {
 				margin-top: variables.$textarea-solo-icon-margin-top;
 			}
 

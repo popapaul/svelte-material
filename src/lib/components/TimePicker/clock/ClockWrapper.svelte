@@ -29,7 +29,7 @@
 		is24h = false,
 		minutesIncrement = 1,
 		zIndex = 0,
-		value = $bindable(new Date()),
+		value = $bindable(),
 		mode = 'hour'
 	}: Props = $props();
 
@@ -95,10 +95,10 @@
 		/* Checks the wrapper mode */
 		if (mode == 'hour') {
 			/* Computes the value with the new hour */
-			value = getDateFromHoursPosition(value, currentPosition, currentWidth, is24h, amSelected);
+			value = new Date(getDateFromHoursPosition(value, currentPosition, currentWidth, is24h, amSelected));
 		} else {
 			/* Computes the value with the new minute */
-			value = getDateFromMinutesPosition(value, currentPosition, minutesIncrement);
+			value = new Date(getDateFromMinutesPosition(value, currentPosition, minutesIncrement));
 		}
 	};
 </script>

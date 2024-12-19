@@ -2,18 +2,8 @@
 	import Style from '../../internal/Style';
 	import './AppBar.scss';
 
-	/** classes added to the appbar */
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	interface Props {
+		/** classes added to the appbar */
 		class?: string;
 		/** height of the appbar */
 		height?: string | number;

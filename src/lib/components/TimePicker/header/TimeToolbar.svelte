@@ -18,7 +18,7 @@
 		timeClassName = '',
 		is24h = true,
 		value = $bindable(),
-		mode = 'hour'
+		mode = $bindable('hour')
 	}: Props = $props();
 
 	/* Handles the AM choice event */
