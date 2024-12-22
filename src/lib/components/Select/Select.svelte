@@ -137,7 +137,6 @@
 		if (Array.isArray(value)) value = value.filter((x) => x != itemValue);
 		else value = null;
 	};
-	$inspect(items)
 	
 	const appendValue = (newValue:any)=>{
 		

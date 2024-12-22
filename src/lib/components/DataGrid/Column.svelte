@@ -15,5 +15,5 @@
     }  
     else
     columns.push(rest);
-$inspect(columns)
+
 </script>
