@@ -30,7 +30,7 @@ export class PaginationManager<TData> implements PaginationFeature {
     protected grid: DatagridInstance<TData, any>
 
     page = $state(1);
-    pageSize = 10;
+    pageSize = 99999999;
     count = $state(0);
     pageSizes = [10, 25, 50, 100];
     pageCount = $state(0)

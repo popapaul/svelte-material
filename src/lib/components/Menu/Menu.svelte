@@ -85,7 +85,7 @@
 		if (disabled) return;
 		activatorWidth = activatorElem.firstElementChild.clientWidth;
 		await tick();
-		menu?.showModal();
+		//menu?.showModal();
 		dispatch('open');
 	};
 
@@ -137,8 +137,8 @@
 
 	{#if active || hovered}
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-		<dialog
-			
+		<div
+			use:portal
 			use:clickOutside={{include:activatorElem}}
 			onclickOutside={()=>(active = false) && (hovered = false)}
 			transition:fade|global={{ duration: 300 }}
@@ -151,8 +151,7 @@
 			onclick={menuClick}
 			onkeydown={menuClick}
 			use:popperContent={{ position: placement }}
-			popover="manual"
-
+		
 			{style}
 			class="s-menu {klass}"
 			style:width={fullWidth ? activatorWidth + 'px' : null}
@@ -163,5 +162,5 @@
 			class:tile
 		>
 			{@render children?.()}
-		</dialog>
+		</div>
 	{/if}
