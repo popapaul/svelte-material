@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './TableCell.scss';
 	import { getContext } from 'svelte';
 	
@@ -32,7 +29,6 @@
 	class="s-table-cell {klass}"
 	{style}
 	style:width
-	onclick={bubble('click')}
 	{...rest}
 >
 	{#if isHead}

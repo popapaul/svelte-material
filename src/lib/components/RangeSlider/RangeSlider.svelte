@@ -3,24 +3,9 @@
 
 	import './RangeSlider.css';
 	import { spring } from 'svelte/motion';
-	import { createEventDispatcher } from 'svelte';
 	import RangePips from './RangePips.svelte';
 
-	
-	
-	
-	
-	
-	
-	// dom references
-	// range slider props
 
-
-	// range pips / values props
-
-	// formatting props
-
-	// stylistic props
 	interface Props {
 		/** Minimum allowed value. */
 		min?: number;
@@ -31,9 +16,9 @@
 		/** Slider jump interval. By default, the slider slides fluently. */
 		step?: number;
 		/**
-	 * Whether slider's orientation is vertical. Defaults to `false`.
-	 * Vertical sliders don't assume a default `height`, so a height needs to be set.
-	 */
+	 	* Whether slider's orientation is vertical. Defaults to `false`.
+		* Vertical sliders don't assume a default `height`, so a height needs to be set.
+	 	*/
 		vertical?: boolean;
 		/** Whether slider is disabled. */
 		disabled?: boolean;
@@ -56,6 +41,26 @@
 		handleFormatter?: any;
 		precision?: number;
 		springValues?: any;
+		onstop?:(value:{
+			activeHandle:number;
+			value: number;
+			values: number[];
+			startValue: number;
+		})=>void;
+		onstart?:(value:{
+			activeHandle:number;
+			value: number;
+			values: number[];
+		})=>void;
+		onchange?:(
+			value:{
+				activeHandle:number;
+				value: number;
+				values: number[];
+				startValue: number;
+				previousValue: number;
+			}
+		)=>void;
 	}
 
 	let {
@@ -83,11 +88,12 @@
 		formatter = (value: number, index: number, procentage: number) => value,
 		handleFormatter = formatter,
 		precision = 2,
-		springValues = { stiffness: 0.15, damping: 0.4 }
+		springValues = { stiffness: 0.15, damping: 0.4 },
+		onstart,
+		onstop,
+		onchange
 	}: Props = $props();
 
-	// prepare dispatched events
-	const dispatch = createEventDispatcher();
 
 	// state management
 	let valueLength = $state(0);
@@ -105,11 +111,6 @@
 	let springPositions = $state();
 
 	const fixFloat = (v) => parseFloat(v.toFixed(precision));
-
-
-
-
-
 
 	/**
 	 * helper func to get the index of an element in it's DOM container
@@ -507,8 +508,7 @@
 	}
 
 	function eStart() {
-		!disabled &&
-			dispatch('start', {
+		!disabled && onstart?.({
 				activeHandle,
 				value: startValue,
 				values: values.map((v) => alignValueToStep(v))
@@ -516,18 +516,16 @@
 	}
 
 	function eStop() {
-		!disabled &&
-			dispatch('stop', {
+		!disabled && onstop?.({
 				activeHandle,
-				startValue: startValue,
+				startValue,
 				value: values[activeHandle],
 				values: values.map((v) => alignValueToStep(v))
 			});
 	}
 
 	function eChange() {
-		!disabled &&
-			dispatch('change', {
+		!disabled && onchange?.({
 				activeHandle,
 				startValue: startValue,
 				previousValue: typeof previousValue === 'undefined' ? startValue : previousValue,

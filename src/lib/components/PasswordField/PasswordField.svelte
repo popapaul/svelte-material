@@ -16,7 +16,7 @@
 <TextField {...rest} class={klass} type={!showPassword ? 'password' : 'text'} bind:value>
 	{#snippet append()}
 		<Icon
-			on:click={() => (showPassword = !showPassword)}
+			onclick={() => (showPassword = !showPassword)}
 			style="cursor:pointer"
 			path={showPassword ? icons.visibility_off : icons.visibility}
 		/>

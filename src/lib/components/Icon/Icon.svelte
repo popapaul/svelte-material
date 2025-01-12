@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import { format } from '../../internal/Style';
 	import './Icon.scss';
-	/** classes added to the icon */
+	import type { HTMLAttributes } from 'svelte/elements';
 	
-	interface Props {
+	
+	interface Props extends HTMLAttributes<HTMLElement> {
+		/** classes added to the icon */
 		class?: string;
 		/** size of the icon */
 		size?: string | number;
@@ -39,7 +38,6 @@
 
 <i
 	{...rest}
-	onclick={bubble('click')}
 	aria-hidden="true"
 	class="s-icon {klass}"
 	class:spin

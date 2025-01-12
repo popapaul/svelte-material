@@ -1,10 +1,8 @@
 
 <script lang="ts">
-	import { preventDefault, createBubbler, handlers } from 'svelte/legacy';
-	import { debounce } from "../../internal/Debounce";
-	const bubble = createBubbler();
+	import { preventDefault } from 'svelte/legacy';
 	import { createPopperActions, type NanoPopPosition } from '../../actions/Popper';
-	import { setContext, createEventDispatcher, onMount, tick } from 'svelte';
+	import { setContext, onMount, tick } from 'svelte';
 	import './Menu.scss';
 	import { clickOutside } from '../../actions/ClickOutside';
 	import { portal } from '../../actions/Portal';
@@ -36,6 +34,8 @@
 		fullWidth?: boolean;
 		nudgeX?: number;
 		nudgeY?: number;
+		onclose?: () => void;
+		onopen?: () => void;
 		children?: import('svelte').Snippet;
 		activator?: import('svelte').Snippet;
 	}
@@ -44,6 +44,8 @@
 		class: klass = '',
 		active = $bindable(),
 		hover = false,
+		onclose,
+		onopen,
 		closeOnClick = true,
 		openOnClick = true,
 		tile = false,
@@ -60,10 +62,9 @@
 	
 	let activatorWidth = $state(0);
 	let activatorElem: HTMLDivElement = $state();
-	let menu: HTMLDialogElement = $state();
+	let menu: HTMLElement = $state();
 	let hovered = $state(false);
 	let timeout;
-	const dispatch = createEventDispatcher();
 
 	setContext('S_ListItemRole', 'menuitem');
 	setContext('S_ListItemRipple', true);
@@ -78,15 +79,14 @@
 	});
 
 	const close = () => {
-		dispatch('close');
+		onclose?.();
 	};
 
 	const open = async () => {
 		if (disabled) return;
 		activatorWidth = activatorElem.firstElementChild.clientWidth;
 		await tick();
-		//menu?.showModal();
-		dispatch('open');
+		onopen?.();
 	};
 
 	const menuClick = () => {
@@ -118,28 +118,27 @@
 	
 </script>
 
-	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		bind:this={activatorElem}
-		
 		onpointerenter={handleMouseEnter}
 		onpointerleave={handleMouseLeave}
 		onclick={() => openOnClick && (active = true)}
-	
 		oncontextmenu={preventDefault(() => rightClick && (active = true)  && (hovered=false))}
-		popovertargetaction="show"
 		style="display:contents;"
 	>
 		{@render activator?.()}
 	</div>
 
 	{#if active || hovered}
-		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+		<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			use:portal
-			use:clickOutside={{include:activatorElem}}
+			use:clickOutside={{include:[activatorElem, activatorElem.parent, ".s-menu"]}}
 			onclickOutside={()=>(active = false) && (hovered = false)}
 			transition:fade|global={{ duration: 300 }}
 			bind:this={menu}

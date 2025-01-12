@@ -1,20 +1,16 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './ListGroup.scss';
 	import { slide, type TransitionConfig } from 'svelte/transition';
-	import { onMount, setContext } from 'svelte';
+	import { type ComponentProps, setContext } from 'svelte';
 	import ListItem from './ListItem.svelte';
 	import { format } from '../../internal/Style';
 	import type { RippleOptions } from '../../actions/Ripple';
 
-	/** classes added to the listgroup */
-	
 	interface Props {
+			/** classes added to the listgroup */
 		class?: string;
 		activatorClass?: string;
-		activatorProps?: any;
+		activatorProps?: ComponentProps<typeof ListItem>;
 		/** toggle the active state */
 		active?: boolean;
 		/** will force the components content to render on mount */
@@ -33,9 +29,9 @@
 		disableToggle?: boolean;
 		/** styles added to the listgroup */
 		style?: any;
-		prepend?: import('svelte').Snippet<[any]>;
-		activator?: import('svelte').Snippet<[any]>;
-		append?: import('svelte').Snippet<[any]>;
+		prepend?: import('svelte').Snippet<[{active:boolean, toggle:()=>void}]>;
+		activator?: import('svelte').Snippet<[{ toggle:()=>void}]>;
+		append?: import('svelte').Snippet<[{active:boolean, toggle:()=>void}]>;
 		children?: import('svelte').Snippet;
 	}
 
@@ -50,18 +46,17 @@
 		offset = null,
 		disabled = false,
 		ripple = {},
-		disableToggle = false,
 		style = null,
-		prepend,
+		prepend: innerPrepend,
 		activator,
-		append,
+		append: innerAppend,
 		children
 	}: Props = $props();
 
 	setContext('S_ListItemRipple', ripple);
 
 	function toggle() {
-		if (disableToggle) return;
+		if (disabled) return;
 		active = !active;
 	}
 
@@ -73,25 +68,20 @@
 <div class="s-list-group {klass}">
 	<ListItem
 		class="s-list-group__activator {activatorClass}"
-		{active}
+		bind:active
 		{...activatorProps}
-		on:click={toggle}
 	>
 		{#snippet prepend()}
-			{@render prepend?.({ active, toggle: ()=>active=!active, })}
+			{@render innerPrepend?.({ active, toggle })}
 		{/snippet}
-		{@render activator?.({ toggle: ()=>active=!active, })}
+		{@render activator?.({toggle })}
 		{#snippet append()}
-			{@render append?.({ active, toggle: ()=>active=!active, })}
+			{@render innerAppend?.({ active, toggle })}
 		{/snippet}
 	</ListItem>
 	{#if active}
 		<div
 			transition:transition={transitionOpts}
-			onintrostart={bubble('introstart')}
-			onoutrostart={bubble('outrostart')}
-			onintroend={bubble('introend')}
-			onoutroend={bubble('outroend')}
 			aria-disabled={disabled}
 			class="s-list-group__items"
 			class:offset

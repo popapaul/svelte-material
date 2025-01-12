@@ -5,27 +5,18 @@
 	const dash = 'M4,11L4,13L20,13L20,11L4,11Z';
 </script>
 
-<script lang="ts">
-	import { run, createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
+<script lang="ts" generics="T">
 	import './Checkbox.scss';
 	import { ripple as Ripple } from '../../actions/Ripple';
 	import TextColor from '../../internal/TextColor';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
+	import type {  HTMLInputAttributes } from 'svelte/elements';
 
-	const dispatch = createEventDispatcher();
 	const context = getContext<FormContext>(FORM_FIELDS);
-
-	interface $$Events {
-		change: Event & { target: EventTarget & HTMLInputElement };
-		group: CustomEvent<any[]>;
-	}
 
 	// Add class to checkbox wrapper.
 	
-
 	// Class to add to checkbox when it is checked or indeterminate.
 
 	// Get/Set checked state.
@@ -34,13 +25,9 @@
 
 	// Make the checkbox disabled.
 
-	
-
 	// The value for the checkbox.
 
 	// Combines components into a single group.
-
-	
 
 	// Id for the checkbox, defaults to a random uid.
 
@@ -48,8 +35,7 @@
 
 	// The <input/> element of the checkbox.
 
-
-	interface Props {
+	interface Props extends HTMLInputAttributes{
 		class?: string;
 		color?: string;
 		checked?: boolean;
@@ -57,12 +43,12 @@
 		disabled?: boolean;
 		errorCount?: number;
 		/**
-	 * A list of validator functions that take the text field value and return an error
-	 * message, or `true` otherwise.
-	 */
+		* A list of validator functions that take the text field value and return an error
+		* message, or `true` otherwise.
+		*/
 		rules?: ((value: string) => string)[];
-		value?: any | any[];
-		group?: any[];
+		value?: T;
+		group?: T[];
 		/** Hint text. */
 		hint?: string;
 		id?: string;
@@ -71,7 +57,7 @@
 		messages?: string[];
 		error?: boolean;
 		children?: import('svelte').Snippet;
-		[key: string]: any
+		ongroup?:(group:T[])=>void;
 	}
 
 	let {
@@ -91,6 +77,8 @@
 		messages = [],
 		error = $bindable(false),
 		children,
+		onchange,
+		ongroup,
 		...rest
 	}: Props = $props();
 
@@ -107,13 +95,18 @@
 	context?.register({ id, validate });
 
 	let hasValidGroup = $derived(Array.isArray(group));
-	run(() => {
+	$effect(() => {
 		if (hasValidGroup && value != null) {
 			checked = group.indexOf(value) >= 0;
 		}
 	});
+	const handleChange = (event)=>{
+		groupUpdate();
+		onchange?.(event);
+	}
 
 	function groupUpdate() {
+
 		if (!hasValidGroup) group = [];
 		if (value != null) {
 			const i = group.indexOf(value);
@@ -124,7 +117,7 @@
 			}
 			group = group;
 		}
-		dispatch('group', group);
+		ongroup?.(group);
 	}
 </script>
 
@@ -146,7 +139,7 @@
 			{id}
 			{disabled}
 			{value}
-			onchange={handlers(groupUpdate, validate, bubble('change'))}
+			onchange={handleChange}
 		/>
 		<div class="s-checkbox__background" aria-hidden="true">
 			{#if checked || indeterminate}

@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './Tab.scss';
 	import { getContext, onMount } from 'svelte';
 	import { SLIDE_GROUP, type SlideGroupContext } from '../SlideGroup/SlideGroup.svelte';
@@ -11,15 +8,16 @@
 
 	let tab: HTMLElement = $state();
 	const click = getContext<SlideGroupContext>(SLIDE_GROUP);
-	const ITEM = getContext<ItemGroupContext>(ITEM_GROUP);
+	const ITEM = getContext<ItemGroupContext<any>>(ITEM_GROUP);
 	const { ripple, registerTab } = getContext<TabsContext>(TABS);
 
 	
 	interface Props {
 		class?: string;
 		value?: any;
-		activeClass?: any;
+		activeClass?: string;
 		disabled?: boolean;
+		onclick?:()=>void;
 		children?: import('svelte').Snippet;
 	}
 
@@ -28,19 +26,17 @@
 		value = ITEM.index(),
 		activeClass = ITEM.activeClass,
 		disabled = false,
+		onclick,
 		children
 	}: Props = $props();
 
-	let active = $state();
-	ITEM.register((values) => {
-		active = values.includes(value);
-	});
-
-	function selectTab({ target }) {
-		if (!disabled) {
-			click(target);
-			ITEM.select(value);
-		}
+	const active = $derived(ITEM.values.includes(value));
+	
+	function selectTab(event) {
+		if (disabled) return 
+		click(event.currentTarget);
+		ITEM.select(value);
+		onclick?.();
 	}
 
 	onMount(() => {
@@ -57,7 +53,7 @@
 	tabindex={disabled ? -1 : 0}
 	class:disabled
 	class:active
-	onclick={handlers(selectTab, bubble('click'))}
+	onclick={selectTab}
 	use:Ripple={ripple}
 >
 	{@render children?.()}

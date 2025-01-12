@@ -4,9 +4,6 @@
 	import Button from '../Button/Button.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import icons from '../../internal/Icons';
-	import { createEventDispatcher } from 'svelte';
-
-	
 
 	interface Props {
 		class?: string;
@@ -18,6 +15,7 @@
 		pageSelect?: boolean;
 		type?: string;
 		style?: string;
+		onchange?:(page:number)=>void
 	}
 
 	let {
@@ -28,6 +26,7 @@
 		pageSizes = Array.from(new Set([pageSize, 10, 25, 50, 75, 100, 150].filter(Boolean))).sort((a, b) => a - b),
 		page = $bindable(),
 		pageSelect = true,
+		onchange,
 		type = 'buttons',
 		style = ''
 	}: Props = $props();
@@ -35,18 +34,15 @@
 	const size = $derived(pageSize ?? pageSizes[0]);
 	const index = $derived(page ?? 0);
 
-	const dispatch = createEventDispatcher();
-
 	const calcDisplacer = (index: number) => {
 		if (index - middle < 0) return Math.abs(0 - (index - middle));
 		if (Number(index) + middle > pageCount - 1) return pageCount - 1 - (Number(index) + middle);
 		return 0;
 	};
 
-	function onChange(event, index) {
+	function onChange(index) {
 		page = index;
-		const detail = { event, index};
-		dispatch('change', detail);
+		onchange?.(page);
 	}
 
 	let lastPage = $derived(Math.max(Math.ceil(count / size) - 1, 0));
@@ -62,16 +58,16 @@
 			mandatory
 			items={pageSizes.map((size) => ({ name: size?.toString(), value: size }))}
 			value={size}
-			on:change={({detail})=> pageSize = detail}
+			onchange={(detail)=> pageSize = detail}
 		>
 			Randuri
 		</Select>
 	{/if}
 	<div class="flex gap-2">
-		<Button fab size="x-small" on:click={(e) => onChange(e, 0)} disabled={index == 0}>
+		<Button fab size="x-small" onclick={(e) => onChange(0)} disabled={index == 0}>
 			<Icon path={icons.arrow_left_double} />
 		</Button>
-		<Button fab size="x-small" on:click={(e) => onChange(e, index - 1)} disabled={index == 0}>
+		<Button fab size="x-small" onclick={(e) => onChange(index - 1)} disabled={index == 0}>
 			<Icon path={icons.arrow_left} />
 		</Button>
 
@@ -83,7 +79,7 @@
 						size="x-small"
 						class={index + button == index ? 'secondary-color' : 'primary-color'}
 						variant={index == index + button ? 'raised' : 'text'}
-						on:click={(e) => onChange(e, index + button)}
+						onclick={(e) => onChange(index + button)}
 					>
 						<span class="s-number">{index + button + 1}</span>
 					</Button>
@@ -99,20 +95,20 @@
 					value: size
 				}))}
 				value={index}
-				on:change={(e) => onChange(e, e.detail)}
+				onchange={(val) => onChange(val)}
 			></Select>
 		{/if}
 
 		<Button
 			fab
 			size="x-small"
-			on:click={(e) => onChange(e, Number(index) + 1)}
+			onclick={(e) => onChange(Number(index) + 1)}
 			disabled={index == lastPage}
 		>
 			<Icon path={icons.arrow_right} />
 		</Button>
 
-		<Button fab size="x-small" on:click={(e) => onChange(e, lastPage)} disabled={index == lastPage}>
+		<Button fab size="x-small" onclick={(e) => onChange(lastPage)} disabled={index == lastPage}>
 			<Icon path={icons.arrow_right_double} />
 		</Button>
 	</div>

@@ -1,27 +1,12 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './NavigationDrawer.scss';
 	import { fade, type TransitionConfig } from 'svelte/transition';
 	import { format } from '../../internal/Style';
-	/** classes added to the drawer */
+	import type { HTMLAttributes } from 'svelte/elements';
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	interface Props {
+	interface Props extends HTMLAttributes<HTMLElement>{
+		/** classes added to the drawer */
 		class?: string;
 		/** width of the drawer */
 		width?: string | number;
@@ -74,25 +59,21 @@
 		style = null,
 		prepend,
 		children,
-		append
+		append,
+		...rest
 	}: Props = $props();
 </script>
 
 <aside
 	class="s-navigation-drawer {klass}"
 	transition:transition|local={transitionOpts}
-	onintrostart={bubble('introstart')}
-	onoutrostart={bubble('outrostart')}
-	onintroend={bubble('introend')}
-	onoutroend={bubble('outroend')}
-	onfocus={bubble('focus')}
 	class:active
 	class:fixed
 	class:absolute
 	class:right
 	class:mini
 	class:clipped
-	onmouseover={bubble('mouseover')}
+	{...rest}
 	style="--s-nav-width:{format(width)};--s-nav-min-width:{format(
 		miniWidth
 	)};--s-nav-clipped-height:{clippedHeight};z-index:{index};{style}"

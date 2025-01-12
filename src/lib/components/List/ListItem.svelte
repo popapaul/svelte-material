@@ -1,41 +1,22 @@
-<script lang="ts">
-	import { createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
+<script lang="ts" generics="T">
 	import './ListItem.scss';
 	import { getContext } from 'svelte';
 	import { ripple as Ripple, type RippleOptions } from '../../actions/Ripple';
-	import type { ItemGroupContext } from '../ItemGroup/ItemGroup.svelte';
+	import { type ItemGroupContext, DEFAULTS } from '../ItemGroup/ItemGroup.svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
 
 	const role = getContext<string>('S_ListItemRole');
 	const ITEM_GROUP = getContext('S_ListItemGroup');
-	const DEFAULTS = {
-		select: () => null,
-		register: () => null,
-		index: () => null,
-		activeClass: 'active'
-	};
-	const ITEM = ITEM_GROUP ? getContext<ItemGroupContext>(ITEM_GROUP) : DEFAULTS;
 
-	/** classes added to the listitem */
-	
-	
-	
-	
-	
-	
-	
-	
+	const ITEM = ITEM_GROUP ? getContext<ItemGroupContext<T>>(ITEM_GROUP) : DEFAULTS;
 
-	
-	
-	
-	interface Props {
+	interface Props extends HTMLAttributes<HTMLAnchorElement> {
+		/** classes added to the listitem */
 		class?: string;
 		/** classes added when active */
 		activeClass?: string;
 		/** value to use in ListItemGroup */
-		value?: any;
+		value?: T;
 		/** specify active state */
 		active?: boolean;
 		/** makes the listitem dense */
@@ -46,7 +27,6 @@
 		multiline?: boolean;
 		/** transforms listitem into anchor */
 		href?: string;
-		link?: any;
 		/** makes text selectable if true */
 		selectable?: any;
 		/** options for the ripple action */
@@ -63,29 +43,32 @@
 	let {
 		class: klass = '',
 		activeClass = ITEM.activeClass,
-		value = ITEM.index(),
+		value = ITEM.index() as any,
 		active = $bindable(false),
 		dense = false,
 		disabled = false,
 		multiline = false,
 		href = '',
-		link = role,
-		selectable = !link,
+		selectable = !href,
 		ripple = getContext<RippleOptions>('S_ListItemRipple') || false,
 		style = '',
 		prepend,
 		children,
 		subtitle,
+		onclick,
 		append,
 		...rest
 	}: Props = $props();
 
-	ITEM.register((values) => {
-		active = values?.includes(value);
-	});
+	$effect(()=>{
+		active = ITEM.values.includes(value);
+	})
 
-	function click() {
-		if (!disabled) ITEM.select(value);
+
+	function click(event) {
+		if (disabled) return;
+		ITEM.select(value);
+		onclick?.(event);
 	}
 </script>
 
@@ -95,16 +78,14 @@
 	{href}
 	class="s-list-item {active ? activeClass : ''} {klass}"
 	{role}
-	tabindex={link ? 0 : -1}
+	tabindex={href ? 0 : -1}
 	aria-selected={role === 'option' ? active : null}
 	class:dense
 	class:multiline
-	class:link
+	class:link={!!href}
 	class:selectable
 	use:Ripple={ripple}
-	onclick={handlers(click, bubble('click'))}
-	onkeydown={bubble('keydown')}
-	ondblclick={bubble('dblclick')}
+	onclick={click}
 	{...rest}
 	{style}
 >

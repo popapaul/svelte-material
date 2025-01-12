@@ -1,83 +1,88 @@
 <script module lang="ts">
 	export const ITEM_GROUP = {};
 
-	export interface ItemGroupContext {
-		select: (val: any) => void;
-		register: (setValue: (values: any[]) => void) => void;
+	export interface ItemGroupContext<T extends any> {
+		select: (val: T) => void;
+		values: T[];
 		index: () => number;
 		activeClass: string;
 	}
+	export const DEFAULTS:ItemGroupContext<any> = {
+		select: () => null,
+		index: () => 0,
+		values: [],
+		activeClass: 'active'
+	};
 </script>
 
-<script lang="ts">
-	import { run } from 'svelte/legacy';
-
+<script lang="ts" generics="T, M extends boolean = false">
+	import type { ConditionalBoolean } from '../../types';
 	import './ItemGroup.scss';
-	import { setContext, createEventDispatcher, onDestroy } from 'svelte';
-	import { writable } from 'svelte/store';
+	import { setContext } from 'svelte';
 
-	/** classes added to item group */
-
+	type DiscriminatedProps =  { multiple:true, value:T[] } | { multiple:false, value:T };
 	
 	
-	interface Props {
+	type Props =  {
+		/** classes added to item group */
 		class?: string;
 		/** class to add to item when active */
 		activeClass?: string;
-		/** value of the group */
-		value?: any;
-		/** allows to select multiple items */
-		multiple?: boolean;
+		// /** value of the group */
+		value?: ConditionalBoolean<T,M>;
+		// /** allows to select multiple items */
+		multiple?: M;
 		/** makes sure atleast one item is selected */
 		mandatory?: boolean;
 		/** max number of selection */
-		max?: any;
+		max?: number;
 		/** roles of item */
 		role?: string;
 		/** styles added to item group */
 		style?: string;
+		onchange?: (value:ConditionalBoolean<T,M>) => void;
+
 		children?: import('svelte').Snippet;
-	}
+	} //& DiscriminatedProps;
 
 	let {
 		class: klass = '',
 		activeClass = '',
 		value = $bindable(),
-		multiple = false,
+		multiple,
 		mandatory = false,
 		max = Infinity,
 		role = null,
 		style = null,
+		onchange,
 		children
 	}: Props = $props();
 
-	const dispatch = createEventDispatcher();
-	const valueStore = writable(value);
-	run(() => {
-		valueStore.set(value);
-	});
+	
+	const internal = $derived({
+		multiple,
+		activeClass,
+		get value(){ return multiple ? value ?? [] : value },
+		set value(val){ value = val as any}
+	} as DiscriminatedProps);	
+
 
 	let startIndex = -1;
 	setContext(ITEM_GROUP, {
-		select: (val) => {
-			if (multiple) {
-				if (value?.includes(val)) {
-					if (!mandatory || value.length > 1) {
-						value.splice(value.indexOf(val), 1);
-						value = [...value];
+		select: (val:T) => {
+			if (internal.multiple == true) {
+				if (internal.value.includes(val)) {
+					if (!mandatory || internal.value.length > 1) {
+						internal.value = internal.value.splice(internal.value.indexOf(val), 1);
 					}
-				} else if ((value?.length ?? 0) < max) value = [...(value ?? []), val];
-			} else if (value === val) {
-				if (!mandatory) value = null;
-			} else value = val;
-			dispatch('change', value);
+				} 
+				else if ((internal.value.length) < max) internal.value.push(val);
+			} else if (internal.value === val) {
+				if (!mandatory) internal.value = null;
+			} else internal.value = val;
+			onchange?.(internal.value as any);
 		},
-		register: (setValue) => {
-			const u = valueStore.subscribe((val) => {
-				setValue(multiple ? val : [val]);
-			});
-			onDestroy(u);
-		},
+		get values(){ return Array.isArray(internal.value) ? internal.value : [internal.value]},
 		index: () => {
 			startIndex += 1;
 			return startIndex;

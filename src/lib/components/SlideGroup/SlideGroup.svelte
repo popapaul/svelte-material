@@ -5,11 +5,9 @@
 	export type SlideGroupContext = (item: HTMLElement) => void;
 </script>
 
-<script lang="ts">
-	import { run, passive } from 'svelte/legacy';
-
+<script lang="ts" generics="T, M extends boolean = false">
 	import './SlideGroup.scss';
-	import { setContext, untrack } from 'svelte';
+	import { type ComponentProps, setContext, type Snippet, untrack } from 'svelte';
 	import ItemGroup from '../ItemGroup/ItemGroup.svelte';
 	import prevIcon from '../../internal/Icons/prev';
 	import nextIcon from '../../internal/Icons/next';
@@ -19,17 +17,12 @@
 	let wrapperWidth: number = $state();
 	let arrowsVisible = $state(false);
 	
-	interface Props {
-		class?: string;
+	type Props = ComponentProps<typeof ItemGroup<T,M>> & {
 		showArrows?: boolean;
 		hideDisabledArrows?: boolean;
 		centerActive?: boolean;
-		activeClass?: string;
-		value?: any;
-		multiple?: boolean;
-		mandatory?: boolean;
-		max?: any;
-		children?: import('svelte').Snippet;
+		previous?: Snippet,
+		next?:Snippet
 	}
 
 	let {
@@ -38,10 +31,13 @@
 		hideDisabledArrows = false,
 		centerActive = false,
 		activeClass = '',
-		value = $bindable([]),
-		multiple = false,
+		value = $bindable(),
+		multiple,
 		mandatory = false,
 		max = Infinity,
+		previous,
+		next,
+		onchange,
 		children
 	}: Props = $props();
 
@@ -68,7 +64,7 @@
 	
 	});
 
-	function next() {
+	function nextItem() {
 		x += wrapperWidth;
 	}
 
@@ -85,14 +81,14 @@
 		x = touchStartX - touches[0].clientX;
 	}
 
-	run(() => {
-		showArrows && setTimeout(() => (arrowsVisible = wrapperWidth < contentWidth), 1);
+	$effect(() => {
+		showArrows &&  (arrowsVisible = wrapperWidth < contentWidth);
 	});
 </script>
 
 <ItemGroup
 	class="s-slide-group {klass}"
-	on:change
+	{onchange}
 	bind:value
 	{activeClass}
 	{multiple}
@@ -108,16 +104,17 @@
 			onclick={prev}
 			onkeydown={prev}
 		>
-
-			<!-- <slot name="previous">
+			{#if previous}
+				{@render previous()}
+			{:else}
 				<Icon path={prevIcon} />
-			</slot> -->
+			{/if}
 		</div>
 	{/if}
 	<div
 		class="s-slide-group__wrapper"
-		use:passive={['touchstart', () => touchstart]}
-		use:passive={['touchmove', () => touchmove]}
+		ontouchstart={touchstart}
+		ontouchmove={touchmove}
 		bind:clientWidth={wrapperWidth}
 	>
 		<div
@@ -134,12 +131,14 @@
 			class="s-slide-group__next"
 			class:disabled={x === contentWidth - wrapperWidth}
 			class:show-arrows={hideDisabledArrows}
-			onkeydown={next}
-			onclick={next}
+			onkeydown={nextItem}
+			onclick={nextItem}
 		>
-			<!-- <slot name="next">
+			{#if next}
+				{@render next()}
+			{:else}
 				<Icon path={nextIcon} />
-			</slot> -->
+			{/if}
 		</div>
 	{/if}
 </ItemGroup>

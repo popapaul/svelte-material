@@ -1,10 +1,6 @@
 <script lang="ts">
-	import { run, preventDefault, stopPropagation, createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import { clickOutside } from '../../actions/ClickOutside';
 	import './Dialog.scss';
-	import { createEventDispatcher, tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 
@@ -21,6 +17,7 @@
 		width?: number | string;
 		/** sets the height for the dialog */
 		height?: number | string;
+		onclose?: () => void;
 		activator?: import('svelte').Snippet;
 		children?: import('svelte').Snippet<[any]>;
 	}
@@ -33,13 +30,12 @@
 		fullscreen = false,
 		width = fullscreen ? '100%' : '500px',
 		height = fullscreen ? '100%' : '',
+		onclose,
 		activator,
 		children
 	}: Props = $props();
 
 	let dialog: HTMLDialogElement = $state();
-
-	const dispatch = createEventDispatcher();
 
 	async function open() {
 		if (disabled) return;
@@ -49,21 +45,22 @@
 		dialog?.showModal();
 	}
 
-	function close() {
+	function close(event?:Event) {
+		event?.stopPropagation();
 		active = false;
 		document.querySelector("body").style.overflow = "";
 		//dialog?.close();
-		dispatch('close');
+		onclose?.()
 	}
 	$effect(() => {
-			active ? open() : close();
+		active ? open() : close();
 	});
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if activator}
-	<div onclick={stopPropagation(preventDefault(() => (active = true)))} style="display:contents;">
+	<div onclick={()=>active = true} style="display:contents;">
 		{@render activator?.()}
 	</div>
 {/if}
@@ -79,8 +76,8 @@
 		style:height
 		{style}
 		bind:this={dialog}
-		onmousedown={(event) => event.target === event.currentTarget && close()}
-		onclose={(event)=> {event.stopPropagation(); close()}}
+		onmousedown={(event) => event.target === event.currentTarget && close(event)}
+		onclose={close}
 	>
 		{@render children?.({ close, })}
 	</dialog>

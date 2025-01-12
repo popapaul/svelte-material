@@ -3,27 +3,11 @@
 	import ColorPicker from '../ColorPicker/ColorPicker.svelte';
 	import Menu from '../Menu/Menu.svelte';
 	import type { ComponentProps } from 'svelte';
-	interface Props {
-		value?: string;
-		colors?: string[];
+	type Props = ComponentProps<typeof ColorPicker> & Omit<ComponentProps<typeof TextField>, "value" | "onchange"> & {
 		children?: import('svelte').Snippet;
 	}
 
-	let { value = $bindable(), colors = $bindable(), children, ...rest }: Props = $props();
-
-	interface $$Events {
-		focus: CustomEvent;
-		blur: CustomEvent;
-		change: CustomEvent<{
-			hex: string;
-			rgba: { r: number; g: number; b: number; a: number };
-		}>;
-	}
-
-	type $$Props = ComponentProps<TextField> & {
-		value?: string;
-		colors?: string[];
-	};
+	let { value = $bindable(), colors = $bindable(), onchange, ...rest }: Props = $props();
 
 	let active = $state(false);
 
@@ -43,25 +27,17 @@
 	{#snippet activator()}
 		<TextField
 			{value}
-			
 			{...rest}
-			on:keydown={onkeydown}
-			on:clear={() => (value = '')}
+			onkeydown={onkeydown}
+			onclear={() => (value = '')}
 			readonly
 		>
-			{@render children?.()}
 			{#snippet prependOuter()}
 				<div class="color-preview" style="background-color:{value??"black"};"></div>
 			{/snippet}
-			<!-- <slot slot="append" name="append" />
-			<slot slot="prependOuter" name="prependOuter">
-				
-			</slot>
-			<slot slot="appendOuter" name="appendOuter" />
-			<slot slot="prepend" name="prepend" /> -->
 		</TextField>
 	{/snippet}
-	<ColorPicker bind:value bind:colors on:change />
+	<ColorPicker bind:value bind:colors {onchange} />
 </Menu>
 
 <style>

@@ -1,9 +1,10 @@
 
-<script lang="ts" generics="T extends any">
+<script lang="ts" generics="T, D extends boolean = false">
+	import type { ConditionalBoolean } from '../../types';
 	import './Select.scss';
-	import { type Snippet, createEventDispatcher, untrack } from 'svelte';
+	import type {  ComponentProps, Snippet } from 'svelte';
 	
-	import { default as TextField,  type Props as TextFieldProps } from '../TextField/TextField.svelte';
+	import TextField from '../TextField/TextField.svelte';
 	import Menu from '../Menu/Menu.svelte';
 	import ListItemGroup from '../List/ListItemGroup.svelte';
 	import ListItem from '../List/ListItem.svelte';
@@ -13,16 +14,8 @@
 	import DOWN_ICON from '../../internal/Icons/down';
 
 	type TItem = { name: string; value: T };
-	interface $$Events {
-		clear: CustomEvent;
-		change: CustomEvent<T>;
-		keydown: KeyboardEvent;
-		search: CustomEvent<string>;
-	}
 
-	const dispatch = createEventDispatcher();
-
-	type Props =  Omit<TextFieldProps, "value"> & {
+	type Props =  Omit<ComponentProps<TextField<T>>, "value"|"onchange"> & {
 		/** Classes to add to select wrapper. */
 		class?: string;
 		/** Styles to add to select wrapper. */
@@ -33,7 +26,7 @@
 		 * Value of the select.
 		 * If multiple is true, this will be an array; otherwise a single value.
 		 */
-		value?: T|T[];
+		value?: ConditionalBoolean<T,D>;
 		/** List of items to select from. */
 		items?: (TItem|T)[];
 		/** Placeholder content for select. */
@@ -43,7 +36,7 @@
 		/** Whether at least one T must be selected. */
 		mandatory?: boolean;
 		/** Whether you can select multiple options. */
-		multiple?: boolean;
+		multiple?: D;
 		/** Maximum number of selectable options. Defaults to unlimited. */
 		max?: number;
 		/** Whether selected options appear as chips. */
@@ -54,24 +47,23 @@
 		itemsPanelClass?: string;
 		fullWidth?: boolean;
 		/**
-	 * Whether select closes on selection. Defaults to `true` on single select and `false`
-	 * on multiple select or when select is filterable.
-	 */
+		* Whether select closes on selection. Defaults to `true` on single select and `false`
+		* on multiple select or when select is filterable.
+		*/
 		closeOnClick?: boolean;
 		/** Select values not in the list. */
 		acceptValue?: boolean;
 		/** Convert the selected value for the underlying text field. */
-		filter?: boolean;
+		filterable?: boolean;
 		emptyString?: string;
 		inputElement?: any;
 		menuClass?: string;
 		filterValue?: string;
+		onchange?: (value:ConditionalBoolean<T,D>)=>void;
 		children?: Snippet;
 		options?: Snippet;
-		option?: Snippet;
-	}
-
-	
+		option?: Snippet<[{active:boolean, item: TItem}]>;
+	};
 
 	let {
 		class: klass = '',
@@ -80,7 +72,7 @@
 		value = $bindable(),
 		hint = '',
 		mandatory = false,
-		multiple = false,
+		multiple,
 		max = Infinity,
 		chips = false,
 		disabled = false,
@@ -88,30 +80,32 @@
 		fullWidth = true,
 		closeOnClick = !multiple,
 		acceptValue = false,
-		filter = !acceptValue,
+		filterable = !acceptValue,
 		emptyString = '',
 		inputElement = $bindable(),
 		menuClass = '',
 		filterValue = $bindable(),
 		validateOnBlur = false,
-		items:initialItems = $bindable([]),
+		items = $bindable([]),
+		onchange,
 		options,
 		option,
 		...rest
 	}: Props = $props();
-	const asArray = (val:T|T[])=>{
-		if(!val) return [];
-		return Array.isArray(val) ? [...val] : [val];
-	}
-	if(!initialItems?.length)
-		initialItems = asArray(value);
 
-	const items = $derived([...new Map(initialItems.map(y=>[(y as any)?.value ?? y ,y])).values()].filter(Boolean).map(x=> typeof x === "object" ? x as TItem : { value: x, name: x } as TItem  ));
+
 	
-	
+	type DiscriminatedProps = { multiple:true, value:T[], onchange?:(value:T[])=>void } | { multiple?:false, value:T, onchange?:(value:T)=>void} ;
+	const internal = $derived({
+		multiple,
+		get value(){ return value },
+		set value(val){ value = val},
+		items: [...new Map(items.map(y=>[(y as any)?.value ?? y ,y])).values()].filter(Boolean).map(x=> typeof x === "object" ? x as TItem : { value: x, name: x } as TItem  )
+	} as {items:TItem[]} & DiscriminatedProps);	
+
 
 	export function getSelectString(v: T) {
-		const item = items.find((i) => i.value == v);
+		const item = internal.items.find((i) => i.value == v);
 		return item?.name || v as string || emptyString;
 	}
 	export function format(val: T|T[]) {
@@ -125,30 +119,23 @@
 			.join(', ');
 	}
 
-	const getFilteredItems = (items: TItem[], search: string) => {
-		if (!search) return [...items];
 
-		return items.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
-	};
-
-	let filteredItems = $derived(getFilteredItems(items, filterValue));
+	let filteredItems = $derived.by(()=>{
+		if (!filterValue) return internal.items;
+		return internal.items.filter((item) => item.name.toLowerCase().includes(filterValue.toLowerCase()));
+	});
 
 	const removeItem = (itemValue: T) => {
-		if (Array.isArray(value)) value = value.filter((x) => x != itemValue);
+		if (Array.isArray(internal.value)) internal.value = internal.value.filter((x) => x != itemValue);
 		else value = null;
 	};
 	
 	const appendValue = (newValue:any)=>{
-		
-			initialItems.push(newValue);
-			if(multiple)
-			{
-				value??=[];
-				value.push(newValue)
-			}
-				
-			else
-				value = newValue;
+		items.push(newValue);
+		if(internal.multiple == true)
+			internal.value.push(newValue)
+		else
+			internal.value = newValue;
 	}
 
 	const handleKeypress = (event: KeyboardEvent)=>{
@@ -161,21 +148,19 @@
 		if(event.key === "Backspace")
 		{
 			if(input.value?.length) return
-			if(multiple)
-				value?.pop?.()
+			if(internal.multiple)
+				internal.value.pop();
 		}
 	}
 </script>
 
 <Menu
 	{closeOnClick}
-	
 	{disabled}
 	bind:active
 	class={menuClass}
 	{fullWidth}
-	on:close={() => (filterValue = '')}
-
+	onclose={() => (filterValue = '')}
 >
 	{#snippet activator()}
 		<TextField
@@ -184,35 +169,29 @@
 			{...rest}
 			labelActive={active || !!value}
 			value={format(value)}
-			on:clear={() => (value = null)}
+			onclear={() => (value = null)}
 			bind:inputElement
 			readonly
 			{disabled}
 			{hint}
 		>	
-			
 			{#snippet content()}
-				{#if  value}
-					{#each (Array.isArray(value) ? value : [value]).filter(Boolean) as val}
+				{#if internal.value}
+					{#each (Array.isArray(internal.value) ? internal.value : [internal.value]).filter(Boolean) as val}
 						{#if chips}
-							<Chip size="small" close on:close={() => removeItem(val)}>{getSelectString(val)}</Chip>
+							<Chip size="small" close onclose={() => removeItem(val)}>{getSelectString(val)}</Chip>
 						{:else}
 							<span style="margin-right:4px;">{getSelectString(val)}</span>
 						{/if}
 					{/each}
 				{/if}
-
-				
-
 				{#if acceptValue}
 					<input onkeydown={handleKeypress} onblur={(event)=>{appendValue(event.currentTarget.value); event.currentTarget.value = ""}} />
 				{/if}
 			{/snippet}
-			
-			
 			 {#snippet append()}
 				<Icon
-					on:click={() => active && setTimeout(() => (active = false), 2)}
+					onclick={() => active && setTimeout(() => (active = false), 2)}
 					path={DOWN_ICON}
 					rotate={active ? 180 : 0}
 				/>
@@ -220,7 +199,7 @@
 		</TextField>
 	{/snippet}
 
-	<ListItemGroup bind:value on:change  {mandatory} {multiple} {max}>
+	<ListItemGroup bind:value {onchange} {mandatory} {multiple} {max}>
 		 {#if options}
 		 	{@render options()}
 		 {:else}

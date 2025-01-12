@@ -3,14 +3,12 @@
 </script>
 
 <script lang="ts">
-	import { run, createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './Radio.scss';
 	import TextColor from '../../internal/TextColor';
 	import { ripple as Ripple } from '../../actions/Ripple';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
 	import { getContext } from 'svelte';
+	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	const context = getContext<FormContext>(FORM_FIELDS);
 
@@ -29,23 +27,21 @@
 
 	// Styles for the radio wrapper.
 
-	
-
 	// The <input/> element of the radio.
-	interface Props {
+	interface Props extends HTMLInputAttributes{
 		class?: string;
 		color?: string;
 		disabled?: boolean;
 		group?: string | number | string[] | boolean;
 		value?: string | number | string[] | boolean;
-		id?: any;
-		style?: any;
+		id?: string;
+		style?: string;
 		/**
 	 * A list of validator functions that take the radio field value and return an error
 	 * message, or `true` otherwise.
 	 */
 		rules?: ((value: any) => string)[];
-		inputElement?: any;
+		inputElement?: HTMLInputElement;
 		children?: import('svelte').Snippet;
 	}
 
@@ -57,9 +53,11 @@
 		value = null,
 		id = $bindable(),
 		style = null,
+		onchange,
 		rules = [],
 		inputElement = $bindable(),
-		children
+		children,
+		...rest
 	}: Props = $props();
 
 	let errorMessages: string[] = $state([]);
@@ -73,10 +71,13 @@
 		if (!rules.map((r) => r(group)).filter((r) => typeof r === 'string').length) errorMessages = [];
 	};
 
-	run(() => {
+	$effect(() => {
 		check(group);
 	});
-
+	const handleChange = (event) =>{
+		validate();
+		onchange?.(event)
+	}
 	context?.register({ id, validate });
 
 	id = id || `s-radio-${uid(5)}`;
@@ -94,10 +95,11 @@
 			type="radio"
 			bind:this={inputElement}
 			bind:group
-			onchange={handlers(bubble('change'), validate)}
+			onchange={handleChange}
 			{id}
 			{value}
 			{disabled}
+			{...rest}
 		/>
 		<div class="s-radio__background"></div>
 	</div>

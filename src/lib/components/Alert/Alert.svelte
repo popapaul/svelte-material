@@ -1,29 +1,13 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './Alert.scss';
 	import type { TransitionConfig } from 'svelte/transition';
-	import { createEventDispatcher } from 'svelte';
 	import { slide } from 'svelte/transition';
-	const dispatch = createEventDispatcher();
 	import Button from '../Button/Button.svelte';
-	import close from '../../internal/Icons/close';
+	import closeIcon from '../../internal/Icons/close';
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	/** classes added to the alert */
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	interface Props {
+	interface Props extends HTMLAttributes<HTMLDivElement> {
+		/** classes added to the alert */
 		class?: string;
 		/** styles added to the alert */
 		style?: any;
@@ -47,7 +31,14 @@
 		border?: 'top' | 'bottom' | 'right' | 'left';
 		/** applies the defined color to the alert's border */
 		coloredBorder?: boolean;
+		/** triggered when alert is dismissed */
+		onDismiss?: () => void;
+		/** snippet for alert content */
 		children?: import('svelte').Snippet;
+		/** snippet for close button icon */
+		close?: import('svelte').Snippet;
+		/** icon to display at the beginning of the alert */
+		icon?: import('svelte').Snippet;
 	}
 
 	let {
@@ -63,7 +54,10 @@
 		dismissible = false,
 		border = null,
 		coloredBorder = false,
-		children
+		onDismiss,
+		children,
+		close,
+		icon
 	}: Props = $props();
 
 	function dismiss() {
@@ -72,7 +66,7 @@
 		 * Triggered when alert is dismissed.
 		 * @returns Nothing
 		 */
-		dispatch('dismiss');
+		onDismiss?.();
 	}
 
 	function fadeSlide(node: Element, options: any) {
@@ -93,26 +87,27 @@
 		role="alert"
 		class="s-alert {klass}"
 		transition:transition={transitionOpts}
-		onintrostart={bubble('introstart')}
-		onoutrostart={bubble('outrostart')}
-		onintroend={bubble('introend')}
-		onoutroend={bubble('outroend')}
 		class:dense
 		class:outlined
 		class:text
 		class:tile
 		class:colored-border={coloredBorder}
+
 	>
 		<div class="s-alert__wrapper">
 			<!-- Slot for icon at beginning of alert. -->
-			<!-- <slot name="icon" /> -->
+			{@render icon?.()}
 			<div class="s-alert__content">
 				{@render children?.()}
 			</div>
 			{#if dismissible}
-				<Button icon size="small" class={dismissible == 'top' ? 'top' : ''} on:click={dismiss}>
+				<Button icon size="small" class={dismissible == 'top' ? 'top' : ''} onclick={dismiss}>
 					<!-- Slot for close button icon. -->
-					<!-- <slot name="close">{@html close}</slot> -->
+					 {#if close}
+						{@render close()}
+					{:else}
+						{@html closeIcon}
+					{/if}
 				</Button>
 			{/if}
 			{#if border}

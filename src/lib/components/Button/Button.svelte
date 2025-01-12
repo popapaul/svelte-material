@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import { ripple as Ripple, type RippleOptions } from '../../actions/Ripple';
 	import './Button.scss';
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	interface Props {
+	interface Props extends HTMLAttributes<HTMLElement> {
 		/** classes added to the button */
 		class?: string;
 		/** designates the button as a floating-action-button */
@@ -32,19 +30,22 @@
 		active?: boolean;
 		/** class to add to button when active */
 		activeClass?: string;
-		/** specifies the type of button */
-		type?: 'button' | 'reset' | 'submit';
 		/** options for the ripple action */
 		ripple?: RippleOptions;
 		/** styles added to the button */
 		style?: string;
-		/** href for link */
-		href?: string;
 		/** tag of element */
 		tag?: string;
+
+		type?: string;
+
 		button?: HTMLElement;
+		 /** Optional href for anchor tags */
+		href?: string;
 		children?: import('svelte').Snippet;
-	}
+		[k:string]:any;
+	};
+
 
 	let {
 		class: klass = '',
@@ -63,14 +64,12 @@
 		type = 'button',
 		ripple = null,
 		style = '',
-		href = null,
+		href,
 		tag = href ? 'a' : 'button',
 		button = $bindable(),
 		children,
 		...rest
 	}: Props = $props();
-
-	const notypecheck = (x: any) => x;
 </script>
 
 <!-- svelte-ignore a11y_missing_attribute -->
@@ -78,7 +77,7 @@
 <svelte:element
 	this={tag}
 	bind:this={button}
-	{...notypecheck({ type, href, disabled })}
+	{href}
 	class="s-btn size-{size} {active ? activeClass : ''} {klass}"
 	class:s-btn--fab={fab}
 	class:icon
@@ -92,7 +91,6 @@
 	{style}
 	aria-disabled={disabled}
 	use:Ripple={ripple}
-	onclick={bubble('click')}
 	{...rest}
 >
 	{@render children?.()}

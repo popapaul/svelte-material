@@ -6,7 +6,7 @@
 	}
 </script>
 
-<script lang="ts">
+<script lang="ts" generics="T">
 	import { run } from 'svelte/legacy';
 
 	import './Tabs.scss';
@@ -22,7 +22,7 @@
 	
 	interface Props {
 		class?: string;
-		value?: any;
+		value?: T;
 		centerActive?: boolean;
 		showArrows?: boolean;
 		fixedTabs?: boolean;
@@ -36,13 +36,14 @@
 		vertical?: boolean;
 		windowClass?: string;
 		wrapperClass?: string;
+		onchange?: (value:T)=>void;
 		children?: import('svelte').Snippet;
 		tabs?:import('svelte').Snippet;
 	}
 
 	let {
 		class: klass = '',
-		value = $bindable(0),
+		value = $bindable(),
 		centerActive = false,
 		showArrows = true,
 		fixedTabs = false,
@@ -56,6 +57,7 @@
 		vertical = false,
 		windowClass = '',
 		wrapperClass = '',
+		onchange,
 		tabs,
 		children
 	}: Props = $props();
@@ -67,7 +69,7 @@
 		}
 	});
 
-	function moveSlider({ detail }) {
+	function moveSlider(detail) {
 		if (detail == null) return;
 		if (slider) {
 			const activeTab = items.find((x) => x.value == detail)?.element;
@@ -83,8 +85,8 @@
 		const index = items.findIndex((x) => x.value == detail);
 		windowComponent.set(index);
 	}
-	run(() => {
-		tabWidth && moveSlider({ detail: value });
+	$effect(() => {
+		tabWidth && moveSlider(value);
 	});
 </script>
 
@@ -99,7 +101,7 @@
 		class:icons
 	>
 	
-		<SlideGroup bind:value mandatory {centerActive} {showArrows} on:change={moveSlider} on:change>
+		<SlideGroup bind:value mandatory {centerActive} {showArrows} onchange={()=> {onchange?.(value); moveSlider(value)}}>
 			{@render tabs?.()}
 			{#if slider}
 				<div class="s-tab-slider {sliderClass}" style="width:0px;" bind:this={sliderElement}></div>

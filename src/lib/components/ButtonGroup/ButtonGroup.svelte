@@ -1,4 +1,5 @@
-<script lang="ts">
+<script lang="ts" generics="T, M extends boolean = false">
+	import type { ConditionalBoolean } from '../../types';
 	import ItemGroup from '../ItemGroup/ItemGroup.svelte';
 	import './ButtonGroup.scss';
 
@@ -31,12 +32,13 @@
 		tile?: boolean;
 		rounded?: boolean;
 		activeClass?: string;
-		value: any | any[];
+		value?: ConditionalBoolean<T,M>;
 		mandatory?: boolean;
-		multiple?: boolean;
+		multiple?: M;
 		max?: number;
 		style?: string;
 		children?: import('svelte').Snippet;
+		onchange?:(value:ConditionalBoolean<T,M>)=>void
 	}
 
 	let {
@@ -48,14 +50,15 @@
 		activeClass = 'active',
 		value = $bindable(),
 		mandatory = false,
-		multiple = false,
+		multiple,
 		max = Infinity,
 		style = null,
+		onchange,
 		children
 	}: Props = $props();
 </script>
 
-<ItemGroup on:change bind:value {activeClass} {multiple} {mandatory} {max}>
+<ItemGroup {onchange} bind:value {activeClass} {multiple} {mandatory} {max}>
 	<div class="s-btn-group {klass}" class:elevated class:borderless class:tile class:rounded {style}>
 		{@render children?.()}
 	</div>

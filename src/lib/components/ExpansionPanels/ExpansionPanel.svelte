@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { run, createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './ExpansionPanel.scss';
 	import { getContext } from 'svelte';
 	import { EXPANSION_PANELS, type EXPANSION_PANELS_Context } from './ExpansionPanels.svelte';
@@ -9,26 +6,19 @@
 	import Icon from '../Icon/Icon.svelte';
 	import down from '../../internal/Icons/down';
 
-	const { values, Disabled, selectPanel, index } =
-		getContext<EXPANSION_PANELS_Context>(EXPANSION_PANELS);
+	const context = getContext<EXPANSION_PANELS_Context>(EXPANSION_PANELS);
 
-	// Classes to add to the panel.
-	
-
-
-	// Options for the slide transition.
-
-	// Make the panel readonly.
-
-	// Disable the panel.
-
-	// Styles to add to the panel.
 	interface Props {
+		// Classes to add to the panel.
 		class?: string;
 		contentClass?: string;
+		// Options for the slide transition.
 		slideOpts?: any;
-		readonly?: false;
-		disabled?: false;
+		// Make the panel readonly.
+		readonly?: boolean;
+		// Disable the panel.
+		disabled?: boolean;
+		// Styles to add to the panel.
 		style?: string;
 		title?: string;
 		header?: import('svelte').Snippet;
@@ -49,22 +39,18 @@
 		children
 	}: Props = $props();
 
-	const value = index();
-	let active = $state(false);
+	const value = context.index();
+	const active = $derived(context.values.includes(value));
 
 	function toggle() {
-		selectPanel(value);
+		context.selectPanel(value);
 	}
 
 	// Inheriting the disabled value from parent.
-	run(() => {
-		disabled = $Disabled == null ? disabled : $Disabled;
+	$effect(() => {
+		disabled = context.disabled == null ? disabled : context.disabled;
 	});
 
-	// Checking if panel is active everytime the value has changed.
-	run(() => {
-		active = $values.includes(value);
-	});
 </script>
 
 <div
@@ -100,10 +86,6 @@
 		<div
 			class="s-expansion-panel__content {contentClass}"
 			transition:slide={slideOpts}
-			onintrostart={bubble('introstart')}
-			onoutrostart={bubble('outrostart')}
-			onintroend={bubble('introend')}
-			onoutroend={bubble('outroend')}
 		>
 			{@render children?.()}
 		</div>

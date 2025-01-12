@@ -1,0 +1,1 @@
+export type ConditionalBoolean<T, D extends boolean = false> = D extends true ? T[] : T;

@@ -17,26 +17,19 @@
 </script>
 
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { onDestroy, setContext } from 'svelte';
-	import { createEventDispatcher } from 'svelte';
 
-	
 	interface Props {
 		class?: string;
 		style?: any;
+		onsubmit?:()=>void;
+		onerror?:(errors: Error[])=>void;
 		children?: import('svelte').Snippet;
 	}
 
-	let { class: klass = '', style = null, children }: Props = $props();
+	let { class: klass = '', style = null, onsubmit, onerror, children }: Props = $props();
 
-	interface $$Events {
-		submit: CustomEvent;
-		error: CustomEvent<Error[]>;
-	}
 
-	const dispatch = createEventDispatcher();
 	const formFields: Set<Field> = new Set();
 
 	setContext<FormContext>(FORM_FIELDS, {
@@ -47,17 +40,18 @@
 		}
 	});
 
-	const onSubmit = () => {
+	const onSubmit = (event:SubmitEvent) => {
+		event.preventDefault();
 		const errorFields = validate();
 
 		if (errorFields.length) {
 			const field = errorFields[0];
 			const input = document.querySelector('#' + field.id);
 			input?.scrollIntoView?.({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-			return dispatch('error', errorFields);
+			onerror?.(errorFields);
+			return;
 		}
-
-		dispatch('submit');
+		onsubmit?.();
 	};
 
 	export function validate() {
@@ -69,6 +63,6 @@
 	}
 </script>
 
-<form onsubmit={preventDefault(onSubmit)} class={klass} {style}>
+<form onsubmit={onSubmit} class={klass} {style}>
 	{@render children?.()}
 </form>

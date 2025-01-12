@@ -1,26 +1,12 @@
 <script lang="ts">
-	import { createBubbler, stopPropagation } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './Chip.scss';
 	import { ripple as Ripple } from '../../actions/Ripple';
 	import Icon from '../Icon/Icon.svelte';
 	import closeIcon from '../../internal/Icons/close';
-	import { createEventDispatcher } from 'svelte';
-
-	/** Classes to add to chip. */
+	import type { HTMLAttributes } from 'svelte/elements';
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	interface Props {
+	interface Props extends HTMLAttributes<HTMLElement> {
+		/** Classes to add to chip. */
 		class?: string;
 		/** Styles to add to chip. */
 		style?: string;
@@ -41,7 +27,7 @@
 		/** specifies if the chip is a label, making it less rounded */
 		label?: boolean;
 		/** determines if a close button will appear */
-		close?: boolean;
+		close?: boolean | import('svelte').Snippet;
 		children?: import('svelte').Snippet;
 	}
 
@@ -57,14 +43,10 @@
 		link = !!href,
 		label = false,
 		close = false,
-		children
+		onclose,
+		children,
+		...rest
 	}: Props = $props();
-
-	const dispatch = createEventDispatcher();
-
-	function onClose() {
-		dispatch('close');
-	}
 </script>
 
 {#if active}
@@ -78,17 +60,18 @@
 		class:link
 		class:label
 		class:selected
-		onkeydown={bubble('keydown')}
-		onclick={bubble('click')}
+		{...rest}
 	>
 		{@render children?.()}
 		{#if close}
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div class="s-chip__close" onclick={stopPropagation(onClose)}>
-				<!-- <slot name="close-icon">
+			<div class="s-chip__close" onclick={onclose}>
+				{#if typeof close === 'function'}
+					{@render close()}
+				{:else}
 					<Icon path={closeIcon} />
-				</slot> -->
+				{/if}
 			</div>
 		{/if}
 	</span>

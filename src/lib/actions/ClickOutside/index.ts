@@ -22,7 +22,7 @@ import { ClickOutsideParameter } from "./public";
  *  <button
  *    type="button"
  *    class="mt-10 bg-primary p-6 drop-shadow-lg hover:bg-orange-700"
- *    on:click={() => (modal = true)}
+ *    onclick={() => (modal = true)}
  *  >
  *      Click to open modal
  *    </button>
@@ -30,7 +30,7 @@ import { ClickOutsideParameter } from "./public";
  *    <aside
  *      class="absolute top-0 left-0 right-0 bottom-0"
  *      use:clickOutside={{ limit: { parent: containerNode }}}
- *      on:clickOutside={onClickOutside}
+ *      onclickOutside={onClickOutside}
  *    >
  *      ...some modal content...
  *    </aside>
@@ -56,14 +56,17 @@ export function clickOutside(node: Element, param: ClickOutsideParameter = { ena
 	let { enabled, eventType, include, nodeForEvent, options, capture } = resolveConfig(param);
 
 
-	function handle(event: Event) {
+	function handle(event: Event & {target: HTMLElement}) {
 		if (!event.target || !node) return;
 
 		if(node.contains((event.target as any)))
 			return;
 		
-		if(include?.contains(event.target as any))
+		if(include.some(element=>{
+			return typeof element === "string" ? event.target.closest(element) : element.contains(event.target)
+		}))
 			return;
+	
 	
 		node.dispatchEvent(new CustomEvent('clickOutside', { detail: event }));
 	}
@@ -89,7 +92,7 @@ export function resolveConfig(param: ClickOutsideParameter = {}) {
 	return {
 		enabled: param.enabled ?? true,
 		nodeForEvent: param.limit?.parent ?? document,
-		include: param.include,
+		include: (Array.isArray(param.include) ? param.include : [param.include]).filter(Boolean),
 		eventType: param.event ?? 'click',
 		options: param.options,
 		capture: typeof param.options === 'object' ? param.options?.capture : param.options,

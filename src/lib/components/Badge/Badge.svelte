@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './Badge.scss';
 	import { scale, type TransitionConfig } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
 	
-	interface Props {
+	interface Props extends HTMLAttributes<HTMLElement>{
 		/** classes to add to badge */
 		class?: string;
 		value?: string | number;
@@ -47,7 +45,8 @@
 		wrapperClass = 'block',
 		style = '',
 		children,
-		badge
+		badge,
+		...rest
 	}: Props = $props();
 	let mounted = $state(false);
 
@@ -55,17 +54,13 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<span class="s-badge {wrapperClass}" onclick={bubble('click')} ondblclick={bubble('dblclick')} onkeydown={bubble('keydown')}>
+<span class="s-badge {wrapperClass}" {...rest}>
 	{@render children?.()}
 	<span class="s-badge__wrapper">
 		{#if active && mounted}
 			<span
 				class="s-badge__badge {klass}"
 				transition:transition={transitionOpts}
-				onintrostart={bubble('introstart')}
-				onoutrostart={bubble('outrostart')}
-				onintroend={bubble('introend')}
-				onoutroend={bubble('outroend')}
 				class:bordered
 				class:dot
 				class:tile

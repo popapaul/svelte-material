@@ -2,36 +2,37 @@
 	import uid from '../../internal/uid';
 </script>
 
-<script>
-	import { createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
+<script lang="ts" generics="T">
 	import './Switch.scss';
 	import TextColor from '../../internal/TextColor';
+	import type { HTMLInputAttributes } from 'svelte/elements';
 
-	// Add class to switch wrapper.
-	
-
-	// Color of the switch when active.
-
-	// The value for the switch.
-
-	// Combines components into a single group.
-
-	// Get/Set checked state.
-
-	// make switch inset.
-
-	// Makes the switch dense.
-
-	// Disables the switch.
-
-	// Id for switch.
-
-	// Styles to add to switch.
-
-	// The <input/> element of the switch.
-	/** @type {{class?: string, color?: string, value?: any, group?: any, checked?: boolean, inset?: boolean, dense?: boolean, disabled?: boolean, id?: any, style?: any, inputElement?: any, children?: import('svelte').Snippet}} */
+	interface Props extends HTMLInputAttributes {
+		/** Class to add to switch wrapper. */
+		class?: string;
+		/** Color of the switch when active. */
+		color?: string;
+		/** The value for the switch. */
+		value?: T;
+		/** Combines components into a single group. */
+		group?: T[];
+		/** Get/Set checked state. */
+		checked?: boolean;
+		/** Make switch inset. */
+		inset?: boolean;
+		/** Makes the switch dense. */
+		dense?: boolean;
+		/** Disables the switch. */
+		disabled?: boolean;
+		/** Id for switch. */
+		id?: string;
+		/** Styles to add to switch. */
+		style?: string;
+		/** The <input/> element of the switch. */
+		inputElement?: HTMLInputElement;
+		/** The children (Svelte snippet). */
+		children?: import('svelte').Snippet;
+	};
 	let {
 		class: klass = '',
 		color = 'primary',
@@ -44,8 +45,10 @@
 		id = $bindable(),
 		style = null,
 		inputElement = $bindable(),
-		children
-	} = $props();
+		children,
+		onchange,
+		...rest
+	}:Props = $props();
 
 	id = id || `s-switch-${uid(5)}`;
 
@@ -54,7 +57,7 @@
 		if (group.indexOf(value) >= 0) checked = true;
 	}
 
-	function groupUpdate() {
+	function groupUpdate(event) {
 		if (hasValidGroup && value) {
 			const i = group.indexOf(value);
 			if (i < 0) {
@@ -64,6 +67,7 @@
 			}
 			group = group;
 		}
+		onchange?.(event)
 	}
 </script>
 
@@ -84,7 +88,8 @@
 			{id}
 			{disabled}
 			{value}
-			onchange={handlers(groupUpdate, bubble('change'))}
+			onchange={groupUpdate}
+			{...rest}
 		/>
 		<div class="s-switch__track"></div>
 		<div class="s-switch__thumb"></div>

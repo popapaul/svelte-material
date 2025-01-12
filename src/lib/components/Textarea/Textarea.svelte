@@ -1,26 +1,14 @@
 <script lang="ts">
-	import { run, createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import Input from '../Input/Input.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import uid from '../../internal/uid';
 	import clearIcon from '../../internal/Icons/close';
-	import { onMount } from 'svelte';
+	import type { ComponentProps } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	interface $$Events {
-		input: KeyboardEvent & { target: EventTarget & HTMLInputElement };
-		blur: Event & { target: EventTarget & HTMLInputElement };
-		click: Event & { target: EventTarget & HTMLInputElement };
-		change: Event & { target: EventTarget & HTMLInputElement };
-		keydown: Event & { target: EventTarget & HTMLInputElement };
-		focus: Event & { target: EventTarget & HTMLInputElement };
-		clear: CustomEvent;
-	}
-
-	/** Classes to add to text field wrapper. */
-
-	interface Props {
+	
+	interface Props extends ComponentProps<typeof Input>, HTMLAttributes<HTMLTextAreaElement> {
+		/** Classes to add to textarea wrapper. */
 		class?: string;
 		/** Value of the textarea. */
 		value?: string;
@@ -55,9 +43,9 @@
 		/** Display a counter set to a desired input length. */
 		counter?: boolean;
 		/**
-	 * A list of validator functions that take the textarea value and return an error
-	 * message, or `true` otherwise.
-	 */
+		 * A list of validator functions that take the textarea value and return an error
+		 * message, or `true` otherwise.
+		 */
 		rules?: ((value: string | number | string[]) => string | true)[];
 		/** Number of error messages to display. Defaults to one. */
 		errorCount?: number;
@@ -79,8 +67,6 @@
 		children?: import('svelte').Snippet;
 		append?: import('svelte').Snippet;
 		prepend?: import('svelte').Snippet;
-		prependOuter?: import('svelte').Snippet;
-		appendOuter?: import('svelte').Snippet;
 	}
 
 	let {
@@ -104,6 +90,7 @@
 		rules = [],
 		errorCount = 1,
 		messages = [],
+		
 		validateOnBlur = false,
 		error = $bindable(false),
 		success = false,
@@ -112,6 +99,9 @@
 		textarea = $bindable(),
 		underline = true,
 		dense = false,
+		oninput,
+		onblur,
+		onfocus,
 		children,
 		prependOuter,
 		appendOuter,
@@ -131,13 +121,15 @@
 		}
 	}
 
-	function onFocus() {
+	function onFocus(event) {
 		focused = true;
+		onfocus?.(event);
 	}
 
-	function onBlur() {
+	function onBlur(event) {
 		focused = false;
 		if (validateOnBlur) checkRules();
+		onblur?.(event);
 	}
 
 	function clear() {
@@ -150,13 +142,11 @@
 			textarea.style.height = `${textarea.scrollHeight}px`;
 		}
 	}
-	$effect(()=>{
-		value;
-		 handleHeight()
-		})
+	$effect(()=>{ value; handleHeight() })
 
-	function onInput() {
+	function onInput(event) {
 		if (!validateOnBlur) checkRules();
+		oninput?.(event);
 	}
 </script>
 
@@ -192,19 +182,15 @@
 				{id}
 				{readonly}
 				{disabled}
-				onfocus={handlers(onFocus, bubble('focus'))}
-				onblur={handlers(onBlur, bubble('blur'))}
-				oninput={handlers(onInput, bubble('input'))}
-				onchange={bubble('change')}
+				onfocus={onFocus}
+				onblur={onBlur}
+				oninput={onInput}
 				{...rest}
 			></textarea>
 		</div>
 
 		{#if clearable && value !== ''}
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div onclick={clear} style="cursor:pointer">
-				<Icon size={20} path={clearIcon} />
-			</div>
+			<Icon onclick={clear} style="cursor:pointer" size={20} path={clearIcon} />
 		{/if}
 
 		<!-- Slot for append inside the input. -->

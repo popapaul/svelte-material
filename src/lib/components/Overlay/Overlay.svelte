@@ -1,23 +1,11 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import { fade } from 'svelte/transition';
 	import BackgroundColor from '../../internal/BackgroundColor';
 	import './Overlay.scss';
-
-	/** classes added to overlay */
+	import type { HTMLAttributes } from 'svelte/elements';
 	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	interface Props {
+	interface Props extends HTMLAttributes<HTMLDivElement> {
+		/** classes added to overlay */
 		class?: string;
 		transition?: any;
 		/** options passed to the intro transition */
@@ -50,7 +38,8 @@
 		index = 5,
 		absolute = false,
 		style = '',
-		children
+		children,
+		...rest
 	}: Props = $props();
 </script>
 
@@ -61,9 +50,8 @@
 		out:transition={outOpts}
 		class="s-overlay {klass}"
 		class:absolute
-		onclick={bubble('click')}
-		onkeydown={bubble('keydown')}
 		style="z-index:{index};{style}"
+		{...rest}
 	>
 		<div class="s-overlay__scrim" use:BackgroundColor={color} style="opacity:{opacity}"></div>
 		<div class="s-overlay__content">

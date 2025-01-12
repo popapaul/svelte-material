@@ -3,7 +3,6 @@
 	import Icon from '../Icon/Icon.svelte';
 	import Add from '../../internal/Icons/add';
 
-	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import Menu from '../Menu/Menu.svelte';
@@ -12,21 +11,18 @@
 	interface Props {
 		colors?: string[];
 		color: string;
+		onchange?: (colors:string[])=>void;
+		onselect?:(color:string)=>void;
 	}
 
-	let { colors = $bindable(), color =  $bindable() }: Props = $props();
+	let { colors = $bindable(), color =  $bindable(), onchange, onselect }: Props = $props();
 
-	const dispatch = createEventDispatcher();
 	const addColor = () => {
 		if (!color) return;
 		colors ??= []; 
 		colors.push(color);
 		colors = [...new Set(colors)];
-		dispatch('change', colors);
-	};
-
-	const selectColor = (color: string) => {
-		dispatch('select', color);
+		onchange?.(colors);
 	};
 </script>
 
@@ -37,7 +33,7 @@
 				{#snippet activator()}
 								<Button
 						
-						on:click={() => selectColor(color)}
+						onclick={() => onselect?.(color)}
 						icon
 						fab
 						size="x-small"
@@ -47,14 +43,14 @@
 					</Button>
 							{/snippet}
 				<List>
-					<ListItem on:click={() => (colors = colors.filter((x) => x != color))}>remove</ListItem>
+					<ListItem onclick={() => (colors = colors.filter((x) => x != color))}>remove</ListItem>
 				</List>
 			</Menu>
 		</div>
 	{/each}
 	{#if color && !colors?.some((x) => x == color)}
 		<div in:fade>
-			<Button disabled={!color} on:click={addColor} style="color:{color};" icon fab size="x-small">
+			<Button disabled={!color} onclick={addColor} style="color:{color};" icon fab size="x-small">
 				<div class="swatch" style="background-color:{color};color:white;">
 					<Icon path={Add} />
 				</div>

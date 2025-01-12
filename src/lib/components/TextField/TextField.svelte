@@ -1,9 +1,18 @@
-<script module lang="ts">
-	export interface Props {
+<script lang="ts" generics="T">
+	import './TextField.scss';
+	import Icon from '../Icon/Icon.svelte';
+	import uid from '../../internal/uid';
+	import clearIcon from '../../internal/Icons/close';
+	import { getContext } from 'svelte';
+	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
+	import { Input } from '../Input';
+	import type { HTMLInputAttributes } from 'svelte/elements';
+	
+	interface Props extends HTMLInputAttributes {
 		/** Classes to add to text field wrapper. */
 		class?: string;
 		/** Value of the text field. */
-		value?: number | string;
+		value?: T;
 		/** Color class of the text field when active. */
 		color?: string;
 		/** Whether text field is the `filled` material design variant. */
@@ -54,6 +63,7 @@
 		underline?: boolean;
 		type?: string;
 		labelActive?: boolean;
+		onclear?: () => void;
 		children?: import('svelte').Snippet;
 		append?: import('svelte').Snippet;
 		prepend?: import('svelte').Snippet;
@@ -61,33 +71,8 @@
 		appendOuter?: import('svelte').Snippet;
 		content?: import('svelte').Snippet;
 	}
-</script>
-<script lang="ts">
-	import { run, createBubbler, handlers } from 'svelte/legacy';
-
-	const bubble = createBubbler();
-	import './TextField.scss';
-	import Icon from '../Icon/Icon.svelte';
-	import uid from '../../internal/uid';
-	import clearIcon from '../../internal/Icons/close';
-	import { getContext, createEventDispatcher, untrack } from 'svelte';
-	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
-	import { Input } from '../Input';
 
 	const context = getContext<FormContext>(FORM_FIELDS);
-
-	type $$Events = {
-		input: KeyboardEvent & { target: EventTarget & HTMLInputElement };
-		blur: Event & { target: EventTarget & HTMLInputElement };
-		click: Event & { target: EventTarget & HTMLInputElement };
-		change: Event & { target: EventTarget & HTMLInputElement };
-		keydown: KeyboardEvent & { target: EventTarget & HTMLInputElement };
-		focus: Event & { target: EventTarget & HTMLInputElement };
-		clear: CustomEvent;
-	};
-
-	
-	
 
 	let {
 		class: klass = '',
@@ -123,11 +108,13 @@
 		prepend,
 		append,
 		content,
+		onfocus,
+		onblur,
+		onclear,
+		onchange,
 		...rest
 	}: Props = $props();
 
-	const dispatch = createEventDispatcher();
-	let touched = $state(false);
 	let errorMessages: string[] = $state([]);
 
 	context?.register({ id, validate });
@@ -141,13 +128,14 @@
 		return errorMessages;
 	}
 
-	function onFocus() {
+	function onFocus(event) {
 		focused = true;
+		onfocus?.(event)
 	}
 
-	function onBlur() {
-		touched = true;
+	function onBlur(event) {
 		focused = false;
+		onblur?.(event);
 		if (validateOnBlur) validate();
 	}
 
@@ -156,19 +144,13 @@
 		event.stopPropagation();
 		event.stopImmediatePropagation();
 		value = null;
-		dispatch('clear');
+		onclear?.();
 	}
 
 	const handleChange = (e) => {
-		value = e.target.value;
+		validate();
+		onchange?.(e);
 	};
-
-
-	$effect(() => {
-		untrack(()=>{
-			touched && (value || !value) && validate();
-		})
-	});
 </script>
 
 <Input class="s-text-field {klass}" {prependOuter} {appendOuter} {color} {dense} {readonly} {disabled} {error} {success} {style}>
@@ -211,21 +193,16 @@
 				
 			<input
 				bind:this={inputElement}
-				value={value ?? ''}
-				oninput={handlers(handleChange, bubble('input'))}
+				bind:value
 				{type}
 				{placeholder}
 				{id}
 				{readonly}
 				{disabled}
 				aria-invalid={error}
-				onfocus={handlers(onFocus, bubble('focus'))}
-				onblur={handlers(onBlur, bubble('blur'))}
-				onchange={handlers(validate, handleChange, bubble('change'))}
-				onclick={bubble('click')}
-				onkeypress={bubble('keypress')}
-				onkeydown={bubble('keydown')}
-				onkeyup={bubble('keyup')}
+				onfocus={onFocus}
+				onblur={onBlur}
+				onchange={handleChange}
 				{...rest}
 			/>
 			{/if}
@@ -257,7 +234,7 @@
 				{/each}
 				{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
 			</div>
-			{#if counter}<span>{value.length} / {counter}</span>{/if}
+			{#if counter}<span>{(value as string)?.length??0} / {counter}</span>{/if}
 		</div>
 	{/snippet}
 </Input>

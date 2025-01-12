@@ -1,13 +1,13 @@
-<script lang="ts">
+<script lang="ts" generics="T">
 	import './ButtonGroupItem.scss';
 	import { getContext } from 'svelte';
 	import Button from '../Button/Button.svelte';
 	import { ITEM_GROUP } from '../ItemGroup/ItemGroup.svelte';
 	import type { ItemGroupContext } from '../ItemGroup/ItemGroup.svelte';
 
-	const ITEM = getContext<ItemGroupContext>(ITEM_GROUP);
+	const ITEM = getContext<ItemGroupContext<T>>(ITEM_GROUP);
 
-	let active: boolean = $state(false);
+	
 
 	// Classes to add to button.
 	
@@ -18,29 +18,31 @@
 	interface Props {
 		class?: string;
 		style?: string;
-		value?: any;
+		value?: T;
 		activeClass?: string;
 		disabled?: boolean;
 		children?: import('svelte').Snippet;
+		onclick?: (event: MouseEvent) => void;
 		[key: string]: any
 	}
 
 	let {
 		class: klass = '',
 		style = '',
-		value = ITEM.index(),
+		value = ITEM.index() as any,
 		activeClass = ITEM.activeClass,
 		disabled = null,
 		children,
+		onclick,
 		...rest
 	}: Props = $props();
 
-	ITEM.register((values) => {
-		active = values.includes(value);
-	});
+	const active = $derived(ITEM.values.includes(value));
 
-	function click() {
-		if (!disabled) ITEM.select(value);
+	function click(event) {
+		if (disabled) return;
+	 	ITEM.select(value);
+		onclick?.(event);
 	}
 </script>
 
@@ -51,8 +53,7 @@
 	{active}
 	{disabled}
 	{...rest}
-	on:click={click}
-	on:click
+	onclick={click}
 >
 	{@render children?.()}
 </Button>

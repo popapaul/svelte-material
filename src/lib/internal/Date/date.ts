@@ -158,6 +158,11 @@ function isSameDay(date1: Date, date2: Date) {
 	return format(date1, 'YYYYMMDD') === format(date2, 'YYYYMMDD');
 }
 
+export function isEqual(d1:Date, d2:Date) {
+    return d1 && d2 && d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth();
+}
+
+
 function isDate(value: Date) {
 	return Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value?.getTime());
 }

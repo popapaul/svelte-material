@@ -1,34 +1,32 @@
-<script lang="ts">
+<script lang="ts" generics="T = number">
 	import { getContext } from 'svelte';
 	import { SLIDE_GROUP } from './SlideGroup.svelte';
 	import { type ItemGroupContext, ITEM_GROUP } from '../ItemGroup/ItemGroup.svelte';
 
 	const moveGroup = getContext<(item: any) => void>(SLIDE_GROUP);
-	const ITEM = getContext<ItemGroupContext>(ITEM_GROUP);
+	const ITEM = getContext<ItemGroupContext<T>>(ITEM_GROUP);
 
-	let active = $state(false);
+	
 	let itemElement: HTMLElement = $state();
 
 	
 	interface Props {
 		class?: string;
-		activeClass?: any;
-		value?: any;
-		disabled?: any;
-		children?: import('svelte').Snippet<[any]>;
+		activeClass?: string;
+		value?: T;
+		disabled?: boolean;
+		children?: import('svelte').Snippet<[{active:boolean}]>;
 	}
 
 	let {
 		class: klass = '',
 		activeClass = ITEM.activeClass,
-		value = ITEM.index(),
+		value = ITEM.index() as any,
 		disabled = null,
 		children
 	}: Props = $props();
 
-	ITEM.register((values) => {
-		active = values.includes(value);
-	});
+	const active = $derived(ITEM.values.includes(value));
 
 	function selectItem() {
 		if (!disabled) {
@@ -45,7 +43,7 @@
 	class="s-slide-item {active ? activeClass : ''} {klass}"
 	onclick={selectItem}
 >
-	{@render children?.({ active, })}
+	{@render children?.({ active })}
 </div>
 
 <style>

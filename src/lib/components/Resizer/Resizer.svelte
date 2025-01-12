@@ -1,16 +1,9 @@
-<script module>
-	import { createEventDispatcher } from 'svelte';
-</script>
-
 <script lang="ts">
 	import './Resizer.scss';
-	// Add class to resizer wrapper.
-	
-
-	// Styles to add to resizer.
-
 	interface Props {
+		// Add class to resizer wrapper.
 		class?: string;
+		// Styles to add to resizer.
 		style?: string;
 		width?: string | number;
 		x?: number;
@@ -25,7 +18,6 @@
 		children
 	}: Props = $props();
 
-	const dispath = createEventDispatcher();
 	let expanding = null;
 	let start = null,
 		initial = null;
@@ -49,14 +41,12 @@
 			const delta = start - event.pageX;
 			x = initial.x - delta;
 			width = initial.width + delta;
-			dispath('width', width);
 			return;
 		}
 
 		if (expanding == 'right') {
 			const delta = event.pageX - start;
 			width = initial.width + delta;
-			dispath('width', width);
 			return;
 		}
 	}

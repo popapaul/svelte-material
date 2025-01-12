@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './TableCell.scss';
 	interface Props {
 		class?: string;
@@ -13,6 +10,6 @@
 	
 </script>
 
-<th class="s-table-cell {klass}" onclick={bubble('click')} {...rest}>
+<th class="s-table-cell {klass}" {...rest}>
 	{@render children?.()}
 </th>

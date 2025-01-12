@@ -2,19 +2,16 @@
 	export const EXPANSION_PANELS = {};
 
 	export interface EXPANSION_PANELS_Context {
-		values: Writable<any[]>;
-		Disabled: Writable<any>;
-		selectPanel: (index: any) => void;
+		values: number[];
+		disabled: boolean;
+		selectPanel: (index: number) => void;
 		index: () => number;
 	}
 </script>
 
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import './ExpansionPanels.scss';
-	import { createEventDispatcher, setContext } from 'svelte';
-	import { type Writable, writable } from 'svelte/store';
+	import { setContext } from 'svelte';
 
 	// Classes to add to panel container.
 	
@@ -51,6 +48,7 @@
 		disabled?: boolean;
 		style?: string;
 		children?: import('svelte').Snippet;
+		onchange?:(value:{ index:number, active: boolean })=>void
 	}
 
 	let {
@@ -65,31 +63,21 @@
 		tile = false,
 		disabled = null,
 		style = null,
+		onchange,
 		children
 	}: Props = $props();
-
-	const dispatch = createEventDispatcher();
-	const values = writable(value);
-	const Disabled = writable(disabled);
-
-	run(() => {
-		values.set(value);
-	});
-	run(() => {
-		Disabled.set(disabled);
-	});
 
 	let startIndex = -1;
 
 	setContext(EXPANSION_PANELS, {
-		values,
-		Disabled,
+		get values(){return value},
+		get disabled(){return disabled},
 		selectPanel: (index) => {
 			if (value.includes(index)) {
 				if (!(mandatory && value.length === 1)) {
 					value.splice(value.indexOf(index), 1);
 					value = value;
-					dispatch('change', { index, active: false });
+					onchange?.({ index, active: false })
 				}
 			} else {
 				if (multiple) {
@@ -98,7 +86,7 @@
 				} else {
 					value = [index];
 				}
-				dispatch('change', { index, active: true });
+				onchange?.({ index, active: false })
 			}
 		},
 		index: () => {

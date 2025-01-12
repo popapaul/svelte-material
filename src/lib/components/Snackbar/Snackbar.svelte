@@ -1,23 +1,12 @@
 <script lang="ts">
-	import { run, createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import './Snackbar.scss';
 	import { scale, type TransitionConfig } from 'svelte/transition';
 	import { tweened } from 'svelte/motion';
 	import { linear } from 'svelte/easing';
-	import { createEventDispatcher, onMount } from 'svelte';
-	/** classes added to the snackbar */
-	
-
-	
-	
-	
-	
-	
-	
+	import {  onMount } from 'svelte';
 	
 	interface Props {
+		/** classes added to the snackbar */
 		class?: string;
 		active?: boolean;
 		/** outlined gives the snackbar a outlined style */
@@ -35,6 +24,7 @@
 		/** styles added to the snackbar */
 		style?: string;
 		type?: 'success' | 'error' | 'info' | 'warning';
+		onclose?:()=>void;
 		children?: import('svelte').Snippet<[any]>;
 	}
 
@@ -49,15 +39,15 @@
 		transition = scale,
 		style = '',
 		type = 'info',
+		onclose,
 		children
 	}: Props = $props();
 	let mounted = $state(false);
 	const progress = tweened(0, { delay: 100, duration: 5000, easing: linear });
 
-	const dispatch = createEventDispatcher();
 	export const close = () => {
 		active = false;
-		dispatch('close');
+		onclose?.();
 	};
 
 	onMount(() => {
@@ -71,7 +61,7 @@
 		progress.set(100, { duration: duration - duration * ($progress / 100) });
 	};
 
-	run(() => {
+	$effect(() => {
 		Math.floor($progress) === 100 && setTimeout(close, 500);
 	});
 </script>
@@ -82,10 +72,6 @@
 		transition:transition|global
 		onmouseenter={pause}
 		onmouseleave={resume}
-		onintrostart={bubble('introstart')}
-		onoutrostart={bubble('outrostart')}
-		onintroend={bubble('introend')}
-		onoutroend={bubble('outroend')}
 		class="s-snackbar snackbar-{type} {klass}"
 		class:outlined
 		class:text

@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { run, passive } from 'svelte/legacy';
-
 	import './ColorPicker.scss';
-	import { createEventDispatcher } from 'svelte';
 	import RangeSlider from '../RangeSlider/RangeSlider.svelte';
 	import TextField from '../TextField/TextField.svelte';
 	import { clickOutside } from '../../actions/ClickOutside';
@@ -12,12 +9,13 @@
 	interface Props {
 		value?: string;
 		colors?: string[];
+		onchange?:	(value:{hex:string, rgba: { r:number, g:number, b:number, a:number }})=>  void
 	}
 
-	let { value = $bindable(), colors = $bindable() }: Props = $props();
+	let { value = $bindable(), colors = $bindable(), onchange }: Props = $props();
 
-	const dispatch = createEventDispatcher();
-	let tracked = $state();
+
+	let tracked = $state<HTMLElement>();
 	let h = $state(1);
 	let s = 1;
 	let v = 1;
@@ -58,7 +56,7 @@
 	}
 
 	function colorChangeCallback() {
-		dispatch('change', {
+		onchange?.({
 			hex: hexValue,
 			rgba: { r, g, b, a }
 		});
@@ -215,14 +213,14 @@
 		value = color ? color : RGBAToHex();
 		colorChangeCallback();
 	};
-	run(() => {
+	$effect(() => {
 		setStartColor(value);
 	});
 </script>
 
 <svelte:window
-	use:passive={['touchmove', () => handleMove]}
-	use:passive={['mousemove', () => handleMove]}
+	ontouchmove={handleMove}
+	onmousemove={handleMove}
 	ontouchend={() => (tracked = null)}
 	onmouseup={() => (tracked = null)}
 />
@@ -246,13 +244,13 @@
 	<div style="margin:0 10px;">
 		<RangeSlider
 			values={[h * 100]}
-			on:change={(event) => handleHueChange(event.detail.value)}
+			onchange={(event) => handleHueChange(event.value)}
 			--range-slider="linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)"
 		/>
 
 		<!-- <RangeSlider 
           values={[a*100]}
-          on:change={event=>handleAlphaChange(event.detail.value)}
+          onchange={event=>handleAlphaChange(event.value)}
           --range-slider="linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0))"  /> -->
 	</div>
 	<div class="color-info-box">
@@ -263,23 +261,17 @@
 		<TextField
 			dense
 			{value}
-			on:input={(event) => changeHex(event.target.value)}
+			oninput={({currentTarget}) => changeHex(currentTarget.value)}
 			style="width:100px;"
 		/>
 
-		<TextField dense bind:value={r} type="number" style="width:50px;" on:input={handleRGBchange}
-			>red</TextField
-		>
+		<TextField dense bind:value={r} type="number" style="width:50px;" oninput={handleRGBchange}>red</TextField>
 
-		<TextField dense bind:value={g} type="number" style="width:50px;" on:input={handleRGBchange}
-			>green</TextField
-		>
+		<TextField dense bind:value={g} type="number" style="width:50px;" oninput={handleRGBchange}>green</TextField>
 
-		<TextField dense bind:value={b} type="number" style="width:50px;" on:input={handleRGBchange}
-			>blue</TextField
-		>
+		<TextField dense bind:value={b} type="number" style="width:50px;" oninput={handleRGBchange}>blue</TextField>
 	</div>
 	<div>
-		<Swatches bind:color={value} bind:colors on:select={({ detail }) => changeHex(detail)} />
+		<Swatches bind:color={value} bind:colors onselect={(value) => changeHex(value)} />
 	</div>
 </div>
