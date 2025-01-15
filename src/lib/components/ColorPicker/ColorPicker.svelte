@@ -19,7 +19,7 @@
 
 	let { value = $bindable(), colors = $bindable(), rgba = $bindable(), hsv = $bindable(), onchange }: Props = $props();
 	initColors();
-	console.log(value, rgba, hsv)
+
 	const internal = $derived({
 		//rgba
 		get r() { return rgba.r },
@@ -193,7 +193,6 @@
 	}
 
 	function rgbaToHex({r,g,b,a}: RGBA) {
-			console.log(a)
 			const rHex = r.toString(16).padStart(2,"0");
 			const gHex = g.toString(16).padStart(2,"0");
 			const bHex = b.toString(16).padStart(2,"0");

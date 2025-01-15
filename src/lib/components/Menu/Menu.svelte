@@ -137,7 +137,7 @@
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
-			use:portal
+			use:portal={activatorElem.closest("dialog") ??  ".s-app"}
 			use:clickOutside={{include:[activatorElem, activatorElem.parent, ".s-menu"]}}
 			onclickOutside={()=>(active = false) && (hovered = false)}
 			transition:fade|global={{ duration: 300 }}

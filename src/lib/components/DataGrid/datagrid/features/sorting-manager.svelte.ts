@@ -89,7 +89,7 @@ export class SortingManager<TData> implements SortingFeature<TData> {
     public setSortMode(mode: SortMode): void {
         if (this.mode === mode) return;
         this.mode = mode;
-        console.log(this.mode)
+   
         if (mode === "none") {
             this.clearSort();
         } else if (mode === "single" && this.sortBy.length > 1) {
