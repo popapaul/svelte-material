@@ -23,7 +23,7 @@
 	position: relative;
 	border-radius: 100px;
 	height: 0.5em;
-	margin: 1em;
+	margin: 1em 0.8em;
 	transition: opacity 0.2s ease;
 	user-select: none;
 }

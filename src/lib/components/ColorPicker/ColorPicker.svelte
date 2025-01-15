@@ -1,64 +1,123 @@
+
 <script lang="ts">
 	import './ColorPicker.scss';
 	import RangeSlider from '../RangeSlider/RangeSlider.svelte';
 	import TextField from '../TextField/TextField.svelte';
 	import { clickOutside } from '../../actions/ClickOutside';
 	import Swatches from './Swatches.svelte';
+	import { untrack } from 'svelte';
 
-
+	type RGBA = { r:number, g:number, b:number, a:number };
+	type HSV = { h:number, s:number, v:number }; 
 	interface Props {
 		value?: string;
 		colors?: string[];
-		onchange?:	(value:{hex:string, rgba: { r:number, g:number, b:number, a:number }})=>  void
+		rgba?: RGBA;
+		hsv?: HSV
+		onchange?:	(value:{hex:string, rgba: RGBA, hsv: HSV })=>  void
 	}
 
-	let { value = $bindable(), colors = $bindable(), onchange }: Props = $props();
+	let { value = $bindable(), colors = $bindable(), rgba = $bindable(), hsv = $bindable(), onchange }: Props = $props();
+	initColors();
+	console.log(value, rgba, hsv)
+	const internal = $derived({
+		//rgba
+		get r() { return rgba.r },
+		set r(val) { 
+			rgba.r = Math.max(Math.min(val, 255), 0);
+			value = rgbaToHex(rgba);
+			hsv = rgbToHSV(rgba);
+		},
+		get g() { return rgba.g },
+		set g(val) { 
+			rgba.g = Math.max(Math.min(val, 255), 0);
+			value = rgbaToHex(rgba);
+			hsv = rgbToHSV(rgba);
+		},
+		get b() { return  rgba.b },
+		set b(val) { 
+			rgba.b = Math.max(Math.min(val, 255), 0);
+			value = rgbaToHex(rgba);
+			hsv = rgbToHSV(rgba);
+		},
+		get a() { return  rgba.a },
+		set a(val) { 
+			rgba.a = Math.max(Math.min(val, 255), 0);
+			value = rgbaToHex(rgba);
+			hsv = rgbToHSV(rgba);
+		},
 
+		//hex
+		get hex() { return value },
+		set hex(val){
+			value = val;
+			rgba = hexToRgba(value);
+			hsv = rgbToHSV(rgba);
+		},
+
+		//hsv
+		get h() { return  hsv.h },
+		set h(val) { 
+			hsv.h = val;
+			rgba = {...rgba, ...hsvToRgb(hsv)};
+			value = rgbaToHex(rgba);
+		},
+		get s() { return  hsv.s },
+		set s(val) { 
+			hsv.s = val;
+			rgba = {...rgba, ...hsvToRgb(hsv)};
+			value = rgbaToHex(rgba);
+		},
+		get v() { return  hsv.v },
+		set v(val) { 
+			hsv.v = val;
+			rgba = {...rgba, ...hsvToRgb(hsv)};
+			value = rgbaToHex(rgba);
+		},
+	});
 
 	let tracked = $state<HTMLElement>();
-	let h = $state(1);
-	let s = 1;
-	let v = 1;
-	let a = 1;
-	let r = $state(255);
-	let g = $state(0);
-	let b = $state(0);
 	let top: string = $state('5px');
 	let left: string = $state('5px');
 
-	let hexValue;
-	function setStartColor(value) {
-		value ??= '#FF0000';
-		let hex = value.replace('#', '');
-		if (hex.length !== 6 && hex.length !== 3 && !hex.match(/([^A-F0-9])/gi)) {
-			hex = 'FF0000';
+		
+
+	function initColors() {
+		if(value)
+		{
+			rgba = hexToRgba(value);
+			hsv = rgbToHSV(rgba);
 		}
-		let hexFiltered = '';
-		if (hex.length === 3)
-			hex.split('').forEach((c) => {
-				hexFiltered += c + c;
-			});
-		else hexFiltered = hex;
-		hexValue = hexFiltered;
-		r = parseInt(hexFiltered.substring(0, 2), 16);
-		g = parseInt(hexFiltered.substring(2, 4), 16);
-		b = parseInt(hexFiltered.substring(4, 6), 16);
-		rgbToHSV(r, g, b);
-		hexValue = RGBAToHex();
-		updateCsPicker();
+		else if(rgba)
+		{
+			value = rgbaToHex(rgba);
+			hsv = rgbToHSV(rgba);
+		}
+		else if(hsv)
+		{
+			rgba = { ...hsvToRgb(hsv), a: 255 };
+			value = rgbaToHex(rgba);
+		}
+		else{
+			rgba = {r:0,g:0,b:0,a:255};
+			hsv = rgbToHSV(rgba);
+		}
 	}
 
-	function updateCsPicker() {
-		let xPercentage = s * 100;
-		let yPercentage = (1 - v) * 100;
-		top = yPercentage + '%';
-		left = xPercentage + '%';
-	}
+	$effect(()=>{
+		const xPercentage = internal.s * 100;
+		const yPercentage = (1 - internal.v) * 100;
+		untrack(()=>{
+			top = yPercentage + '%';
+			left = xPercentage + '%';
+		})
+	});
 
 	function colorChangeCallback() {
 		onchange?.({
-			hex: hexValue,
-			rgba: { r, g, b, a }
+			hex: value,
+			rgba: rgba,
+			hsv
 		});
 	}
 
@@ -69,18 +128,18 @@
 				? [event.clientX, event.clientY]
 				: [event.touches[0].clientX, event.touches[0].clientY];
 		let trackedPos = tracked.getBoundingClientRect();
+	
 		let xPercentage, yPercentage;
-		xPercentage = ((mouseX - trackedPos.x) / 240) * 100;
-		yPercentage = ((mouseY - trackedPos.y) / 160) * 100;
+		xPercentage = ((mouseX - trackedPos.x) / trackedPos.width) * 100;
+		yPercentage = ((mouseY - trackedPos.y) / trackedPos.height) * 100;
 		xPercentage > 100 ? (xPercentage = 100) : xPercentage < 0 ? (xPercentage = 0) : null;
 		yPercentage > 100 ? (yPercentage = 100) : yPercentage < 0 ? (yPercentage = 0) : null;
 		yPercentage = yPercentage.toFixed(2);
 		xPercentage = xPercentage.toFixed(2);
 		top = yPercentage + '%';
 		left = xPercentage + '%';
-		s = xPercentage / 100;
-		v = 1 - yPercentage / 100;
-		colorChange();
+		internal.s = xPercentage / 100;
+		internal.v = 1 - yPercentage / 100;
 	}
 
 	function handleDown(event) {
@@ -97,36 +156,14 @@
 
 		top = yPercentage.toFixed(2) + '%';
 		left = xPercentage.toFixed(2) + '%';
-		s = xPercentage / 100;
-		v = 1 - yPercentage / 100;
-		colorChange();
+		internal.s = xPercentage / 100;
+		internal.v = 1 - yPercentage / 100;
 	}
 
-	const handleHueChange = (value) => {
-		h = value / 100;
-		colorChange();
-		rgbToHSV;
-	};
-
-	const handleRGBchange = () => {
-		r = Math.max(Math.min(r, 255), 0);
-		g = Math.max(Math.min(g, 255), 0);
-		b = Math.max(Math.min(b, 255), 0);
-		({ h, s, v } = rgbToHSV(r, g, b));
-		colorChange();
-	};
-
-	function colorChange() {
-		[r, g, b] = hsvToRgb(h, s, v);
-
-		hexValue = RGBAToHex();
-		value = hexValue;
-		colorChangeCallback();
-	}
 
 	//Math algorithms
-	function hsvToRgb(h, s, v) {
-		var r, g, b;
+	function hsvToRgb({h, s, v}: HSV) {
+		var r:number, g:number, b:number;
 		var i = Math.floor(h * 6);
 		var f = h * 6 - i;
 		var p = v * (1 - s);
@@ -152,70 +189,68 @@
 				(r = v), (g = p), (b = q);
 				break;
 		}
-		return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+		return { r:Math.round(r * 255), g:Math.round(g * 255), b:Math.round(b * 255) };
 	}
-	function RGBAToHex() {
-		let rHex = r.toString(16);
-		let gHex = g.toString(16);
-		let bHex = b.toString(16);
-		if (rHex.length == 1) rHex = '0' + rHex;
-		if (gHex.length == 1) gHex = '0' + gHex;
-		if (bHex.length == 1) bHex = '0' + bHex;
-		return ('#' + rHex + gHex + bHex).toUpperCase();
-	}
-	function rgbToHSV(r, g, b) {
-		let rperc, gperc, bperc, max, min, diff, pr, hnew, snew, vnew;
-		rperc = r / 255;
-		gperc = g / 255;
-		bperc = b / 255;
-		max = Math.max(rperc, gperc, bperc);
-		min = Math.min(rperc, gperc, bperc);
-		diff = max - min;
-		vnew = max;
-		vnew == 0 ? (snew = 0) : (snew = diff / max);
-		for (let i = 0; i < 3; i++) {
-			if ([rperc, gperc, bperc][i] === max) {
-				pr = i;
-				break;
-			}
-		}
-		if (diff == 0) {
-			hnew = 0;
 
-			h = hnew;
-			s = snew;
-			v = vnew;
+	function rgbaToHex({r,g,b,a}: RGBA) {
+			console.log(a)
+			const rHex = r.toString(16).padStart(2,"0");
+			const gHex = g.toString(16).padStart(2,"0");
+			const bHex = b.toString(16).padStart(2,"0");
+			const aHex = (a??255).toString(16).padStart(2,"0");
+			return ('#' + rHex + gHex + bHex + aHex).toUpperCase();
+	}
+	function rgbToHSV({r,g,b}: RGBA) {
+			let pr:number, hnew:number, snew:number;
+			let rperc = r / 255;
+			let gperc = g / 255;
+			let bperc = b / 255;
+			let max = Math.max(rperc, gperc, bperc);
+			let min = Math.min(rperc, gperc, bperc);
+			let diff = max - min;
+			let vnew = max;
+			vnew == 0 ? (snew = 0) : (snew = diff / max);
+
+
+			for (let i = 0; i < 3; i++) {
+				if ([rperc, gperc, bperc][i] === max) {
+					pr = i;
+					break;
+				}
+			}
+			if (diff == 0) {
+				hnew = 0;
+				return { h: hnew, s: snew, v: vnew };
+			} else {
+				switch (pr) {
+					case 0:
+						hnew = (60 * (((gperc - bperc) / diff) % 6)) / 360;
+						break;
+					case 1:
+						hnew = (60 * ((bperc - rperc) / diff + 2)) / 360;
+						break;
+					case 2:
+						hnew = (60 * ((rperc - gperc) / diff + 4)) / 360;
+						break;
+				}
+				if (hnew < 0) hnew += 6;
+			}
 
 			return { h: hnew, s: snew, v: vnew };
-		} else {
-			switch (pr) {
-				case 0:
-					hnew = (60 * (((gperc - bperc) / diff) % 6)) / 360;
-					break;
-				case 1:
-					hnew = (60 * ((bperc - rperc) / diff + 2)) / 360;
-					break;
-				case 2:
-					hnew = (60 * ((rperc - gperc) / diff + 4)) / 360;
-					break;
-			}
-			if (hnew < 0) hnew += 6;
-		}
-
-		h = hnew;
-		s = snew;
-		v = vnew;
-
-		return { h: hnew, s: snew, v: vnew };
 	}
 
-	const changeHex = (color: string = null) => {
-		value = color ? color : RGBAToHex();
-		colorChangeCallback();
-	};
-	$effect(() => {
-		setStartColor(value);
-	});
+	function hexToRgba(hex:string) {
+		hex = hex.replace(/^#/, '');
+		let r:number, g:number, b:number, a:number;
+	
+		r = parseInt(hex.slice(0, 2), 16);
+		g = parseInt(hex.slice(2, 4), 16);
+		b = parseInt(hex.slice(4, 6), 16);
+		a = parseInt(hex.slice(6, 8), 16) / 255; // Convert alpha to a value between 0 and 1
+	
+		// Handle invalid hex format
+		return { r, g, b, a };
+	}
 </script>
 
 <svelte:window
@@ -227,7 +262,7 @@
 
 <div class="main-container">
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="colorsquare size" style="background-color:rgba({hsvToRgb(h, 1, 1).join(',')});">
+	<div class="colorsquare" style="background-color:rgba({Object.values(hsvToRgb({ h:internal.h, s:1, v:1 })).join(',')});">
 		<div class="saturation-gradient">
 			<div class="value-gradient">
 				<div id="colorsquare-picker" style="top:{top};left:{left};"></div>
@@ -243,35 +278,27 @@
 	</div>
 	<div style="margin:0 10px;">
 		<RangeSlider
-			values={[h * 100]}
-			onchange={(event) => handleHueChange(event.value)}
+		
+			values={[internal.h * 100]}
+			onchange={(event) => internal.h = event.value / 100}
 			--range-slider="linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)"
 		/>
 
-		<!-- <RangeSlider 
-          values={[a*100]}
-          onchange={event=>handleAlphaChange(event.value)}
-          --range-slider="linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0))"  /> -->
+		<RangeSlider 
+		  min={0}
+		  max={255}
+          values={[internal.a]}
+          onchange={event=> internal.a = event.value}
+          --range-slider="linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0))"  />
 	</div>
 	<div class="color-info-box">
-		<div class="color-picked-bg">
-			<div class="color-picked" style="background-color:rgb({r},{g},{b})"></div>
-		</div>
+		<TextField dense bind:value={internal.hex} onchange={colorChangeCallback} style="width:80px;">hex</TextField>
 
-		<TextField
-			dense
-			{value}
-			oninput={({currentTarget}) => changeHex(currentTarget.value)}
-			style="width:100px;"
-		/>
+		<TextField dense bind:value={internal.r} onchange={colorChangeCallback} type="number" style="width:40px;">red</TextField>
 
-		<TextField dense bind:value={r} type="number" style="width:50px;" oninput={handleRGBchange}>red</TextField>
+		<TextField dense bind:value={internal.g} onchange={colorChangeCallback} type="number" style="width:40px;">green</TextField>
 
-		<TextField dense bind:value={g} type="number" style="width:50px;" oninput={handleRGBchange}>green</TextField>
-
-		<TextField dense bind:value={b} type="number" style="width:50px;" oninput={handleRGBchange}>blue</TextField>
+		<TextField dense bind:value={internal.b} onchange={colorChangeCallback} type="number" style="width:40px;">blue</TextField>
 	</div>
-	<div>
-		<Swatches bind:color={value} bind:colors onselect={(value) => changeHex(value)} />
-	</div>
+	<Swatches bind:color={internal.hex} bind:colors onselect={colorChangeCallback} />
 </div>

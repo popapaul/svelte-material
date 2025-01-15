@@ -93,7 +93,7 @@ export function resolveConfig(param: ClickOutsideParameter = {}) {
 		enabled: param.enabled ?? true,
 		nodeForEvent: param.limit?.parent ?? document,
 		include: (Array.isArray(param.include) ? param.include : [param.include]).filter(Boolean),
-		eventType: param.event ?? 'click',
+		eventType: param.event ?? 'pointerdown',
 		options: param.options,
 		capture: typeof param.options === 'object' ? param.options?.capture : param.options,
 	};

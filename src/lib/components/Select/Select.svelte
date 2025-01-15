@@ -55,6 +55,7 @@
 		acceptValue?: boolean;
 		/** Convert the selected value for the underlying text field. */
 		filterable?: boolean;
+
 		emptyString?: string;
 		inputElement?: any;
 		menuClass?: string;
@@ -77,10 +78,12 @@
 		chips = false,
 		disabled = false,
 		itemsPanelClass = '',
-		fullWidth = true,
-		closeOnClick = !multiple,
 		acceptValue = false,
-		filterable = !acceptValue,
+		filterable = false,
+		fullWidth = true,
+		closeOnClick = !multiple && !filterable,
+		
+		
 		emptyString = '',
 		inputElement = $bindable(),
 		menuClass = '',
@@ -198,7 +201,9 @@
 			 {/snippet}
 		</TextField>
 	{/snippet}
-
+	{#if filterable}
+		<TextField autofocus bind:value={filterValue} class="s-select__filter">Cautare</TextField>
+	{/if}
 	<ListItemGroup bind:value {onchange} {mandatory} {multiple} {max}>
 		 {#if options}
 		 	{@render options()}

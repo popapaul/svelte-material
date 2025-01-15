@@ -1,28 +1,26 @@
-<script>
+<script lang="ts">
     import { fade } from 'svelte/transition';
     import { compute } from './utils/grid';
     import { scale } from './utils/transitions'
-    import { MODE_MONTH, MODE_YEAR, MODE_DECADE } from './utils/constants';
+    import { MODE_MONTH, MODE_YEAR, MODE_DECADE, type UpdateProp } from './utils/constants';
     import { SvelteDate } from 'svelte/reactivity';
   
-    /**
-     * @type {{
-     *  wid?: number
-     *  dates: Date[],
-     *  startDate?: Date|null,
-     *  endDate?: Date|null,
-     *  weekStart?: number,
-     *  initialView?: any,
-     *  i18n: import("$lib/i18n/index.js").i18nType,
-     *  enableTimeToggle?: boolean,
-     *  isRange?: boolean,
-     *  hoverDate?: number?,
-     *  additionalDisableFn?: ?function(Date): boolean,
-     *  onupdate?: (prop: import('$lib/types/internal.js').UpdateProp) => void
-     *  onswitch?: (mode: string) => void
-     *  onhoverupdate?: (date: number|null) => void
-     * }}
-     */
+    type Props = {
+      wid?: number;
+      dates: Date[];
+      startDate?: Date | null;
+      endDate?: Date | null;
+      weekStart?: number;
+      initialView?: any;
+      i18n: i18nType;
+      enableTimeToggle?: boolean;
+      isRange?: boolean;
+      hoverDate?: number;
+      additionalDisableFn?: (date: Date) => boolean;
+      onupdate?: (prop: UpdateProp) => void;
+      onswitch?: (mode: string) => void;
+      onhoverupdate?: (date: number | null) => void;
+    };
     let {
       wid = 0,
       dates = [],
@@ -38,12 +36,9 @@
       onupdate,
       onswitch,
       onhoverupdate,
-    } = $props();
-    /**
-     * @param {string} key
-     * @param {boolean} shiftKey
-     */
-    export function handleGridNav(key, shiftKey) {
+    }: Props = $props();
+
+    export function handleGridNav(key:string, shiftKey:boolean) {
       if (currentView !== MODE_MONTH) {
         currentView = MODE_MONTH;
         viewDelta = 1;
@@ -97,18 +92,16 @@
       }
     }
   
-    /**
-     * @param {Date|SvelteDate} date
-     */
-    export function focusDate(date) {
+
+    export function focusDate(date:Date|SvelteDate) {
       activeDate.setTime(date.getTime());
       internalDate = new Date(date.getTime());
     }
   
-    /** @type Date? */
-    let internalDate = dates[wid] || null;
-    /** @type {SvelteDate} */
-    let activeDate = $state(wid === 1
+ 
+    let internalDate:Date = dates[wid] || null;
+   
+    let activeDate:SvelteDate = $state(wid === 1
       ? (() => {
         //if the end date is set, and the month/year is different from the start month/year
         // then return that, otherwise return the month succeeding the start date
@@ -161,20 +154,17 @@
     let dayLabels = $derived(i18n.daysMin.concat(...i18n.daysMin.slice(1)).slice(weekStart, 7 + weekStart));
     let tableCaption = $derived(i18n && showCaption(currentView, activeDate));
   
-    function isBetween(/** @type {number} */num) {
+    function isBetween(num:number) {
       return dataset.prevTo <= num && num < dataset.nextFrom;
     }
   
-    /**
-     * @param {Date} date
-     * @returns {boolean}
-    */
-    function isDisabledDate(date) {
+
+    function isDisabledDate(date:Date) {
       switch (currentView) {
         case MODE_MONTH:
           if (computedStartDate && computedStartDate > date) return true;
           if (endDate && endDate <= date) return true;
-          if (additionalDisableFn && additionalDisableFn(date)) return true;
+          if (additionalDisableFn?.(date)) return true;
           break;
         case MODE_YEAR:
           const dateYear = date.getFullYear();
@@ -201,13 +191,7 @@
       return false;
     }
   
-    /**
-     *
-     * @param {Date} date
-     * @param {number} direction
-     * @param {number} mode
-     */
-    function disableButtonNav(date, direction, mode) {
+    function disableButtonNav(date:Date, direction:number, mode:number) {
       const compareToEndDate = direction === 1;
       const dateToCompare = compareToEndDate ? endDate : computedStartDate;
       if (dateToCompare) {
@@ -226,10 +210,7 @@
       return false;
     }
   
-    /**
-     * @param {number} val
-     */
-    function onChangeMonth(val) {
+    function onChangeMonth(val:number) {
   
       const multiplier = currentView === MODE_DECADE
         ? 120
@@ -252,10 +233,8 @@
         : TRANSFORM_CONST;
     }
   
-    /**
-     * @param {number} val
-     */
-    function onTransformChangeMonth(val) {
+ 
+    function onTransformChangeMonth(val:number) {
       if (currentView === MODE_MONTH) {
         return onChangeMonth(val);
       }
@@ -303,7 +282,7 @@
           break;
         case 2:
           if (isDisabledDate(value)) return;
-          if (additionalDisableFn && additionalDisableFn(value)) return;
+          if (additionalDisableFn?.(value)) return;
           const newInternalDate = new Date(value.getFullYear(), value.getMonth(), value.getDate());
           if (internalDate) {
             newInternalDate.setMinutes(internalDate.getMinutes());
@@ -347,11 +326,7 @@
       onswitch?.('time');
     }
   
-    /**
-     * @param {number} currentView
-     * @param {Date} activeDate
-     */
-    function showCaption(currentView, activeDate) {
+    function showCaption(currentView:number, activeDate:Date) {
       switch (currentView) {
         case MODE_DECADE:
           const from = dataset.years[Math.floor(dataset.prevTo / 4)][dataset.prevTo % 4]; // y,x
@@ -364,29 +339,18 @@
       }
     }
   
-    /**
-     * @param {Date?} currDate
-     * @returns {function(): void}
-    */
-    function wrapHoverDateToggle(currDate = null) {
-      return function(/** @type MouseEvent */ event) {
+    function wrapHoverDateToggle(currDate:Date = null) {
+      return function(event:MouseEvent) {
         hoverDate = currDate?.getTime() || null;
         onhoverupdate?.(hoverDate);
       }
     }
   
-    /**
-     * @param {number} timestamp
-    */
-    function isInRange(timestamp) {
+    function isInRange(timestamp:number) {
       return times.length === 2 ? timestamp >= times[0] && timestamp < times[1] : false;
     }
   
-    /**
-     * @param {number} timestamp
-     * @param {number?} hoverDate
-    */
-    function isRangeHoverable(timestamp, hoverDate) {
+    function isRangeHoverable(timestamp:number, hoverDate:number) {
       return hoverDate && times.length === 1 && (
         (timestamp <= hoverDate && times[0] <= timestamp)
         ||

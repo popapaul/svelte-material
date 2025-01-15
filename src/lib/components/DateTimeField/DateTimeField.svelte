@@ -7,8 +7,6 @@
         displayFormatType: null,
         minuteIncrement: 1,
         weekStart: 1,
-        todayBtnClasses: 'sdt-action-btn sdt-today-btn',
-        clearBtnClasses: 'sdt-action-btn sdt-clear-btn',
         hourOnly: false,
         todayBtn: true,
         clearBtn: true,
@@ -19,8 +17,8 @@
   </script>
   
   <script lang="ts">
-    import { Cancel, Delete, CalendarToday, Clear, Check } from "@paulpopa/icons/md/outlined"
-    import { onMount } from "svelte";
+    import { Cancel, CalendarToday, Clear, Check } from "@paulpopa/icons/md/outlined"
+    import type {  ComponentProps } from "svelte";
     import { fade } from "svelte/transition";
     import { SvelteDate } from "svelte/reactivity";
     import Calendar from "./Calendar.svelte";
@@ -32,8 +30,8 @@
     import Menu from "../Menu/Menu.svelte";
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
-
-    type Props = Omit<ComponentProps<typeof TextField>, "value"> & {
+  
+    type Props = Omit<ComponentProps<TextField<string>>, "value"> & {
         disabled?: boolean;
         placeholder?: string;
         required?: boolean;
@@ -53,8 +51,6 @@
         displayFormatType?: string;
         minuteIncrement?: number;
         weekStart?: number;
-        todayBtnClasses?: string;
-        clearBtnClasses?: string;
         todayBtn?: boolean;
         clearBtn?: boolean;
         clearToggle?: boolean;
@@ -69,8 +65,6 @@
         actionRow?: import('svelte').Snippet<[
             {
             autocloseSupported: boolean;
-            todayBtnClasses: string;
-            clearBtnClasses: string;
             onCancel: Function;
             onConfirm: Function;
             onClear: Function;
@@ -103,8 +97,6 @@
       displayFormatType = config.displayFormatType,
       minuteIncrement = config.minuteIncrement,
       weekStart = config.weekStart,
-      todayBtnClasses = config.todayBtnClasses,
-      clearBtnClasses = config.clearBtnClasses,
       todayBtn = config.todayBtn,
       clearBtn = config.clearBtn,
       clearToggle = config.clearToggle,
@@ -602,7 +594,6 @@
                 {disabled}
                 {required}
                 autocomplete="off"
-                inputmode={inputMode}
                 onclick={onInputClick}
                 readonly={isFocused && !manualInput && !isRange}
                 oninput={manualInput ? onManualInput : () => {}}
@@ -664,7 +655,7 @@
           </div>
           {/each}
         </div>
-        {@render actionRow({ autocloseSupported, todayBtnClasses, clearBtnClasses, onCancel: onCancelFn, onConfirm, onClear, onToday, isTodayDisabled, i18n, currentMode })}
+        {@render actionRow({ autocloseSupported, onCancel: onCancelFn, onConfirm, onClear, onToday, isTodayDisabled, i18n, currentMode })}
         </div> <!-- END: popup -->
     </Menu>
   
@@ -711,34 +702,7 @@
       font-size: 0.875em;
       border-radius: 0.2em;
     }
-    .sdt-today-btn {
-      background-color: var(--sdt-bg-selected, #286090);
-      color: var(--sdt-today-color, var(--sdt-bg-main, #fff));
-      padding: 0.25em 0.5em;
-      font-size: 0.875em;
-      border-radius: 0.2em;
-      border: 1px solid var(--sdt-today-bg, #286090);
-    }
-    .sdt-today-btn[disabled] {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .sdt-today-btn:focus,
-    .sdt-today-btn:active,
-    .sdt-today-btn:hover:not([disabled]) {
-      background-color: var(--sdt-today-bg, #286090);
-    }
-    .sdt-clear-btn {
-      border: 1px solid var(--sdt-clear-color, #dc3545);
-      background-color: var(--sdt-clear-bg, transparent);
-      color: var(--sdt-clear-color, #dc3545);
-    }
-    .sdt-clear-btn:focus,
-    .sdt-clear-btn:active:not([disabled]),
-    .sdt-clear-btn:hover:not([disabled]) {
-      background-color: var(--sdt-clear-hover-bg, #dc3545);
-      color: var(--sdt-clear-hover-color, var(--sdt-bg-main, #fff));
-    }
+
     .sdt-widget + .sdt-widget:before {
       content: '';
       position: absolute;

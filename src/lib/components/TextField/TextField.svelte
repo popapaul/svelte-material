@@ -7,6 +7,7 @@
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
 	import { Input } from '../Input';
 	import type { HTMLInputAttributes } from 'svelte/elements';
+	import { fade } from 'svelte/transition';
 	
 	interface Props extends HTMLInputAttributes {
 		/** Classes to add to text field wrapper. */
@@ -40,7 +41,7 @@
 		/** Display a counter set to a desired input length. */
 		counter?: boolean;
 		/** Error messages to display. */
-		messages?: string[];
+		messages?: string[] | string;
 		/**
 	 * A list of validator functions that take the text field value and return an error
 	 * message, or `true` otherwise.
@@ -212,7 +213,7 @@
 		{#if clearable && value?.toString().length > 0}
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div onclick={clear} style="cursor:pointer">
+			<div transition:fade onclick={clear} style="cursor:pointer">
 				<Icon size={20} path={clearIcon} />
 			</div>
 		{/if}
@@ -229,7 +230,7 @@
 		<div>
 			<div>
 				<span>{hint ?? ''}</span>
-				{#each messages ?? [] as message}
+				{#each messages ? Array.isArray(messages) ? messages : [messages] :  [] as message}
 					<span style="margin-right:8px;">{message}</span>
 				{/each}
 				{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}

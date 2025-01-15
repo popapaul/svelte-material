@@ -1,10 +1,10 @@
 @use '../../styles/variables';
 
 $text-field-line-height: 20px !default;
-$text-field-label-top: 6px !default;
+$text-field-label-top: 10px !default;
 $text-field-prepend-append-margin: 8px !default;
 $text-field-label-active-transform: translateY(-18px) scale(0.75) !default;
-$text-field-padding: 8px 0 8px !default;
+$text-field-padding: 8px 0 0px !default;
 $text-field-dense-padding: 4px 0 2px !default;
 $text-field-border-radius: var(--border-radius-root);
 $text-field-rounded-border-radius: 28px !default;

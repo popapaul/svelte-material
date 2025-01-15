@@ -2,15 +2,21 @@
 	import TextField from '../TextField/TextField.svelte';
 	import Icon from '../Icon/Icon.svelte';
 	import icons from '../../internal/Icons';
+	import type { ComponentProps } from 'svelte';
 	
-	/** @type {{class?: string, value?: string, showPassword?: boolean, children?: import('svelte').Snippet, [key: string]: any}} */
+	interface Props extends ComponentProps<TextField<string>> {
+		class?: string; // Optional string for the class name
+		value?: string; // Optional string for the value
+		showPassword?: boolean; // Optional boolean flag for showing password
+		children?: import('svelte').Snippet; // Optional children of type Snippet from Svelte
+	}
 	let {
 		class: klass = '',
 		value = $bindable(),
 		showPassword = $bindable(false),
 		children,
 		...rest
-	} = $props();
+	}:Props = $props();
 </script>
 
 <TextField {...rest} class={klass} type={!showPassword ? 'password' : 'text'} bind:value>

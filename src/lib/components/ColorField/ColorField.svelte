@@ -26,11 +26,10 @@
 <Menu closeOnClick={false} bind:active placement="bottom-start">
 	{#snippet activator()}
 		<TextField
-			{value}
+			bind:value
 			{...rest}
 			onkeydown={onkeydown}
 			onclear={() => (value = '')}
-			readonly
 		>
 			{#snippet prependOuter()}
 				<div class="color-preview" style="background-color:{value??"black"};"></div>

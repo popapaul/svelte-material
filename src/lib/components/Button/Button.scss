@@ -22,7 +22,7 @@
 	text-decoration: none;
 	transition-duration: variables.$btn-transition-duration;
 	transition-property: box-shadow, transform, opacity;
-	background-color: var(--theme-app-bar);
+	--background-color: var(--theme-app-bar);
 	position: relative;
 	align-items: center;
 	line-height: normal;

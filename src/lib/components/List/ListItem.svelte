@@ -33,6 +33,8 @@
 		ripple?: RippleOptions | boolean;
 		/** styles added to listitem */
 		style?: string;
+
+		link?: string;
 		prepend?: import('svelte').Snippet;
 		children?: import('svelte').Snippet;
 		subtitle?: import('svelte').Snippet;
@@ -48,6 +50,7 @@
 		dense = false,
 		disabled = false,
 		multiline = false,
+		link = role,
 		href = '',
 		selectable = !href,
 		ripple = getContext<RippleOptions>('S_ListItemRipple') || false,
@@ -81,8 +84,8 @@
 	tabindex={href ? 0 : -1}
 	aria-selected={role === 'option' ? active : null}
 	class:dense
+	class:link
 	class:multiline
-	class:link={!!href}
 	class:selectable
 	use:Ripple={ripple}
 	onclick={click}

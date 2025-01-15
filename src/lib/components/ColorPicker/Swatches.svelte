@@ -29,10 +29,9 @@
 <div class="swatches">
 	{#each colors as color (color)}
 		<div transition:fade animate:flip>
-			<Menu rightClick>
+			<Menu >
 				{#snippet activator()}
-								<Button
-						
+					<Button
 						onclick={() => onselect?.(color)}
 						icon
 						fab
@@ -41,7 +40,7 @@
 					>
 						<div class="swatch" style="background-color:{color};"></div>
 					</Button>
-							{/snippet}
+				{/snippet}
 				<List>
 					<ListItem onclick={() => (colors = colors.filter((x) => x != color))}>remove</ListItem>
 				</List>
@@ -51,9 +50,7 @@
 	{#if color && !colors?.some((x) => x == color)}
 		<div in:fade>
 			<Button disabled={!color} onclick={addColor} style="color:{color};" icon fab size="x-small">
-				<div class="swatch" style="background-color:{color};color:white;">
-					<Icon path={Add} />
-				</div>
+				<Icon class="swatch" style="background-color:{color};color:white;" path={Add} />
 			</Button>
 		</div>
 	{/if}
