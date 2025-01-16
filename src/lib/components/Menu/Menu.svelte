@@ -120,12 +120,12 @@
 
 	<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		bind:this={activatorElem}
 		onpointerenter={handleMouseEnter}
 		onpointerleave={handleMouseLeave}
 		onclick={() => openOnClick && (active = true)}
+		onkeypress={() => openOnClick && (active = true)}
 		oncontextmenu={preventDefault(() => rightClick && (active = true)  && (hovered=false))}
 		style="display:contents;"
 	>
@@ -135,22 +135,18 @@
 	{#if active || hovered}
 		<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			use:portal={activatorElem.closest("dialog") ??  ".s-app"}
-			use:clickOutside={{include:[activatorElem, activatorElem.parent, ".s-menu"]}}
+			use:clickOutside={{include:[activatorElem, activatorElem.parentElement, ".s-menu"]}}
 			onclickOutside={()=>(active = false) && (hovered = false)}
 			transition:fade|global={{ duration: 300 }}
 			bind:this={menu}
-
 			onpointerenter={handleMouseEnter}
 			onpointerleave={handleMouseLeave}
-
 			onclose={(event)=> {event.stopPropagation(); close()}}
 			onclick={menuClick}
 			onkeydown={menuClick}
 			use:popperContent={{ position: placement }}
-		
 			{style}
 			class="s-menu {klass}"
 			style:width={fullWidth ? activatorWidth + 'px' : null}

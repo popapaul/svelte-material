@@ -159,7 +159,7 @@
     let isDirty = $derived(autocommit ? false : value_array.join() !== undoHistory.join());
 
     // svelte-ignore non_reactive_update
-    let ref_calendar: Calendar;
+    let ref_calendar =$state<Calendar>();
   
 
     function computeDisplayValue() {
