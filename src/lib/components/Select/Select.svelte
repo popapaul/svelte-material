@@ -81,9 +81,6 @@
 		acceptValue = false,
 		filterable = false,
 		fullWidth = true,
-		closeOnClick = !multiple && !filterable,
-		
-		
 		emptyString = '',
 		inputElement = $bindable(),
 		menuClass = '',
@@ -155,10 +152,15 @@
 				internal.value.pop();
 		}
 	}
+	const handleChange = (event)=>{
+		onchange?.(event);
+		if(!multiple)
+			active = false;
+	}
 </script>
 
 <Menu
-	{closeOnClick}
+	closeOnClick={!multiple && !filterable}
 	{disabled}
 	bind:active
 	class={menuClass}
@@ -204,7 +206,7 @@
 	{#if filterable}
 		<TextField autofocus bind:value={filterValue} class="s-select__filter">Cautare</TextField>
 	{/if}
-	<ListItemGroup bind:value {onchange} {mandatory} {multiple} {max}>
+	<ListItemGroup bind:value onchange={handleChange}  {mandatory} {multiple} {max}>
 		 {#if options}
 		 	{@render options()}
 		 {:else}
@@ -226,7 +228,7 @@
 						{/if}
 					{/each}
 				{:else}
-					Nu au fost gasite optiuni
+					<div class="s-select__filter">Nu au fost gasite optiuni</div>
 				{/if}
 			</div>
 		{/if}
