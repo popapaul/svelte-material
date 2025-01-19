@@ -137,7 +137,7 @@
 	function onBlur(event) {
 		focused = false;
 		onblur?.(event);
-		if (validateOnBlur) validate();
+		if (validateOnBlur && rules?.length) validate();
 	}
 
 	function clear(event: Event) {

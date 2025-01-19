@@ -94,6 +94,7 @@
 	}: Props = $props();
 
 
+	let TextFieldInstance: TextField<string>;
 	
 	type DiscriminatedProps = { multiple:true, value:T[], onchange?:(value:T[])=>void } | { multiple?:false, value:T, onchange?:(value:T)=>void} ;
 	const internal = $derived({
@@ -154,6 +155,7 @@
 	}
 	const handleChange = (event)=>{
 		onchange?.(event);
+		TextFieldInstance?.validate();
 		if(!multiple)
 			active = false;
 	}
@@ -169,6 +171,7 @@
 >
 	{#snippet activator()}
 		<TextField
+			bind:this={TextFieldInstance}
 			class={klass}
 			{style}
 			{...rest}
