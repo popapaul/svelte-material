@@ -39,14 +39,13 @@
 		children?: import('svelte').Snippet;
 		subtitle?: import('svelte').Snippet;
 		append?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {
 		class: klass = '',
 		activeClass = ITEM.activeClass,
 		value = ITEM.index() as any,
-		active = $bindable(false),
+		active = $bindable(),
 		dense = false,
 		disabled = false,
 		multiline = false,
