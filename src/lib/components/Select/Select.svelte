@@ -101,17 +101,18 @@
 		multiple,
 		get value(){ return value },
 		set value(val){ value = val},
-		items: [...new Map(items.map(y=>[(y as any)?.value ?? y ,y])).values()].filter(Boolean).map(x=> typeof x === "object" ? x as TItem : { value: x, name: x } as TItem  )
+		items: [...new Map(items.map(y=>[(y as any)?.value ?? y ,y])).values()].map(x=> typeof x === "object" ? x as TItem : { value: x, name: x } as TItem  )
 	} as {items:TItem[]} & DiscriminatedProps);	
 
 
 	export function getSelectString(v: T) {
 		const item = internal.items.find((i) => i.value == v);
-		return item?.name || v as string || emptyString;
+
+		return item?.name ?? v as string ?? emptyString;
 	}
 	export function format(val: T|T[]) {
 		if (!val && val !== 0) return null;
-
+	
 		if (!Array.isArray(val)) return getSelectString(val);
 
 		return val
@@ -183,9 +184,10 @@
 			{disabled}
 			{hint}
 		>	
+			
 			{#snippet content()}
-				{#if internal.value}
-					{#each (Array.isArray(internal.value) ? internal.value : [internal.value]).filter(Boolean) as val}
+				{#if internal.value || internal.value ===0 }
+					{#each (Array.isArray(internal.value) ? internal.value : [internal.value]) as val}
 						{#if chips}
 							<Chip size="small" close onclose={() => removeItem(val)}>{getSelectString(val)}</Chip>
 						{:else}
@@ -197,6 +199,7 @@
 					<input onkeydown={handleKeypress} onblur={(event)=>{appendValue(event.currentTarget.value); event.currentTarget.value = ""}} />
 				{/if}
 			{/snippet}
+			
 			 {#snippet append()}
 				<Icon
 					onclick={() => active && setTimeout(() => (active = false), 2)}

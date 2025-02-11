@@ -1,65 +1,218 @@
 <script lang="ts" generics="T">
-	import { setContext , type Snippet, type Component } from "svelte";
-	import { Datagrid, type ColumnDef, type Row } from "./datagrid/index.svelte";
-	import  CellHeader  from "./CellHeader.svelte";
-	import  CellData  from "./CellData.svelte";
+	import { setContext, untrack , type Snippet, type Component } from "svelte";
+	import { DatagridCore, type LeafColumn, type GridBasicRow } from "./datagrid/index.svelte";
+	import CellHeader  from "./CellHeader.svelte";
 	import Column from "./Column.svelte";
-    import {slide} from "svelte/transition"
-	type ColumnComponent =   Component<ColumnDef<T>>;
-    let { data = $bindable(), columns = $bindable([]), footer, class:klass, header, expand, children }:{ columns?: ColumnDef<T>[]; class?:string, data:T[], footer?:Snippet, expand?:Snippet<[Row<T>, Datagrid<T>]>, children:Snippet<[ColumnComponent]>; header?:Snippet, }  = $props();
+    import Button from "../Button/Button.svelte";
+    import Icon from "../Icon/Icon.svelte";
+    import {flip} from "svelte/animate"
+	import { debounce } from "../../internal/Debounce";
+    import {ArrowDropUp} from "@paulpopa/icons/md/outlined"   
+    import CellData from "./CellData.svelte";
+    import { slide } from "svelte/transition"
+	type ColumnComponent =   Component<LeafColumn<T>>;
+    type Props = {
+        columns?: LeafColumn<T>[]; 
+        class?:string, 
+        data:T[], 
+        footer?:Snippet<[DatagridCore<T>]>, 
+        expand?:Snippet<[GridBasicRow<T>,  DatagridCore<T>]>, 
+        children:Snippet<[ColumnComponent]>; 
+        header?:Snippet<[DatagridCore<T>]>,
+        onSwitch?: (event:{dragged:GridBasicRow<T>, target:GridBasicRow<T>}) => void
+    }
+    let { 
+        data = $bindable(), 
+        columns = $bindable([]), 
+        footer, class:klass, 
+        header, 
+        expand, 
+        onSwitch,
+        children
+     }:Props  = $props();
 	setContext("columns", columns);
-	let grid = new Datagrid({
-		data,
-		columns
-	})
-    $effect(()=>{
-        grid.original.data = data;
-    })
-   
-
-	$effect(()=>{
-		grid.original.columns = columns;
-		grid.columnsProcessor.transform();
-	})
     
-	
+
+
+	let grid = new DatagridCore({data, columns});
+    setContext("datagrid", grid);
+    $effect(()=>{
+        columns;
+        data;
+
+        untrack(()=>{
+            grid.initializeState({data, columns});
+        })
+    });
+
+   
+    $inspect(grid.rows);
+	$effect(()=>{
+     // grid.columns = grid.processors.column.initializeColumns(columns)
+	})
+
+
+    type Position = 'top' | 'middle' | 'bottom';
+
+function getMouseVerticalPosition(event: DragEvent): Position {
+    // The element over which the drag event is triggered
+    const element = event.target as HTMLElement;
+   
+    // Get the element's size and position relative to the viewport
+    const elementRect = element.getBoundingClientRect();
+
+    // Get the height of the element
+    const elementHeight = elementRect.height;
+
+    // Calculate mouse Y position relative to the element
+    const mouseY = event.clientY - elementRect.top;
+
+    // Determine the height of each third of the element
+    const topThird = elementHeight / 3;
+    const bottomThird = 2 * topThird;
+
+    // Determine which third the mouse is in
+    if (mouseY < topThird) {
+        return 'top'; // Mouse is in the top third
+    } else if (mouseY < bottomThird) {
+        return 'middle'; // Mouse is in the middle third
+    } else {
+        return 'bottom'; // Mouse is in the bottom third
+    }
+}
+
+    let _el =$state<HTMLElement>();
+	let draggedItem: GridBasicRow<T>;
+    let hovered: { row?: GridBasicRow<T>; position?: Position } = $state({});
+
+   function isBefore(el1, el2) {
+    if (el2.parentNode === el1.parentNode)
+      for (
+        var cur = el1.previousSibling;
+        cur && cur.nodeType !== 9;
+        cur = cur.previousSibling
+      )
+        if (cur === el2) return true;
+    return false;
+  }
+
+  function dragStart(e:DragEvent, row: GridBasicRow<T>) {
+    draggedItem = row
+  }
+
+  function dragOver(e:DragEvent, row: GridBasicRow<T>) {
+    if (row == draggedItem) return;
+
+    const position = getMouseVerticalPosition(e);
+    hovered.row = row;
+    hovered.position = position;
+  }
+
+  function dragEnd(e, row: GridBasicRow<T>) {
+    if (row == draggedItem) return;
+	e.preventDefault();	
+   
+	const index = grid.cache.paginatedRows.indexOf(row);
+    grid.cache.paginatedRows =  grid.cache.paginatedRows.filter(x=> x!= draggedItem)
+
+    const position = getMouseVerticalPosition(e);
+   
+    const offset = position == 'bottom' ? 0 : 0;
+
+    grid.cache.paginatedRows.splice(index + offset, 0, draggedItem);
+    onSwitch?.({dragged:draggedItem, target: row});
+
+    handleDrag.clear();
+  }
+
+  function touchStart(e) {
+    console.log("touchStart()");
+    e.preventDefault();
+
+    if (e.touches.length == 1) {
+      _el = e.targetTouches[0].target;
+      _el.style.backgroundColor = "#e5e5e5";
+    }
+  }
+
+  function touchMove(e) {
+    console.log("touchMove()");
+    e.preventDefault();
+
+    if (isBefore(_el, e.target))
+      e.target.parentNode.insertBefore(_el, e.target);
+    else e.target.parentNode.insertBefore(_el, e.target.nextSibling);
+  }
+
+  function touchEnd(e) {
+    console.log("touchEnd()");
+  }
+    const handleDrag = debounce((e, row)=>dragOver(e, row),1);
+	$inspect(hovered.row)
 </script>
 {@render children(Column)}
-<div class="grid-wrapper {klass}">
+<div  class="grid-wrapper {klass}">
     <div>
-        {@render header?.()}
+        {@render header?.(grid)}
     </div>
 	<div class="grid-content">
 		<div class="grid-header">
-            
 			<div class="grid-header-row">
-				{#each grid.columnManager.getVisibleColumns() as column}
+                {#if expand}
+                    <div style="width:50px;"></div>
+                {/if}
+				{#each grid.columnManager.getLeafColumns() as column}
 					<CellHeader {grid} {column}/>
 				{/each}
 			</div>
 		</div>
-
 		<div class="grid-body">
-			{#each grid.rows as row}
-				<div class="grid-row">
-					{#each grid.columnManager.getVisibleColumns() as column}
-						<CellData {grid} {row} {column} />
-					{/each}
-				</div>
-				{#if expand && grid.rowManager.isRowExpanded(String(row?.original?.id))}
-					<div transition:slide={{axis:"y"}} class="grid-row">
-                        {@render expand(row, grid)}
-					</div>
-				{/if}
+			{#each grid.rows.getBasicRows() as row(row.identifier)}
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <div class="grid-row {hovered.position}" class:hovered={hovered.row == row} animate:flip={{duration:250}}
+                    draggable="true"
+                    ondragstart={() => (draggedItem = row)}
+                    ondragover={(e)=> {e.preventDefault();  dragOver(e, row)}}
+                    ondrop={(e)=>dragEnd(e,row)}
+                    ondragend={()=>hovered = {row:null, position:null}}
+                    ontouchstart={touchStart}
+                    ontouchmove={touchMove}
+                    ontouchend={touchEnd}>
+                    <div class="flex w-full">
+                    {#if expand}
+                        <div style="width:50px;" class="flex justify-between">
+                            <Button
+                                depressed
+                                icon
+                                class="m-auto"
+                                size="small"
+                                onclick={() => grid.handlers.rowExpanding.toggleRowExpansion(row.identifier)}>
+                                <Icon path={ArrowDropUp} rotate={row.isExpanded() ? 180 : 90} />
+                            </Button>
+                        </div>
+                        {/if}
+                        {#each grid.columnManager.getLeafColumnsInOrder() as column}
+                            <CellData {grid} {row} {column} />
+                        {/each}
+                    </div>
+                    {#if expand && row.isExpanded()}
+                        <div transition:slide={{axis:"y"}}>
+                            {@render expand(row, grid)}
+                        </div>
+                    {/if}
+                </div>
+               
 			{/each}
+
 		</div>
 	</div>
-    <div>
-        {@render footer?.()}
-    </div>
+    <footer>
+        {@render footer?.(grid)}
+    </footer>
 </div>
 
 <style>
+  
     .grid-wrapper{
         width: 100%;
         display: flex;
@@ -106,6 +259,9 @@
             position: relative;
         }
 
+        footer{
+            border-top: 1px solid hsl(var(--grid-border));
+        }
       
 
         .grid-header {
@@ -125,38 +281,6 @@
         }
 
 
-
-/* Grid Rows */
-.grid-row {
-    display: flex;
-    border-bottom: 1px solid hsl(var(--grid-border));
-    border-top: none;
-    min-width: fit-content;
-    transition: 150ms;
-}
-
-.grid-row:last-child {
-    border-bottom: none;
-}
-
-.grid-row:nth-child(odd) {
-    background-color: hsl(var(--grid-row-odd-background));
-}
-
-.grid-row:hover:nth-child(odd) {
-    background-color: hsl(var(--grid-row-odd-background-hover));
-}
-
-.grid-row:nth-child(even) {
-    background-color: hsl(var(--grid-row-even-background));
-}
-
-.grid-row:hover:nth-child(even) {
-    background-color: hsl(var(--grid-row-even-background-hover));
-}
-
-
-
 /* Sticky Offsets */
 .offset-left {
     left: var(--offset);
@@ -168,103 +292,58 @@
     position: sticky;
 }
 
-/* Pagination */
-.pagination {
-    background-color: hsl(var(--grid-header-row-background));
-    padding: 0.75rem;
-    border: 1px solid hsl(var(--grid-border));
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: center;
-    gap: 0.75rem;
-}
 
-@media (min-width: 640px) {
-    .pagination {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* Grid Rows */
+    .grid-row {
+    
+        border-bottom: 1px solid hsl(var(--grid-border));
+        border-top: none;
+        min-width: fit-content;
+        transition: 150ms;
     }
-}
 
-/* Pagination Details */
-.pagination-details {
-    --tw-text-opacity: 1;
-    color: hsl(var(--muted-foreground) / var(--tw-text-opacity));
-    order: 2;
-    column-span: 2;
-    display: none;
-    text-align: center;
-    font-size: 0.75rem; /* 12px */
-    line-height: 1rem; /* 16px */
-}
-
-@media (min-width: 640px) {
-    .pagination-details {
-        order: 1;
-        grid-column: span 1 / span 1;
-        display: block;
-        text-align: left;
+    .grid-row:nth-child(odd) {
+        background-color: hsl(var(--grid-row-odd-background));
     }
-}
 
-/* Pagination Navigation and Page Wrapper */
-.pagination-navigation-container {
-    order: 1;
-    display: flex;
-    gap: 0.5rem;
-}
-
-@media (min-width: 640px) {
-    .pagination-navigation-container {
-        order: 2;
-        justify-content: center;
+    .grid-row:hover:nth-child(odd) {
+        background-color: hsl(var(--grid-row-odd-background-hover));
     }
-}
 
-.pagination-per-page-wrapper {
-    order: 1;
-    display: flex;
-    justify-content: flex-end;
-}
-
-@media (min-width: 640px) {
-    .pagination-per-page-wrapper {
-        order: 2;
+    .grid-row:nth-child(even) {
+        background-color: hsl(var(--grid-row-even-background));
     }
-}
 
-/* Pagination Buttons */
-.pagination-button {
-    border: 1px solid hsl(var(--grid-border));
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .grid-row:hover:nth-child(even) {
+        background-color: hsl(var(--grid-row-even-background-hover));
+    }
 
-.pagination-button:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
 
-.pagination-button:hover:not(:disabled) {
-    background-color: theme('colors.orange.400');
-}
-
-/* Pagination Inputs and Select */
-.pagination-input,
-.pagination-select {
-    border-radius: 0.25rem;
-    border: 1px solid hsl(var(--grid-border));
-    padding: 0 0.5rem;
-    height: 2rem;
-}
-
-.pagination-input {
-    max-width: 5rem;
-}
-
+    .hovered{
+        position: relative;
+    }
+    .hovered::before, .hovered::after{
+        content:"";
+        opacity:0;
+        height:7px;
+        position: absolute;
+        left:10px;
+        right:10px;
+        z-index: 2;
+        border-radius: 4px;
+        transition: all 300ms ;
+    }
+    .hovered.top::before, .hovered.bottom::after {
+        content:"";
+        background-color: orange !important;
+        opacity: 1;
+    }
+    .hovered::before{
+        top:-4px;
+    }
+    .hovered::after{
+        bottom:-4px;
+    }
 /* Label 
 label {
     padding-bottom: 0.25rem;

@@ -32,6 +32,9 @@
 	text-transform: functions.map-deep-get(styles-variables.$headings, 'button', 'text-transform');
 	@include elevation.elevation(3);
 
+	&.pressable{
+		cursor: pointer;
+	}
 	a,
 	.s-icon {
 		color: inherit;

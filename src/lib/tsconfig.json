@@ -7,6 +7,7 @@
 		"esModuleInterop": true,
 		"allowArbitraryExtensions":true,
 		"forceConsistentCasingInFileNames": true,
+		"allowSyntheticDefaultImports": true,
 		"moduleResolution": "bundler",
 		"noImplicitAny": false,
 		"strictNullChecks": false,

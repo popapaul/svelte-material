@@ -68,6 +68,7 @@
 		tag = href ? 'a' : 'button',
 		button = $bindable(),
 		children,
+		onclick,
 		...rest
 	}: Props = $props();
 </script>
@@ -81,6 +82,7 @@
 	class="s-btn size-{size} {active ? activeClass : ''} {klass}"
 	class:s-btn--fab={fab}
 	class:icon
+	class:pressable={onclick}
 	class:block
 	class:tile
 	class:text={text || icon}
@@ -88,6 +90,7 @@
 	class:outlined
 	class:rounded
 	class:disabled
+	{onclick}
 	{style}
 	aria-disabled={disabled}
 	use:Ripple={ripple}

@@ -1,152 +1,165 @@
-import { untrack } from "svelte";
-import { ColumnManager } from "./features/column-manager.svelte";
-import { FilteringManager, type FilteringFeature, type FilteringState } from "./features/filtering-manager.svelte";
-import { GroupingManager, type GroupingFeature, type GroupingManagerState } from "./features/grouping-manager.svelte";
-import { PaginationManager, type PaginationFeature, type PaginationState } from "./features/pagination-manager.svelte";
-import { RowManager, type RowExpansionMode, type RowManagerState, type RowSelectionMode } from "./features/row-manager.svelte";
-import { SortingManager, type SortingFeature, type SortingState } from "./features/sorting-manager.svelte";
-import { ColumnProcessor, type Column, type ColumnProcessorInstance } from "./processors/column-processor.svelte";
-import { DataProcessor, type DataProcessorInstance, type Row } from "./processors/data-processor.svelte";
-import type { ColumnDef } from "./types";
+import type { AnyColumn } from "./types";
+import { PerformanceMetrics } from "./helpers/performance-metrics.svelte";
+import { DataProcessor, ColumnProcessor } from "./processors";
+import { DatagridCacheManager, HandlersManager, RowManager, ColumnManager } from "./managers";
+import { LifecycleHooks } from "./managers/lifecycle-hooks-manager.svelte";
+import { type PaginationPluginConfig } from "./features/pagination.svelte";
+import { type ColumnFilteringPluginConfig } from "./features/column-filtering.svelte";
+import { type ColumnFacetingPluginConfig } from "./features/column-faceting.svelte";
+import { type GlobalSearchPluginConfig } from "./features/global-search.svelte";
+import { type GroupingPluginConfig } from "./features/grouping.svelte";
+import { type RowExpandingPluginConfig } from "./features/row-expanding.svelte";
+import { type RowSelectionPluginConfig, } from "./features/row-selection.svelte";
+import { type SortingPluginConfig, } from "./features/sorting.svelte";
+import { FeatureManager } from "./managers/feature-manager.svelte";
+import type { ColumnOrderingPluginConfig } from "./features/column-ordering.svelte";
+import type { ColumnGroupingPluginConfig } from "./features/column-grouping.svelte";
+import type { ColumnPinningPluginConfig } from "./features/column-pinning.svelte";
+import type { ColumnSizingPluginConfig } from "./features/column-sizing.svelte";
+import type { ColumnVisibilityPluginConfig } from "./features/column-visibility.svelte";
+import type { RowPinningPluginConfig } from "./features/row-pinning.svelte";
+
 export * from "./types";
-export type { Row, Column };
-export interface DatagridOriginal<TData, TCustomKeys extends string = never> {
-    data: TData[];
-    columns: ColumnDef<TData, TCustomKeys>[]
-}
 
-export interface DatagridInstance<TData, TCustomKeys extends string = never> {
-    original: DatagridOriginal<TData, TCustomKeys>
-
-    rows: Row<TData>[]
-    columns: Column<TData, TCustomKeys>[]
-
-    sorting: SortingFeature<TData>
-    filtering: FilteringFeature<TData>;
-    grouping: GroupingFeature
-    pagination: PaginationFeature
-
-    columnManager: ColumnManager<TData>
-
-
-    dataProcessor: DataProcessorInstance<TData>
-    columnsProcessor: ColumnProcessorInstance<TData>
-
-
-    isRowVisible(row: Row<TData>): boolean
-    getVisibleRows(page: number, pageSize: number): Row<TData>[]
-    getVisibleRowCount(): number
-}
-
-export type PaginationStateConfig = Partial<Omit<PaginationState, 'pageCount'>>
-export type GroupingStateConfig = Partial<Omit<GroupingManagerState, '_groupedDataCache'>>
-export type FilteringStateConfig<TData> = Partial<FilteringState<TData>>
-export type RowManagerStateConfig = Partial<RowManagerState> & {
-    selectionMode?: RowSelectionMode
-    expansionMode?: RowExpansionMode
-}
-export type SortingStateConfig<TData> = Partial<SortingState<TData>>
-
-export type DatagridConfig<T, C> = {
+export type DatagridCoreConfig<TOriginalRow, C extends AnyColumn<TOriginalRow> = AnyColumn<TOriginalRow>> = {
     columns: C[];
-    data: T[];
-    pagination?: PaginationStateConfig;
-    grouping?: GroupingStateConfig;
-    filtering?: FilteringStateConfig<T>;
-    rowManager?: RowManagerStateConfig;
-    sorting?: SortingStateConfig<T>;
-};
+    data: TOriginalRow[];
+    lifecycleHooks?: LifecycleHooks<TOriginalRow>;  // Add this
 
-export class Datagrid<TData, TCustomKeys extends string = never> implements DatagridInstance<TData, TCustomKeys> {
-   
+    features?: {
+        columnFaceting?: ColumnFacetingPluginConfig
+        filtering?: ColumnFilteringPluginConfig
+        globalSearch?: GlobalSearchPluginConfig
+        grouping?: GroupingPluginConfig
+        pagination?: PaginationPluginConfig
+        rowExpanding?: RowExpandingPluginConfig
+        rowPinning?: RowPinningPluginConfig
+        rowSelection?: RowSelectionPluginConfig
+        sorting?: SortingPluginConfig
+        columnSizing?: ColumnSizingPluginConfig
+        columnVisibility?: ColumnVisibilityPluginConfig
+        columnPinning?: ColumnPinningPluginConfig
+        columnGrouping?: ColumnGroupingPluginConfig
+        columnOrdering?: ColumnOrderingPluginConfig
+    }
+}
 
-    rows = $state<Row<TData>[]>([]);
-    columns = $state<Column<TData, TCustomKeys>[]>([]);
-    original: DatagridOriginal<TData, TCustomKeys> = $state({
-        data: [] as TData[],
-        columns: [] as ColumnDef<TData, TCustomKeys>[],
-    })
-    sorting: SortingFeature<TData> = new SortingManager(this);
-    filtering: FilteringFeature<TData> = new FilteringManager(this);
-    grouping: GroupingFeature = new GroupingManager(this);
-    pagination: PaginationFeature = new PaginationManager(this);
-    columnManager: ColumnManager<TData> = new ColumnManager<TData>(this);
-    rowManager: RowManager<TData> = new RowManager(this);
 
-    dataProcessor: DataProcessorInstance<TData> = new DataProcessor(this);
-    columnsProcessor: ColumnProcessorInstance<TData> = new ColumnProcessor<TData>(this);
+export class DatagridCore<TOriginalRow = any, TMeta = any> {
+    identifier = $state('tzezars-datagrid')
 
-    constructor(config: DatagridConfig<TData, ColumnDef<TData, TCustomKeys>>) {
-        this.original = { data: config.data, columns: config.columns };
-       
-        $effect(()=>{
-            this.original.data;
-            untrack(()=>{
-                this.initialize(config);
-            })
-        })
+    readonly metrics = new PerformanceMetrics();
+    initial = $state.raw({
+        columns: [] as AnyColumn<TOriginalRow, TMeta>[],
+        data: [] as TOriginalRow[]
+    });
+    columns: AnyColumn<TOriginalRow, TMeta>[] = $state([]);
+
+    handlers = new HandlersManager(this);
+    processors = {
+        data: new DataProcessor(this),
+        column: new ColumnProcessor(this)
     }
 
-    private initialize(config: DatagridConfig<TData, ColumnDef<TData, TCustomKeys>>): void {
-        this.pagination.initialize(config.pagination || {});
-        this.grouping.initialize(config.grouping || {});
-        this.filtering.initialize(config.filtering || {});
-        this.rowManager.initialize(config.rowManager || {});
-        this.sorting.initialize(config.sorting || {});
+    cache = new DatagridCacheManager(this);
+    rows = new RowManager(this);
+    columnManager = new ColumnManager(this);
 
-        //this.columnsProcessor.transform();
-        this.dataProcessor.process();
-        this.columnsProcessor.calculateFacets(this.dataProcessor.processedRowsCache);
-        this.filtering.assignFuseInstance(this.original.data);
-        this.pagination.updatePageCount()
+    config = {
+        measurePerformance: false,
+        createBasicRowIdentifier: (row: TOriginalRow) => (row as any).id,
+        createBasicRowIndex: (row: TOriginalRow, parentIndex: string | null, index: number) =>
+            parentIndex ? `${parentIndex}-${index + 1}` : String(index + 1),
     }
 
-    refreshVisibleRows(): void {
-        this.rows = this.getVisibleRows(this.pagination.page, this.pagination.pageSize);
+    features: FeatureManager<TOriginalRow> = new FeatureManager(this);
+
+    lifecycleHooks = new LifecycleHooks<TOriginalRow>();
+
+    constructor(config: DatagridCoreConfig<TOriginalRow>, lazy: boolean = true) {
+        this.features = new FeatureManager(this, config);
+
+        if (config.lifecycleHooks) this.lifecycleHooks = config.lifecycleHooks;
+        if (lazy) return;
+        this.initializeState(config);
     }
 
 
-    // Used when the data should be updated eg. pagination
-    refresh(operation: () => void): void {
+
+    initializeState(config: DatagridCoreConfig<TOriginalRow>) {
+        this.validateConfigInputs(config);
+
+        // !!! IMPORTANT !!!
+        // This has to run in this order, otherwise the datagrid will not be initialized properly
+
+        // * Features has to be initialized first to prevent some bugs eg. not updating pagination
+        // * when there is wrapper around the datagrid that implements its own features
+        // * it might be worked around by processing data after extra features are initialized
+        // * but it involves extra processing which is not needed, maybe some refactoring is needed
+
+
+
+        this.initializeOriginalColumns(config.columns);
+        this.initializeOriginalData(config.data)
+
+        this.columns = this.processors.column.initializeColumns(this.initial.columns)
+        this.features = new FeatureManager(this, config);
+        this.processors.data.executeFullDataTransformation();
+
+        // Recompute faceted values
+        // Moved out of executeFullDataTransformation to avoid unnecessary recomputation
+        this.features.columnFaceting.calculateFacets(this.cache.sortedData || [], this.columns);
+
+    }
+
+    private initializeOriginalColumns(columns: AnyColumn<TOriginalRow>[]) {
+        // * Parent column Ids must be assigned before the columns are processed to ensure correct grouping
+        columns = this.lifecycleHooks.executePreProcessOriginalColumns(this.processors.column.assignParentColumnIds(columns));
+        this.initial.columns = columns;
+        this.initial.columns = this.lifecycleHooks.executePostProcessOriginalColumns(this.initial.columns);
+    }
+
+    private initializeOriginalData(data: TOriginalRow[]) {
+        data = this.lifecycleHooks.executePreProcessData(data);
+        this.initial.data = data;
+        this.initial.data = this.lifecycleHooks.executePostProcessData(this.initial.data);
+    }
+
+    /**
+       * Performs a refresh with different levels of data recalculation
+       */
+    refresh(operation: () => void, options: {
+        recalculateAll?: boolean;
+        recalculateGroups?: boolean;
+        recalculatePagination?: boolean;
+    } = {}): void {
         const timeStart = performance.now();
+
         operation();
-        this.refreshVisibleRows();
-        console.log(`Operation took ${performance.now() - timeStart}ms`)
-    }
 
-    // Used when the data should be reloaded
-    reload(command: () => void): void {
-        const timeStart = performance.now();
-        command();
-        this.dataProcessor.process()
-        this.pagination.updatePageCount()
-        console.log(`Execution took ${performance.now() - timeStart}ms`)
+        const {
+            recalculateAll = false,
+            recalculateGroups = false,
+            recalculatePagination = true
+        } = options;
 
-    }
-
-
-    getVisibleRows(page: number, pageSize: number): Row<TData>[] {
-        const visibleRows = this.dataProcessor.processedRowsCache.filter(row => this.isRowVisible(row));
-        const startIndex = (page - 1) * pageSize;
-        const endIndex = startIndex + pageSize;
-        return visibleRows.slice(startIndex, endIndex);
-    }
-
-    isRowVisible(row: Row<TData>): boolean {
-        if (!row.parentId) return true;
-
-        let currentParentId: string | null = row.parentId;
-        while (currentParentId) {
-            if (!this.grouping.state.expandedRows.has(currentParentId)) {
-                return false;
-            }
-            const parentRow = this.dataProcessor.rowsMap.get(currentParentId);
-            currentParentId = parentRow?.parentId ?? null;
+        if (recalculateAll) {
+            this.processors.data.executeFullDataTransformation();
+        } else if (recalculateGroups) {
+            this.processors.data.handleGroupExpansion();
+        } else if (recalculatePagination) {
+            this.processors.data.handlePaginationChange();
         }
 
-        return true;
+        if (this.config.measurePerformance) console.log(`Operation took ${performance.now() - timeStart}ms`);
     }
-    getVisibleRowCount(): number {
-        return this.dataProcessor.processedRowsCache.filter(row => this.isRowVisible(row)).length;
+
+    private validateConfigInputs({ columns, data }: DatagridCoreConfig<TOriginalRow>) {
+        if (!columns) throw new Error('Columns are required');
+        if (!data) throw new Error('Data is required');
+        if (!Array.isArray(data)) throw new Error('Data must be an array');
+        if (!Array.isArray(columns)) throw new Error('Columns must be an array');
+        if (columns.length === 0) throw new Error('Columns array must not be empty');
+      //  if (data.length === 0) throw new Error('Data array must not be empty');
     }
 }

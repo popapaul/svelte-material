@@ -1,57 +1,56 @@
 <script lang="ts" generics="T">
-    import type { Column, Datagrid } from "./datagrid/index.svelte";
-
-    let { column, grid }: { grid:Datagrid<T>, column: Column<T>} = $props();
-        
+    import type { LeafColumn, DatagridCore } from "./datagrid/index.svelte";
+    import { getSortDirection } from './datagrid/utils.svelte';
+    import Button from "../Button/Button.svelte";
+    import Icon from "../Icon/Icon.svelte";
+     let { column, grid }: { grid:DatagridCore<T>, column: LeafColumn<T>} = $props();
+     import {ArrowDropUp, Sort} from "@paulpopa/icons/md/outlined"   
     
-    const toggleSort = () => {
-        if (column.sortable === false) return;
-        grid.reload(() => grid.sorting.toggleSort(column.columnId));
-    }
+    const toggleSort = () => grid.handlers.sorting.toggleColumnSorting(column, false);
+
 </script>
 {#snippet sorter()}
-    {#if column.isSorted()}
-    <span class="text-nowrap w-2 text-xs">
-        {column.getSortingDirection() === 'asc'
-            ? `▲`
-            : column.getSortingDirection() === 'desc'
-                ? `▼`
-                : ' '}
-    </span>
+   
+    {#if column.isSortable()}
+        {@const direction = getSortDirection(grid, column)}
+        <Button  fab depressed size="x-small">
+            {#if direction == "intermediate"}
+                <Icon path={Sort} />
+            {:else}
+                <Icon path={ArrowDropUp} rotate={direction == "desc" ? 180 : 0} />
+            {/if}
+        </Button>
     {/if}
 {/snippet}
 <div
-    class="grid-header-cell"
-    style="{column.grow === false
-        ? `--width:${column.width}px; --max-width:${column.width}px;`
-        : 'flex-grow:1; width:50px;'} --min-width:{column.minWidth}px; 
-        {['left', 'right'].includes(column.pinning.position) && `background-color: black;`}"
-    class:offset-left={column.pinning.position === 'left'}
-    class:offset-right={column.pinning.position === 'right'}
-    style:--offset={`${column.pinning.offset}px`}
+    class="grid-header-cell cursor-pointer"
+    style="--width:{column.state.size.width}px; --max-width:{column.state.size.maxWidth}px; --min-width:{column.state.size.minWidth}px; 
+        {['left', 'right'].includes(column.state.pinning.position) && `background-color: black;`}"
+    class:offset-left={column.state.pinning.position === 'left'}
+    class:offset-right={column.state.pinning.position === 'right'}
+    style:flex-grow={column.state.size.grow ? 1 : null}
+    style:--offset={`${column.state.pinning.offset}px`}
     >
-    {#if column.header}
-        {@render column.header({column, grid, toggleSort, sorter})}
+
+    {#if column.headerCell}
+        {@render column.headerCell({ column, datagrid:grid })}
     {:else}
         <div
             aria-label="Click to sort column"
             role="button"
             tabindex="0"
             class="flex w-full items-center gap-1 overflow-hidden"
-            class:justify-end={column.align === 'end'}
+            class:justify-end={column.align === 'right'}
             class:justify-center={column.align === 'center'}
-            class:justify-start={column.align === 'start'}
-            onclick={() => {
-                if (column.sortable === false) return;
-                grid.reload(() => grid.sorting.toggleSort(column.columnId));
-            }}
+            class:justify-start={column.align === 'left'}
+            onclick={toggleSort}
             onkeydown={(e) => {
-                if (column.sortable === false) return;
-                if (e.key === 'Enter') grid.reload(() => grid.sorting.toggleSort(column.columnId));
-                else if (e.key === 'Escape') grid.reload(() => grid.sorting.clearSort());
+                if (e.key === 'Enter') toggleSort();
+                else if (e.key === 'Escape')  grid.handlers.sorting.unSortColumn(column);
             }}
         >   
-            <span class="overflow-hidden text-ellipsis">{column.title}</span>
+            <span class="overflow-hidden text-ellipsis">{column.header}</span>
+            
             {@render sorter()}
         </div>
     {/if}
@@ -67,6 +66,7 @@
         max-width: var(--max-width);
         min-width: var(--min-width);
         align-items: center;
+        justify-content: center;
         gap: 0.25rem;
     }
 

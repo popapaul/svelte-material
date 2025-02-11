@@ -22,7 +22,7 @@ export { RangeSlider } from './components/RangeSlider';
 export { SlideGroup, SlideItem } from './components/SlideGroup';
 
 export type * from "./components/DataGrid/datagrid/index.svelte";
-export  { DataGrid, Datagrid, Column } from './components/DataGrid';
+export  { DataGrid, DatagridCore as Datagrid, Column } from './components/DataGrid';
 
 
 export { Checkbox } from './components/Checkbox';

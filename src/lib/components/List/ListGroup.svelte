@@ -6,13 +6,10 @@
 	import { format } from '../../internal/Style';
 	import type { RippleOptions } from '../../actions/Ripple';
 
-	interface Props {
-			/** classes added to the listgroup */
+	interface Props extends  ComponentProps<typeof ListItem> {
+		/** classes added to the listgroup */
 		class?: string;
-		activatorClass?: string;
-		activatorProps?: ComponentProps<typeof ListItem>;
-		/** toggle the active state */
-		active?: boolean;
+		wrapperClass?: string;
 		/** will force the components content to render on mount */
 		eager?: boolean;
 		/** transition when open or close */
@@ -29,34 +26,32 @@
 		disableToggle?: boolean;
 		/** styles added to the listgroup */
 		style?: any;
-		prepend?: import('svelte').Snippet<[{active:boolean, toggle:()=>void}]>;
-		activator?: import('svelte').Snippet<[{ toggle:()=>void}]>;
-		append?: import('svelte').Snippet<[{active:boolean, toggle:()=>void}]>;
+		activator?: import('svelte').Snippet<[{active:boolean, toggle:()=>void}]>;
 		children?: import('svelte').Snippet;
 	}
 
 	let {
 		class: klass = '',
-		activatorClass = '',
-		activatorProps = {},
+		wrapperClass = '',
 		active = $bindable(),
 		eager = false,
 		transition = slide,
+		disableToggle,
 		transitionOpts = {},
 		offset = null,
 		disabled = false,
 		ripple = {},
 		style = null,
-		prepend: innerPrepend,
+		onclick,
 		activator,
-		append: innerAppend,
-		children
+		children,
+		...rest
 	}: Props = $props();
 
 	setContext('S_ListItemRipple', ripple);
 
 	function toggle() {
-		if (disabled) return;
+		if (disabled || disableToggle) return;
 		active = !active;
 	}
 
@@ -65,20 +60,11 @@
 	}
 </script>
 
-<div class="s-list-group {klass}">
-	<ListItem
-		class="s-list-group__activator {activatorClass}"
-		bind:active
-		{...activatorProps}
-	>
-		{#snippet prepend()}
-			{@render innerPrepend?.({ active, toggle })}
-		{/snippet}
-		{@render activator?.({toggle })}
-		{#snippet append()}
-			{@render innerAppend?.({ active, toggle })}
-		{/snippet}
+<div class="s-list-group {wrapperClass}">
+	<ListItem bind:active onclick={(event)=>{toggle(); onclick?.(event)}} {...rest}>
+		{@render activator?.({active, toggle })}
 	</ListItem>
+	
 	{#if active}
 		<div
 			transition:transition={transitionOpts}

@@ -11,10 +11,6 @@
 	}
 }
 
-.s-list-group__activator.active:not(:hover):not(:focus)::before {
-	opacity: 0;
-}
-
 .s-list-group__items {
 	&.offset {
 		.s-list-item {

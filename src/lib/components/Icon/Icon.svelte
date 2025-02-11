@@ -36,7 +36,7 @@
 	}: Props = $props();
 </script>
 
-<i
+<i	
 	{...rest}
 	aria-hidden="true"
 	class="s-icon {klass}"

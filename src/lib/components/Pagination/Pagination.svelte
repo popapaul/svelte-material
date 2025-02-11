@@ -63,7 +63,7 @@
 			Randuri
 		</Select>
 	{/if}
-	<div class="flex gap-2">
+	<div class="flex gap-2 items-center">
 		<Button fab size="x-small" onclick={(e) => onChange(0)} disabled={index == 0}>
 			<Icon path={icons.arrow_left_double} />
 		</Button>

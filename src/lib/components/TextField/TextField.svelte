@@ -121,7 +121,7 @@
 	context?.register({ id, validate });
 
 	let focused = $state(false);
-
+	
 	export function validate() {
 		const text = value ?? inputElement.value;
 		errorMessages = rules.map((r) => r(text?.toString())).filter((r) => typeof r === 'string');
@@ -185,13 +185,12 @@
 					{@render children()}
 				</label>
 			{/if}
-
+				
 			<!-- <slot name="content" /> -->
 			<!-- keypress Event is deprecated. Use keydown or keyup instead -->
 				{#if content}
 					{@render content()}
 				{:else}
-				
 			<input
 				bind:this={inputElement}
 				bind:value

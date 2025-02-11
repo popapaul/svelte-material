@@ -58,7 +58,7 @@
 	}
 
 	.s-avatar {
-		height: variables.$chip-avatar-size;
+		min-height: variables.$chip-avatar-size;
 		min-width: variables.$chip-avatar-size;
 		width: variables.$chip-avatar-size;
 	}
@@ -86,7 +86,7 @@
 		&.size-#{$name} {
 			border-radius: #{map.get($size, 'height') * 0.5}px;
 			font-size: #{map.get($size, 'font-size')}px;
-			height: #{map.get($size, 'height')}px;
+			min-height: #{map.get($size, 'height')}px;
 		}
 	}
 
@@ -102,7 +102,7 @@
 
 	&.pill {
 		& > .s-avatar {
-			height: variables.$chip-pill-avatar-size;
+			min-height: variables.$chip-pill-avatar-size;
 			width: variables.$chip-pill-avatar-size;
 
 			&:first-child {

@@ -18,11 +18,6 @@
 		success,
 		error
 	};
-
-	
-	
-	
-	
 	
 	interface Props {
 		defaults?: Toast;

@@ -62,9 +62,11 @@
 		...rest
 	}: Props = $props();
 
+	
 	$effect(()=>{
+		if(!ITEM.values.length) return
 		active = ITEM.values.includes(value);
-	})
+	});
 
 
 	function click(event) {

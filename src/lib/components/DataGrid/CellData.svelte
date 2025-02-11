@@ -1,32 +1,33 @@
 <script lang="ts" generics="T">
-	import type { Column, Datagrid, Row } from "./datagrid/index.svelte";
-    let { column, row, grid }: { row:Row<T>; grid:Datagrid<T>, column: Column<T> } = $props();
+	import type { LeafColumn, DatagridCore, GridBasicRow } from "./datagrid/index.svelte";
+    let { column, row, datagrid }: { row:GridBasicRow<T>; datagrid:DatagridCore<T>, column: LeafColumn<T> } = $props();
+      
 </script>
 
-<div
-    class="grid-cell text-ellipsis text-nowrap"
-    class:justify-end={column.align === 'end'}
-    class:justify-center={column.align === 'center'}
-    class:justify-start={column.align === 'start'}
-    class:offset-left={column.pinning.position === 'left'}
-    class:offset-right={column.pinning.position === 'right'}
-    style:--offset="{column.pinning.offset}px"
-    style:--min-width="{column.minWidth}px"
-    style:--width={!column.grow ? `${column.width}px` : '50px'}
-    style:--max-width={!column.grow ? `${column.width}px` : null}
-    style:flex-grow={column.grow ? 1 : null}
-    style={`${['left', 'right'].includes(column.pinning.position) && `background-color: black;`}`}
->
-    {#if column.component}
-        <column.component {row} {grid} {column}/>
-    {:else if column.cell}
-        {@render column.cell(row, grid, column)}
-    {:else if column.formatter}
-        {column.formatter(row.original)}
-    {:else}
-        {column.accessor(row.original)}
-    {/if}
-</div>
+{#if column.isVisible()}
+    <div
+        class="grid-cell"
+        class:justify-end={column.align === 'right'}
+        class:justify-center={column.align === 'center'}
+        class:justify-start={column.align === 'left'}
+        class:offset-left={column.state.pinning.position === 'left'}
+        class:offset-right={column.state.pinning.position === 'right'}
+        style:--offset="{column.state.pinning.offset}px"
+        style:--min-width="{column.state.size.minWidth}px"
+        style:--width={!column.state.size.grow ? `${column.state.size.width}px` : '50px'}
+        style:--max-width={`${column.state.size.maxWidth}px`}
+        style:flex-grow={column.state.size.grow ? 1 : null}
+        style={`${['left', 'right'].includes(column.state.pinning.position) && `background-color: black;`}`}
+    >
+        {#if column.cell}
+            {@render column.cell({row, original:row.original, datagrid, column})}
+        {:else if column.formatterFn}
+            {column.formatterFn(row.original)}
+        {:else}
+            {column.accessorFn(row.original)}
+        {/if}
+    </div>
+{/if}
 
 <style>
     /* Grid Cells */
@@ -36,7 +37,8 @@
         border-right: 1px solid (var(--grid-border));
         cursor: pointer;
         width: var(--width);
-        margin:auto;
+        margin-top:auto;
+        margin-bottom:auto;
         max-width: var(--max-width);
         min-width: var(--min-width);
         overflow: hidden;

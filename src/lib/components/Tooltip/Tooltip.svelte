@@ -13,6 +13,7 @@
 		color?: string;
 		active?: boolean;
 		placement?: NanoPopPosition;
+		text?:string;
 		wrapperClass?: string;
 		/** The transition function for the tooltip. */
 		transition?: any;
@@ -27,6 +28,7 @@
 	let {
 		class: klass = '',
 		color = 'default',
+		text,
 		active = $bindable(false),
 		placement = 'bottom',
 		wrapperClass = '',
@@ -65,6 +67,10 @@
 		use:BackgroundColor={color}
 	>
 		<!-- Slot for the content of the tooltip -->
-		{@render tip?.()}
+		 {#if tip}
+			{@render tip()}
+		{:else}
+			{text}
+		{/if}
 	</span>
 {/if}

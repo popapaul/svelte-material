@@ -21,7 +21,7 @@ export type Toast = {
 	pausable?: boolean;
 	dismissable?: boolean;
 	message?: string;
-} & ComponentProps<Snackbar>
+} & ComponentProps<typeof Snackbar>
 
 const defaults: Toast = {
 	duration: 5000,
