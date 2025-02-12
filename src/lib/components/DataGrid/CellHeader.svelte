@@ -52,6 +52,7 @@
             <span class="overflow-hidden text-ellipsis">{column.header}</span>
             
             {@render sorter()}
+            {@render column?.menu()}
         </div>
     {/if}
 </div>
