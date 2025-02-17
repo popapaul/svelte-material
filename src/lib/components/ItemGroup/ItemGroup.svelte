@@ -70,16 +70,19 @@
 	let startIndex = -1;
 	setContext(ITEM_GROUP, {
 		select: (val:T) => {
+			
 			if (internal.multiple == true) {
 				if (internal.value.includes(val)) {
 					if (!mandatory || internal.value.length > 1) {
-						internal.value.splice(internal.value.indexOf(val), 1);
+						//internal.value.splice(internal.value.indexOf(val), 1);
+						internal.value = internal.value.filter(x=> x != val);
 					}
 				} 
-				else if ((internal.value.length) < max) internal.value.push(val);
+				else if ((internal.value.length) < max) internal.value = [...internal.value, val];
 			} else if (internal.value === val) {
 				if (!mandatory) internal.value = null;
 			} else internal.value = val;
+
 			onchange?.(internal.value as any);
 		},
 		get values(){ return Array.isArray(internal.value) ? internal.value : [internal.value]},

@@ -20,7 +20,7 @@
         children:Snippet<[ColumnComponent]>; 
         header?:Snippet<[DatagridCore<T>]>,
         onSwitch?: (event:{dragged:GridBasicRow<T>, target:GridBasicRow<T>}) => void
-    }
+    } & Omit<DatagridCoreConfig<T>, "data", "columns">
     let { 
         data = $bindable(), 
         columns = $bindable([]), 
@@ -28,25 +28,25 @@
         header, 
         expand, 
         onSwitch,
-        children
+        children,
+        ...rest
      }:Props  = $props();
 	setContext("columns", columns);
     
 
 
-	let grid = new DatagridCore({data, columns});
+	const grid = new DatagridCore({data, columns, ...rest});
     setContext("datagrid", grid);
     $effect(()=>{
         columns;
         data;
 
         untrack(()=>{
-            grid.initializeState({data, columns});
+            grid.initializeState({data, columns, ...rest});
         })
     });
 
    
-    $inspect(grid.rows);
 	$effect(()=>{
      // grid.columns = grid.processors.column.initializeColumns(columns)
 	})
@@ -148,7 +148,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
     console.log("touchEnd()");
   }
     const handleDrag = debounce((e, row)=>dragOver(e, row),1);
-	$inspect(hovered.row)
+
 </script>
 {@render children(Column)}
 <div  class="grid-wrapper {klass}">
@@ -192,7 +192,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
                         </div>
                         {/if}
                         {#each grid.columnManager.getLeafColumnsInOrder() as column}
-                            <CellData {grid} {row} {column} />
+                            <CellData datagrid={grid} {row} {column} />
                         {/each}
                     </div>
                     {#if expand && row.isExpanded()}

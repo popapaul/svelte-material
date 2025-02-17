@@ -44,7 +44,7 @@ export class FeatureManager<TOriginalRow = any> {
             fuseInstance: config?.features?.globalSearch?.fuseInstance || initializeFuseInstance(this.datagrid.initial.data || [], flattenColumnStructureAndClearGroups(this.datagrid.columns).map(col => col.columnId as string)),
             value: config?.features?.globalSearch?.value
         });
-
+      
         this.grouping = new GroupingFeature(config?.features?.grouping);
         this.pagination = new PaginationFeature(this.datagrid, config?.features?.pagination);
         this.rowExpanding = new RowExpandingFeature(this.datagrid, config?.features?.rowExpanding);

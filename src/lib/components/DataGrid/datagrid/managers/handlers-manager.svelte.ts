@@ -22,29 +22,28 @@ export class HandlersManager {
             if (!column.options.sortable) return;
 
 
-            const isColumnSorted = datagrid.features.sorting.isColumnSorted(columnId);
-            const isColumnSortedAscending = datagrid.features.sorting.isColumnSorted(columnId, false);
-
+            const isColumnSorted = this.datagrid.features.sorting.sortings[columnId] != undefined;
+            const isColumnSortedAscending = this.datagrid.features.sorting.sortings[columnId] == "asc";
+          
+          
             const singleColumnSort = () => {
+               delete this.datagrid.features.sorting.sortings[columnId] ;
                 if (!isColumnSorted) {
-                    this.datagrid.features.sorting.clearSorting();
-                    this.datagrid.features.sorting.addSortConfig(columnId, false)
+                    this.datagrid.features.sorting.sortings = {[columnId]: "asc"};
                 }
                 else if (isColumnSortedAscending) {
-                    this.datagrid.features.sorting.clearSorting();
-                    datagrid.features.sorting.addSortConfig(columnId, true);
+                    this.datagrid.features.sorting.sortings = {[columnId]: "desc"};
                 }
-                else this.datagrid.features.sorting.clearSorting();
-
-            }
+            }   
+            
 
             const multipleColumnSort = () => {
                 if (!isColumnSorted) {
-                    const isOverMaxColCount = datagrid.features.sorting.sortings.length >= datagrid.features.sorting.maxMultiSortColCount;
+                    const isOverMaxColCount = Object.keys(datagrid.features.sorting.sortings).length >= datagrid.features.sorting.maxMultiSortColCount;
                     if (isOverMaxColCount) {
                         // remove first sorting config
                         console.log('removing first sorting config');
-                        datagrid.features.sorting.removeSortConfig(datagrid.features.sorting.sortings[0].columnId);
+                        datagrid.features.sorting.removeSortConfig(datagrid.features.sorting.sorted[0].columnId);
                     }
 
                     datagrid.features.sorting.addSortConfig(columnId, false);

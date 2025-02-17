@@ -1,15 +1,16 @@
 import type { DatagridCore } from "../index.svelte";
-import type { ColumnId, Sorting } from "../types";
+import type { ColumnId, SortDirection } from "../types";
 
 
 export type SortingPluginConfig = {
     manualSorting: boolean;
-    sortConfigs?: Sorting[];
+    sortings?: Record<ColumnId,SortDirection>;
+
     enableMultiSort?: boolean;
 
     isMultiSortEvent?: (e: unknown) => boolean;
     maxMultiSortColCount?: number;
-    onSortingChange?(config: any): void;
+    onSortingChange?(config: SortingFeature): void;
 
 }
 
@@ -20,9 +21,10 @@ export type SortingPluginConfig = {
 export class SortingFeature {
     datagrid: DatagridCore<any>;
     manualSorting: boolean = $state(false);
-
-    sortings: Sorting[] = $state([]); // List of sort configurations, each representing a column's sort state
     
+    sortings: Record<ColumnId, SortDirection> = $state({}); // List of sort configurations, each representing a column's sort state
+    sorted = $derived(Object.entries(this.sortings).map(([columnId,value])=> ({ columnId, desc: value == "desc" })));
+
     enableMultiSort: boolean = $state(true);
     maxMultiSortColCount: number = $state(99);
     onSortingChange: (config: SortingFeature) => void = () => { };
@@ -46,17 +48,16 @@ export class SortingFeature {
      * Refreshes the indices of the sort configurations, ensuring each config has an up-to-date index.
      */
     refreshIndices() {
-        this.sortings = this.sortings.map((config, index) => ({
-            ...config,
-            index
-        }));
+       // this.sorted.forEach((config, index) => {
+         //   this.sortings[config.columnId].index = index;
+       // });
     }
 
     /**
      * Clears all the sorting configurations, effectively removing any sorting from the grid.
      */
     clearSorting() {
-        this.sortings = [];
+        this.sortings = {};
     }
 
     /**
@@ -64,32 +65,28 @@ export class SortingFeature {
      * @param columnId - The ID of the column to remove from sorting.
      */
     removeSortConfig(columnId: ColumnId) {
-        this.sortings = this.sortings.filter((config) => config.columnId !== columnId);
+        this.sortings[columnId] = null;
+        delete this.sortings[columnId];
         this.refreshIndices(); // Refresh indices after removing a sort config
     }
 
-    /**
-     * Finds the index of a given column in the sorting configuration.
-     * @param columnId - The ID of the column to find.
-     * @returns The index of the column in the sort configuration array, or -1 if not found.
-     */
-    findIndex(columnId: ColumnId): number {
-        return this.sortings.findIndex((config) => config.columnId === columnId);
-    }
+    // /**
+    //  * Finds the index of a given column in the sorting configuration.
+    //  * @param columnId - The ID of the column to find.
+    //  * @returns The index of the column in the sort configuration array, or -1 if not found.
+    //  */
+    // findIndex(columnId: ColumnId): number {
+    //     return this.sortings.findIndex((config) => config.columnId === columnId);
+    // }
 
     /**
      * Changes the sorting direction (ascending/descending) for a specified column.
      * @param columnId - The ID of the column to update.
      * @param desc - The desired sorting direction; true for descending, false for ascending.
      */
-    changeDirection(columnId: ColumnId, desc: boolean) {
-        const index = this.findIndex(columnId);
-        if (index === -1) return; // If the column is not sorted, do nothing
-
+    changeDirection(columnId: ColumnId, desc: SortDirection) {
         // Update the sort direction for the specified column
-        this.sortings = this.sortings.map((config, i) =>
-            i === index ? { ...config, desc } : config
-        );
+        this.sortings[columnId] = desc;
     }
 
     /**
@@ -97,12 +94,10 @@ export class SortingFeature {
      * @param columnId - The ID of the column to add a sorting configuration for.
      * @param desc - The sorting direction; true for descending, false for ascending.
      */
-    addSortConfig(columnId: ColumnId, desc: boolean) {
-        if (this.sortings.length >= this.maxMultiSortColCount) return;
-        this.sortings = [
-            ...this.sortings,
-            { columnId, desc, index: this.sortings.length }
-        ];
+    addSortConfig(columnId: ColumnId, desc: SortDirection) {
+        const size = this.sorted.length;
+        if (size >= this.maxMultiSortColCount) return;
+        this.sortings = {...this.sortings, [columnId]: desc};
     }
 
     /**
@@ -112,13 +107,13 @@ export class SortingFeature {
      * @param desc - Optional; if specified, checks for the sorting direction.
      * @returns True if the column is sorted, optionally with the specified direction.
      */
-    isColumnSorted(columnId: ColumnId, desc?: boolean): boolean {
+    isColumnSorted(columnId: ColumnId, desc?: SortDirection): boolean {
         if (desc === undefined) {
             // Return true if the column is sorted in any direction
-            return this.sortings.some((config) => config.columnId === columnId);
+            return !!this.sortings?.[columnId];
         }
-
+        
         // Return true if the column is sorted with the specified direction
-        return this.sortings.some((config) => config.columnId === columnId && config.desc === desc);
+        return this.sortings?.[columnId] == desc;
     }
 }

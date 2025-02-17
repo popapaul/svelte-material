@@ -168,10 +168,11 @@ export type HeaderCell<TOriginalRow> = Snippet<[HeaderCellProps<TOriginalRow>]>;
  * Sorting Types
  */
 export interface Sorting {
-    columnId: ColumnId;
     desc: boolean;
     index: number;
 }
+
+export type SortDirection = "asc" | "desc";
 
 /**
  * Pinning Types

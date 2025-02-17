@@ -1,23 +1,22 @@
 <script lang="ts" generics="T">
     import type { LeafColumn, DatagridCore } from "./datagrid/index.svelte";
-    import { getSortDirection } from './datagrid/utils.svelte';
+    
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
      let { column, grid }: { grid:DatagridCore<T>, column: LeafColumn<T>} = $props();
      import {ArrowDropUp, Sort} from "@paulpopa/icons/md/outlined"   
     
     const toggleSort = () => grid.handlers.sorting.toggleColumnSorting(column, false);
-
+ 
 </script>
 {#snippet sorter()}
    
     {#if column.isSortable()}
-        {@const direction = getSortDirection(grid, column)}
         <Button  fab depressed size="x-small">
-            {#if direction == "intermediate"}
+            {#if grid.features.sorting.sortings[column.columnId] == undefined}
                 <Icon path={Sort} />
             {:else}
-                <Icon path={ArrowDropUp} rotate={direction == "desc" ? 180 : 0} />
+                <Icon path={ArrowDropUp} rotate={grid.features.sorting.sortings[column.columnId] == "desc" ? 180 : 0} />
             {/if}
         </Button>
     {/if}

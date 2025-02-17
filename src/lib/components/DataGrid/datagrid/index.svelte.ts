@@ -102,8 +102,7 @@ export class DatagridCore<TOriginalRow = any, TMeta = any> {
         this.initializeOriginalColumns(config.columns);
         this.initializeOriginalData(config.data)
 
-        this.columns = this.processors.column.initializeColumns(this.initial.columns)
-        this.features = new FeatureManager(this, config);
+        this.columns = this.processors.column.initializeColumns(this.initial.columns);
         this.processors.data.executeFullDataTransformation();
 
         // Recompute faceted values
