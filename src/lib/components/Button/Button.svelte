@@ -43,7 +43,6 @@
 		 /** Optional href for anchor tags */
 		href?: string;
 		children?: import('svelte').Snippet;
-		[k:string]:any;
 	};
 
 
@@ -93,7 +92,7 @@
 	{onclick}
 	{style}
 	aria-disabled={disabled}
-	use:Ripple={ripple}
+	
 	{...rest}
 >
 	{@render children?.()}

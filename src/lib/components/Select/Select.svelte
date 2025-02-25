@@ -63,6 +63,7 @@
 		onchange?: (value:ConditionalBoolean<T,D>)=>void;
 		children?: Snippet;
 		options?: Snippet;
+		chip?: Snippet<[{ value:T, name:string }]>
 		option?: Snippet<[{active:boolean, item: TItem}]>;
 	};
 
@@ -90,6 +91,7 @@
 		onchange,
 		options,
 		option,
+		chip,
 		...rest
 	}: Props = $props();
 
@@ -173,7 +175,7 @@
 	{#snippet activator()}
 		<TextField
 			bind:this={TextFieldInstance}
-			class={klass}
+			class="s-select  {klass}"
 			{style}
 			{...rest}
 			labelActive={active || !!value}
@@ -184,12 +186,15 @@
 			{disabled}
 			{hint}
 		>	
-			
 			{#snippet content()}
 				{#if internal.value || internal.value ===0 }
 					{#each (Array.isArray(internal.value) ? internal.value : [internal.value]) as val}
 						{#if chips}
-							<Chip size="small" close onclose={() => removeItem(val)}>{getSelectString(val)}</Chip>
+							{#if chip}
+								{@render chip({value:val, name: getSelectString(val)})}
+							{:else}
+								<Chip size="small" close onclose={() => removeItem(val)}>{getSelectString(val)}</Chip>
+							{/if}
 						{:else}
 							<span style="margin-right:4px;">{getSelectString(val)}</span>
 						{/if}

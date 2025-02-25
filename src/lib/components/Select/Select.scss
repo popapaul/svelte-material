@@ -13,20 +13,10 @@
 			cursor: pointer;
 		}
 	}
-
-	&.chips {
-		.s-text-field__wrapper.filled .s-text-field__input {
-			padding-top: 24px;
-		}
-		// .s-select-input input{
-		//   margin: 0;
-		//   opacity: 0;
-		//   width: 0px;
-		// }
-		.s-chip {
-			margin: variables.$select-chip-margin;
-		}
+	.s-chip {
+		margin-bottom: 2px;
 	}
+	
 }
 
 .s-select__filter {

@@ -4,7 +4,7 @@
 @use "../../styles/tools/elevation";
 @use "../../styles/variables" as styles-variables;
 
-
+@layer s_components{
 .s-text-field__input {
 	display: flex;
 	flex-grow: 1;
@@ -276,4 +276,5 @@
 			}
 		}
 	}
+}
 }

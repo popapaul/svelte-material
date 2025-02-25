@@ -4,7 +4,8 @@
 @use 'variables';
 @use "../../styles/variables" as styles-variables;
 
-
+@layer s_components{
+	
 .s-input__slot {
 	border-radius: inherit;
 	align-items: center;
@@ -50,6 +51,9 @@
 	margin-bottom: variables.$input-slot-margin-bottom;
 	margin-top: variables.$input-slot-margin-top;
 
+	&.error{
+		color:red;
+	}
 	input {
 		max-height: variables.$input-max-height;
 		border: none;
@@ -141,4 +145,5 @@
 	&.dense {
 		margin-bottom: variables.$input-dense-slot-margin-bottom;
 	}
+}
 }

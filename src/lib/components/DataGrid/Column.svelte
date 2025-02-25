@@ -2,15 +2,17 @@
 	import { accessorColumn, computedColumn, displayColumn } from "./datagrid/column-creation";
 
 	import type { CreateComputeColumnProps, CreateAccessorColumnProps, CreateDisplayColumnProps } from "./datagrid/column-creation/types";
-    import type {  LeafColumn } from "./datagrid/index.svelte";
+    import type {  ColumnSizeState, DatagridCore } from "./datagrid/index.svelte";
 	import { getContext } from "svelte";
-    let columns = getContext<LeafColumn<T>[]>("columns");
+  
     type CreateColumn<T> = CreateComputeColumnProps<T> | CreateAccessorColumnProps<T> | CreateDisplayColumnProps<T>;
-    let { ...rest }:CreateColumn<T>= $props();
-   
+    let {  minWidth, maxWidth, width, grow, ...rest }:CreateColumn<T> & ColumnSizeState = $props();
+   const datagrid = getContext<DatagridCore<T>>("datagrid");
     
     const createColumn = (config: CreateColumn<T>) =>{
-        config = {...config, }
+        config = {...config }
+        if(minWidth || maxWidth || width ||grow)
+        config.state = { size: {minWidth, maxWidth, width, grow }};
         config.columnId ??= config.header ?? crypto.randomUUID();
         if("accessorKey" in  config)
             return accessorColumn(config);
@@ -22,9 +24,9 @@
     
     const column = createColumn(rest);   
  
-    const index = columns.findIndex(y=>y.columnId == rest.columnId);
+    const index = datagrid.columns.findIndex(y=>y.columnId == rest.columnId);
     if(index>0)
-        columns[index] = column;
+        datagrid.columns[index] = column;
     else
-        columns.push(column);
+        datagrid.columns.push(column);
 </script>

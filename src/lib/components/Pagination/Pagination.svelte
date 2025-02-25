@@ -32,7 +32,7 @@
 	}: Props = $props();
 
 	const size = $derived(pageSize ?? pageSizes[0]);
-	const index = $derived(page ?? 0);
+	const index = $derived(page ?? 1);
 
 	const calcDisplacer = (index: number) => {
 		if (index - middle < 0) return Math.abs(0 - (index - middle));
@@ -45,13 +45,14 @@
 		onchange?.(page);
 	}
 
-	let lastPage = $derived(Math.max(Math.ceil(count / size) - 1, 0));
+	let lastPage = $derived(Math.max(Math.ceil(count / size), 1));
 	let middle = $derived(Math.floor(buttons.length / 2));
 	let pageCount = $derived(Math.ceil(count / size) || 1);
 </script>
 
 <div class="s-pagination {klass}">
-	<span style="width:120px; {style}">{page * pageSize + 1}-{Math.min((Number(page) + 1) * pageSize, count)} din {count}</span>
+	
+	<span style="width:120px; {style}">{Math.min(page * pageSize + 1, count)}-{Math.min((Number(page) + 1) * pageSize, count)} din {count}</span>
 	{#if pageSelect}
 		<Select
 			style="max-width:120px;"
@@ -64,10 +65,10 @@
 		</Select>
 	{/if}
 	<div class="flex gap-2 items-center">
-		<Button fab size="x-small" onclick={(e) => onChange(0)} disabled={index == 0}>
+		<Button fab size="x-small" onclick={(e) => onChange(1)} disabled={index <= 1}>
 			<Icon path={icons.arrow_left_double} />
 		</Button>
-		<Button fab size="x-small" onclick={(e) => onChange(index - 1)} disabled={index == 0}>
+		<Button fab size="x-small" onclick={(e) => onChange(index - 1)} disabled={index <= 1}>
 			<Icon path={icons.arrow_left} />
 		</Button>
 
@@ -91,8 +92,8 @@
 				style="width:60px;"
 				mandatory
 				items={Array.from(Array(pageCount).keys()).map((size) => ({
-					name: (size + 1).toString(),
-					value: size
+					name: (size+1).toString(),
+					value: size + 1
 				}))}
 				value={index}
 				onchange={(val) => onChange(val)}
@@ -103,12 +104,12 @@
 			fab
 			size="x-small"
 			onclick={(e) => onChange(Number(index) + 1)}
-			disabled={index == lastPage}
+			disabled={index >= lastPage}
 		>
 			<Icon path={icons.arrow_right} />
 		</Button>
 
-		<Button fab size="x-small" onclick={(e) => onChange(lastPage)} disabled={index == lastPage}>
+		<Button fab size="x-small" onclick={(e) => onChange(lastPage)} disabled={index >= lastPage}>
 			<Icon path={icons.arrow_right_double} />
 		</Button>
 	</div>

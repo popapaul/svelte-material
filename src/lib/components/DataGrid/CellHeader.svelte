@@ -11,23 +11,17 @@
 </script>
 {#snippet sorter()}
    
-    {#if column.isSortable()}
+    {#if column.isSortable() && grid.features.sorting.sortings[column.columnId]}
         <Button  fab depressed size="x-small">
-            {#if grid.features.sorting.sortings[column.columnId] == undefined}
-                <Icon path={Sort} />
-            {:else}
-                <Icon path={ArrowDropUp} rotate={grid.features.sorting.sortings[column.columnId] == "desc" ? 180 : 0} />
-            {/if}
+            <Icon path={ArrowDropUp} rotate={grid.features.sorting.sortings[column.columnId] == "desc" ? 180 : 0} />
         </Button>
     {/if}
 {/snippet}
 <div
     class="grid-header-cell cursor-pointer"
-    style="--width:{column.state.size.width}px; --max-width:{column.state.size.maxWidth}px; --min-width:{column.state.size.minWidth}px; 
-        {['left', 'right'].includes(column.state.pinning.position) && `background-color: black;`}"
+    style="{['left', 'right'].includes(column.state.pinning.position) && `background-color: black;`}"
     class:offset-left={column.state.pinning.position === 'left'}
     class:offset-right={column.state.pinning.position === 'right'}
-    style:flex-grow={column.state.size.grow ? 1 : null}
     style:--offset={`${column.state.pinning.offset}px`}
     >
 
@@ -48,8 +42,8 @@
                 else if (e.key === 'Escape')  grid.handlers.sorting.unSortColumn(column);
             }}
         >   
-            <span class="overflow-hidden text-ellipsis">{column.header}</span>
-            
+            <div class="overflow-hidden inline-flex items-center text-ellipsis" style="height:35px;">{column.header}</div>
+
             {@render sorter()}
             {@render column?.menu()}
         </div>
@@ -62,9 +56,9 @@
         flex-direction: column;
         padding: 0.5rem;
         --border-right: 1px solid hsl(var(--grid-border));
-        width: var(--width);
-        max-width: var(--max-width);
-        min-width: var(--min-width);
+
+        min-width: 0;
+        max-width: 100%;
         align-items: center;
         justify-content: center;
         gap: 0.25rem;

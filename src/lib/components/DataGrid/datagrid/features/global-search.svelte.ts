@@ -1,4 +1,6 @@
 import Fuse from "fuse.js";
+import { DatagridCore } from "../index.svelte";
+import { debounce } from "../utils.svelte";
 
 
 export type GlobalSearchPluginConfig = {
@@ -14,24 +16,33 @@ export type GlobalSearchPluginConfig = {
 /**
  * Manages global search functionality with fuzzy searching using Fuse.js.
  */
-export class GlobalSearchFeature {
+export class GlobalSearchFeature<TOriginalRow = any> {
+    datagrid: DatagridCore<TOriginalRow>;
+    #value = $state('');
     manual: boolean = $state(false);
 
     // State for storing the current search value
-    value = $state('');
+    get value(){
+        return this.#value;
+    }
+    set value(val){
+        this.#value = val;
+        this.handleSearch?.();
+    }
 
     // State for the search debounce delay (in milliseconds)
     delay = $state(300);
 
     // State for toggling fuzzy search behavior
-    fuzzy = $state(true);
+    fuzzy = $state(false);
 
     // The instance of Fuse.js for performing the search
     fuseInstance: Fuse<any> | null = $state(null)
 
     onGlobalSearchChange: (value: string) => void = () => { };
 
-    constructor(config?: GlobalSearchPluginConfig) {
+    constructor(datagrid: DatagridCore<TOriginalRow>,config?: GlobalSearchPluginConfig) {
+        this.datagrid = datagrid;
         this.initialize(config);
     }
 
@@ -42,6 +53,7 @@ export class GlobalSearchFeature {
         this.fuzzy = config?.fuzzy ?? this.fuzzy;
         this.fuseInstance = config?.fuseInstance ?? this.fuseInstance;
         this.onGlobalSearchChange = config?.onGlobalSearchChange ?? this.onGlobalSearchChange;
+        this.handleSearch = debounce(()=>this.applySearch(), 1)//this.delay);
     }
 
     /**
@@ -52,11 +64,11 @@ export class GlobalSearchFeature {
         this.fuseInstance = fuseInstance;
     }
 
-    /**
-     * Updates the current search value.
-     * @param value - The new search value to set.
-     */
-    updateSearchValue(value: string): void {
-        this.value = value;
+    applySearch(){
+        this.datagrid.features.pagination.goToFirstPage();
+        this.datagrid.cache.invalidate('filteredData');
+        this.datagrid.processors.data.executeFullDataTransformation();
+        this.onGlobalSearchChange?.(this.#value);
     }
+    handleSearch: () => void;
 }

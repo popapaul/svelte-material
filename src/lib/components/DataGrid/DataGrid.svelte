@@ -1,59 +1,58 @@
 <script lang="ts" generics="T">
 	import { setContext, untrack , type Snippet, type Component } from "svelte";
-	import { DatagridCore, type LeafColumn, type GridBasicRow } from "./datagrid/index.svelte";
+	import { DatagridCore, type LeafColumn, type GridBasicRow, type DatagridCoreConfig, type ColumnSizeState } from "./datagrid/index.svelte";
 	import CellHeader  from "./CellHeader.svelte";
 	import Column from "./Column.svelte";
     import Button from "../Button/Button.svelte";
+    import TextField from "../TextField/TextField.svelte";
+    import Pagination from "../Pagination/Pagination.svelte";
+    
     import Icon from "../Icon/Icon.svelte";
     import {flip} from "svelte/animate"
 	import { debounce } from "../../internal/Debounce";
     import {ArrowDropUp} from "@paulpopa/icons/md/outlined"   
     import CellData from "./CellData.svelte";
     import { slide } from "svelte/transition"
-	type ColumnComponent =   Component<LeafColumn<T>>;
+    import { Search } from '@paulpopa/icons/md/outlined';
+
     type Props = {
-        columns?: LeafColumn<T>[]; 
+        data:T[]; 
+        columns?: DatagridCoreConfig<T>["columns"]; 
         class?:string, 
-        data:T[], 
+        createBasicRowIdentifier?: (row:T) => string,
         footer?:Snippet<[DatagridCore<T>]>, 
         expand?:Snippet<[GridBasicRow<T>,  DatagridCore<T>]>, 
-        children:Snippet<[ColumnComponent]>; 
+        children:Snippet<[Component<LeafColumn<T>>]>; 
         header?:Snippet<[DatagridCore<T>]>,
         onSwitch?: (event:{dragged:GridBasicRow<T>, target:GridBasicRow<T>}) => void
-    } & Omit<DatagridCoreConfig<T>, "data", "columns">
+    } & DatagridCoreConfig<T>["features"]
     let { 
         data = $bindable(), 
         columns = $bindable([]), 
         footer, class:klass, 
         header, 
+        createBasicRowIdentifier,
         expand, 
         onSwitch,
         children,
-        ...rest
+        ...features
      }:Props  = $props();
-	setContext("columns", columns);
-    
 
 
-	const grid = new DatagridCore({data, columns, ...rest});
+	export const grid = new DatagridCore({data, columns:[], createBasicRowIdentifier, features}, false);
     setContext("datagrid", grid);
-    $effect(()=>{
-        columns;
-        data;
-
+ 
+     $effect(()=>{
+        if(grid.initial.data == data) return;
+       
         untrack(()=>{
-            grid.initializeState({data, columns, ...rest});
+            grid.initial.data = data;
+            grid.processors.data.executeFullDataTransformation();
         })
-    });
-
-   
-	$effect(()=>{
-     // grid.columns = grid.processors.column.initializeColumns(columns)
-	})
-
-
+     })
     type Position = 'top' | 'middle' | 'bottom';
 
+ 
 function getMouseVerticalPosition(event: DragEvent): Position {
     // The element over which the drag event is triggered
     const element = event.target as HTMLElement;
@@ -144,6 +143,20 @@ function getMouseVerticalPosition(event: DragEvent): Position {
     else e.target.parentNode.insertBefore(_el, e.target.nextSibling);
   }
 
+  function generateGridTemplate(columns: ColumnSizeState[]): string {
+    return columns
+        .map(col => {
+            if(col.width) 
+                return typeof col.width === "number" ? `${col.width}px` : col.width;
+
+            const min = (col.minWidth ?? col.width ?? 100) + "px";
+            const max = (col.maxWidth ?? col.width ?? 100) + "px"; 
+
+            return `minmax(${min}, ${col.grow ? max : "1fr"})`;
+        })
+        .join(" ");
+    }
+
   function touchEnd(e) {
     console.log("touchEnd()");
   }
@@ -151,15 +164,21 @@ function getMouseVerticalPosition(event: DragEvent): Position {
 
 </script>
 {@render children(Column)}
-<div  class="grid-wrapper {klass}">
-    <div>
+<div class="grid-wrapper rounded-md overflow-hidden {klass}" style="--cols-count:{grid.columns.length+1};">
+    <header class="px-4 py-1 flex bg-white">
         {@render header?.(grid)}
-    </div>
-	<div class="grid-content">
+        <TextField clearable class="ml-auto max-w-[250px]" bind:value={grid.features.globalSearch.value}  onclear={() => (grid.features.globalSearch.value = '')}>
+			{#snippet prepend()}
+				<Icon path={Search} size="22" />
+			{/snippet}
+            Search
+        </TextField>
+    </header>
+	<div class="grid-content" style="grid-template-columns: {expand ? "50px" :""} {generateGridTemplate(grid.columnManager.getLeafColumns().map(y=>y.state.size))}">
 		<div class="grid-header">
 			<div class="grid-header-row">
                 {#if expand}
-                    <div style="width:50px;"></div>
+                    <div></div>
                 {/if}
 				{#each grid.columnManager.getLeafColumns() as column}
 					<CellHeader {grid} {column}/>
@@ -169,7 +188,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
 		<div class="grid-body">
 			{#each grid.rows.getBasicRows() as row(row.identifier)}
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
-                <div class="grid-row {hovered.position}" class:hovered={hovered.row == row} animate:flip={{duration:250}}
+                <div class="grid-row {hovered.position}" class:hovered={hovered.row == row} animate:flip={{duration:300}}
                     draggable="true"
                     ondragstart={() => (draggedItem = row)}
                     ondragover={(e)=> {e.preventDefault();  dragOver(e, row)}}
@@ -178,9 +197,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
                     ontouchstart={touchStart}
                     ontouchmove={touchMove}
                     ontouchend={touchEnd}>
-                    <div class="flex w-full">
                     {#if expand}
-                        <div style="width:50px;" class="flex justify-between">
                             <Button
                                 depressed
                                 icon
@@ -189,14 +206,12 @@ function getMouseVerticalPosition(event: DragEvent): Position {
                                 onclick={() => grid.handlers.rowExpanding.toggleRowExpansion(row.identifier)}>
                                 <Icon path={ArrowDropUp} rotate={row.isExpanded() ? 180 : 90} />
                             </Button>
-                        </div>
                         {/if}
                         {#each grid.columnManager.getLeafColumnsInOrder() as column}
                             <CellData datagrid={grid} {row} {column} />
                         {/each}
-                    </div>
                     {#if expand && row.isExpanded()}
-                        <div transition:slide={{axis:"y"}}>
+                        <div class="row-expand" transition:slide={{axis:"y"}}>
                             {@render expand(row, grid)}
                         </div>
                     {/if}
@@ -206,8 +221,14 @@ function getMouseVerticalPosition(event: DragEvent): Position {
 
 		</div>
 	</div>
-    <footer>
+    <footer class="px-4 py-1">
         {@render footer?.(grid)}
+        
+        <Pagination
+            type="select"
+            bind:page={grid.features.pagination.page}
+            bind:pageSize={grid.features.pagination.pageSize}
+            count={grid.features.pagination.count} />
     </footer>
 </div>
 
@@ -250,17 +271,29 @@ function getMouseVerticalPosition(event: DragEvent): Position {
     /* Grid Content and Header */
         .grid-content {
             background-color: hsl(var(--grid-row-even-background));
-            
             flex-grow: 1;
             max-height: 100%;
-            display: flex;
-            flex-direction: column;
+            display: grid;
             overflow: auto;
             position: relative;
+            grid-auto-rows: max-content;
+        }
+        .row-expand{
+            border-top: 1px solid hsl(var(--grid-border));
+            grid-column: span var(--cols-count);
+        }
+        .grid-body{
+            grid-column: span var(--cols-count);
+            grid-template-columns: subgrid;
+            display:grid;
+            grid-auto-rows: max-content;
         }
 
         footer{
             border-top: 1px solid hsl(var(--grid-border));
+        }
+        header{
+            border-bottom: 1px solid hsl(var(--grid-border));
         }
       
 
@@ -269,13 +302,18 @@ function getMouseVerticalPosition(event: DragEvent): Position {
             z-index: 11;
             background-color: hsl(var(--grid-header-row-background));
             position: sticky;
+            grid-column: span var(--cols-count);
+            grid-template-columns: subgrid;
+            display:grid;
         }
         :global(.grid-content .grid-content .grid-header){
             z-index: 10;
         }
         .grid-header-row {
             background-color: hsl(var(--grid-header-row-background));
-            display: flex;
+            display: grid;
+            grid-column: span var(--cols-count);
+            grid-template-columns: subgrid;
             border-bottom: 1px solid hsl(var(--grid-border));
             min-width: fit-content;
         }
@@ -295,7 +333,9 @@ function getMouseVerticalPosition(event: DragEvent): Position {
 
     /* Grid Rows */
     .grid-row {
-    
+        grid-column: span var(--cols-count);
+        grid-template-columns: subgrid;
+        display:grid;
         border-bottom: 1px solid hsl(var(--grid-border));
         border-top: none;
         min-width: fit-content;

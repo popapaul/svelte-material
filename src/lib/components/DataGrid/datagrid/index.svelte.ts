@@ -78,6 +78,9 @@ export class DatagridCore<TOriginalRow = any, TMeta = any> {
 
     constructor(config: DatagridCoreConfig<TOriginalRow>, lazy: boolean = true) {
         this.features = new FeatureManager(this, config);
+    
+        if(config.createBasicRowIdentifier)
+        this.config.createBasicRowIdentifier = config.createBasicRowIdentifier
 
         if (config.lifecycleHooks) this.lifecycleHooks = config.lifecycleHooks;
         if (lazy) return;
@@ -134,7 +137,7 @@ export class DatagridCore<TOriginalRow = any, TMeta = any> {
     } = {}): void {
         const timeStart = performance.now();
 
-        operation();
+        operation?.();
 
         const {
             recalculateAll = false,
@@ -158,7 +161,7 @@ export class DatagridCore<TOriginalRow = any, TMeta = any> {
         if (!data) throw new Error('Data is required');
         if (!Array.isArray(data)) throw new Error('Data must be an array');
         if (!Array.isArray(columns)) throw new Error('Columns must be an array');
-        if (columns.length === 0) throw new Error('Columns array must not be empty');
+       // if (columns.length === 0) throw new Error('Columns array must not be empty');
       //  if (data.length === 0) throw new Error('Data array must not be empty');
     }
 }

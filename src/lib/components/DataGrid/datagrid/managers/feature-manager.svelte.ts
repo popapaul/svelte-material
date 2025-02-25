@@ -37,7 +37,7 @@ export class FeatureManager<TOriginalRow = any> {
         this.columnGrouping = new ColumnGroupingFeature(this.datagrid, config?.features?.columnGrouping);
 
 
-        this.globalSearch = new GlobalSearchFeature({
+        this.globalSearch = new GlobalSearchFeature(this.datagrid,{
             manual: config?.features?.globalSearch?.manual,
             delay: config?.features?.globalSearch?.delay,
             fuzzy: config?.features?.globalSearch?.fuzzy,

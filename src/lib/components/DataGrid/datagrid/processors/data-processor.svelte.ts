@@ -49,10 +49,10 @@ export class DataProcessor<TOriginalRow> {
 
     applyGlobalSearch(data: TOriginalRow[]): TOriginalRow[] {
         data = this.datagrid.lifecycleHooks.executePreGlobalSearch(data);
-
+        console.log("search ", this.datagrid.features.globalSearch.value)
         const isManualSortingEnabled = this.datagrid.features.globalSearch.manual
         const valueIsEmpty = this.datagrid.features.globalSearch.value === ''
-
+       
         if (isManualSortingEnabled || valueIsEmpty) return data
 
         const searchValue = this.datagrid.features.globalSearch.value.toLowerCase();
@@ -62,8 +62,8 @@ export class DataProcessor<TOriginalRow> {
             const fuseInstance = this.datagrid.features.globalSearch.fuseInstance;
             if (!fuseInstance) throw new Error('Fuse instance is not initialized');
             return fuseInstance.search(searchValue).map(result => result.item);
-
         }
+
         const applySimpleSearch = (data: TOriginalRow[]) => {
             const searchableColumns = flattenColumnStructureAndClearGroups(this.datagrid.columns).filter(c => ['accessor', 'computed'].includes(c.type)).filter(col => col.options.searchable !== false) as (AccessorColumn<TOriginalRow> | ComputedColumn<TOriginalRow>)[];
             return data.filter(item =>
@@ -176,7 +176,7 @@ export class DataProcessor<TOriginalRow> {
         // Update cache and pagination
         this.metrics.measure('Cache Update', () => {
             this.datagrid.cache.rows = visibleRows;
-            this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
+           // this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
             this.datagrid.cache.paginatedRows = this.paginateRows(visibleRows);
         });
 
@@ -204,7 +204,7 @@ export class DataProcessor<TOriginalRow> {
 
 
         this.datagrid.features.pagination.visibleRowsCount = data!.length;
-        this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(data);
+        //this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(data);
         // Apply pagination
         this.datagrid.cache.paginatedRows = this.paginateRows(basicRows!);
     }
@@ -363,7 +363,8 @@ export class DataProcessor<TOriginalRow> {
     }
 
     private paginateRows(rows: GridRow<TOriginalRow>[]): GridRow<TOriginalRow>[] {
-        const { page, pageSize } = this.datagrid.features.pagination;
+        const { page, pageSize, manual } = this.datagrid.features.pagination;
+        if(manual) return rows;
         const start = (page - 1) * pageSize;
         return rows.slice(start, start + pageSize);
     }
@@ -381,7 +382,7 @@ export class DataProcessor<TOriginalRow> {
         this.metrics.measure('Group Expansion', () => {
             const visibleRows = this.getVisibleRows();
             this.datagrid.cache.rows = visibleRows;
-            this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
+           // this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
             this.datagrid.cache.paginatedRows = this.paginateRows(visibleRows);
         });
     }

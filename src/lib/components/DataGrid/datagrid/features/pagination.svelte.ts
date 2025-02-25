@@ -1,11 +1,20 @@
 import type { DatagridCore } from "../index.svelte";
 
+
+
 export type PaginationPluginConfig = {
     manual?: boolean;
+    // The current page number (starts at page 1)
     page?: number;
+    // The data count number
+    count?: number;
+    // The number of items per page (initially set to 20)
     pageSize?: number;
+    // Available page size options (e.g., [10, 20, 50, 100])
     pageSizes?: number[];
+    // Total number of pages in the current data set
     pageCount?: number;
+    // The total count of rows visible in the current data set
     visibleRowsCount?: number;
 
     autoResetPage?: boolean;
@@ -15,30 +24,54 @@ export type PaginationPluginConfig = {
 /**
  * Manages pagination functionality within the data grid.
  */
-export class PaginationFeature<TOriginalRow = any> {
+export class PaginationFeature<TOriginalRow = any> implements PaginationPluginConfig {
     // The instance of the data grid associated with this feature
     datagrid: DatagridCore<TOriginalRow>;
 
+    #pageSize = $state(20);
 
-    autoResetPage: boolean = $state(false);
-    onPaginationChange: (config: PaginationFeature<any>) => void = () => { };
-
-    manual: boolean = $state(false);
-
-    // The current page number (starts at page 1)
-    page = $state(1);
-
-    // The number of items per page (initially set to 10)
-    pageSize = $state(10);
-
-    // Available page size options (e.g., [10, 20, 50, 100])
     pageSizes = $state([10, 20, 50, 100]);
 
-    // Total number of pages in the current data set
-    pageCount: number = $state(0);
+    visibleRowsCount = $state(0);
 
-    // The total count of rows visible in the current data set
-    visibleRowsCount: number = $state(0);
+    #page = $state(1);
+
+    #count = $state(0);
+
+    manual = $state(false);
+
+    autoResetPage = $state(false);
+   
+    onPaginationChange: (config: PaginationFeature<any>) => void = () => { };
+
+    set pageSize(value:number){
+        this.#pageSize = value;
+        this.onPaginationChange(this);
+    }
+    get pageSize(){
+        return this.#pageSize;
+    }
+
+    set page(value:number){
+        this.#page = value;
+        this.onPaginationChange(this);
+    }
+    get page(){
+        return this.#page;
+    }
+
+    get count(){
+        return this.manual ? this.#count : this.datagrid.cache.rows.length;
+    };
+
+    set count(value:number) {
+        this.#count  = value;
+    }
+
+    get pageCount(){
+        return Math.ceil(this.#count / this.pageSize);
+    }
+
 
     /**
      * Constructor for setting up the data grid and initializing states.
@@ -50,14 +83,14 @@ export class PaginationFeature<TOriginalRow = any> {
     }
 
     initialize(config?: PaginationPluginConfig) {
+        this.onPaginationChange = config?.onPaginationChange ?? this.onPaginationChange;
         this.manual = config?.manual ?? this.manual;
         this.pageSizes = config?.pageSizes ?? this.pageSizes;
-        this.pageCount = config?.pageCount ?? this.pageCount;
         this.visibleRowsCount = config?.visibleRowsCount ?? this.visibleRowsCount;
-        this.pageSize = config?.pageSize ?? this.pageSize;
-        this.page = config?.page ?? this.page;
+        this.#pageSize = config?.pageSize ?? this?.pageSize;
+        this.#count = config?.count ?? this.count;
+        this.#page = config?.page ?? this.page;
         this.autoResetPage = config?.autoResetPage ?? this.autoResetPage;
-        this.onPaginationChange = config?.onPaginationChange ?? this.onPaginationChange;
     }
 
 
@@ -145,7 +178,6 @@ export class PaginationFeature<TOriginalRow = any> {
     setPageSize(newSize: number): void {
         if (newSize === this.pageSize) return; // No action if the page size is the same
         this.pageSize = newSize;
-        this.pageCount = this.getPageCount(this.datagrid.cache.rows || []);
         // Recalculate pagination and ensure the page is within the valid range after the page size change
         this.goToClosestPage();
     }

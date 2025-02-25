@@ -271,7 +271,7 @@ export class HandlersManager {
     }
     globalSearch = {
         updateValue: (value: string) => {
-            this.datagrid.features.globalSearch.updateSearchValue(value)
+            this.datagrid.features.globalSearch.value = value;
             this.datagrid.features.pagination.goToFirstPage();
             this.datagrid.cache.invalidate('filteredData');
             this.datagrid.processors.data.executeFullDataTransformation();

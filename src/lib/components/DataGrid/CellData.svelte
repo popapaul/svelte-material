@@ -13,10 +13,6 @@
         class:offset-left={column.state.pinning.position === 'left'}
         class:offset-right={column.state.pinning.position === 'right'}
         style:--offset="{column.state.pinning.offset}px"
-        style:--min-width="{column.state.size.minWidth}px"
-        style:--width={!column.state.size.grow ? `${column.state.size.width}px` : '50px'}
-        style:--max-width={`${column.state.size.maxWidth}px`}
-        style:flex-grow={column.state.size.grow ? 1 : null}
         style={`${['left', 'right'].includes(column.state.pinning.position) && `background-color: black;`}`}
     >
         {#if column.cell}
@@ -36,11 +32,8 @@
         padding: 0.5rem;
         border-right: 1px solid (var(--grid-border));
         cursor: pointer;
-        width: var(--width);
         margin-top:auto;
         margin-bottom:auto;
-        max-width: var(--max-width);
-        min-width: var(--min-width);
         overflow: hidden;
         text-overflow: ellipsis;
     }

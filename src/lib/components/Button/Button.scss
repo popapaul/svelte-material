@@ -1,11 +1,13 @@
 @use 'sass:math';
-
 @use "sass:map";
 @use 'variables';
 @use "../../styles/tools/colors";
 @use "../../styles/tools/elevation";
 @use "../../styles/tools/functions";
 @use "../../styles/variables" as styles-variables;
+
+
+@layer s_components{
 
 
 .s-btn {
@@ -44,8 +46,6 @@
 		}
 	}
 
-
-
 	.s-btn__content {
 		display: flex;
 		align-items: center;
@@ -59,8 +59,6 @@
 		letter-spacing: functions.map-deep-get(styles-variables.$headings, 'button', 'letter-spacing');
 		text-transform: functions.map-deep-get(styles-variables.$headings, 'button', 'text-transform');
 	}
-
-
 
 	&::before {
 		border-radius: inherit;
@@ -185,4 +183,5 @@
 			}
 		}
 	}
+}
 }

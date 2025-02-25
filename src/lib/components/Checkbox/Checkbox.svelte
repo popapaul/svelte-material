@@ -125,9 +125,8 @@
 	<div
 		class="s-checkbox__wrapper"
 		class:disabled
-		use:Ripple={{ centered: true }}
-		use:TextColor={error ? 'error' : color}
-		use:TextColor={checked || indeterminate ? color : false}
+		
+
 	>
 		<input
 			{...rest}
@@ -149,7 +148,7 @@
 			{/if}
 		</div>
 	</div>
-	<div style="display:flex;flex-direction:column" use:TextColor={error ? 'error' : color}>
+	<div style="display:flex;flex-direction:column">
 		<label for={id}>
 			{@render children?.()}
 		</label>

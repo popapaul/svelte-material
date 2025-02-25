@@ -1,15 +1,13 @@
 <script lang="ts">
 	import './MaterialApp.scss';
-	/** classes added to the App */
-	
 	
 	interface Props {
+		/** classes added to the App */
 		class?: string;
 		/** theme for the app */
 		theme?: 'light' | 'dark';
 		style?: string;
 		children?: import('svelte').Snippet;
-		[key: string]: any
 	}
 
 	let {
@@ -20,6 +18,8 @@
 		...rest
 	}: Props = $props();
 </script>
+
+
 
 <div class="s-app {klass} theme--{theme}" {...rest} {style} >
 	{@render children?.()}

@@ -1,7 +1,7 @@
 
 export const DEFAULT_COLUMN_SIZE = {
-    width: 200,
-    minWidth: 60,
+    width: undefined,
+    minWidth: 160,
     maxWidth: 700,
     grow: true
 }

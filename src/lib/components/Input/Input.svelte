@@ -47,9 +47,9 @@
 	class:error
 	class:success
 	class:readonly
-	class:disabled
+	class:disabled	
 	{style}
-	use:TextColor={error ? 'error' : color}
+
 >
 	{@render prependOuter?.()}
 	<div class="s-input__control">

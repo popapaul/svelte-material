@@ -2,31 +2,35 @@
 @use '../../styles/generic/color';
 // @use '../../styles/generic/reset';
 
-*::-webkit-scrollbar {
-	width: 0.4rem;
-	height: 0.4rem;
-}
-*::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
-}
-*::-webkit-scrollbar-thumb {
-	background-color: #a7a7a7;
-}
+@layer s_components {
+	
+	*::-webkit-scrollbar {
+		width: 0.4rem;
+		height: 0.4rem;
+	}
+	*::-webkit-scrollbar-track {
+		-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+	}
+	*::-webkit-scrollbar-thumb {
+		background-color: #a7a7a7;
+	}
 
-.hideScroll::-webkit-scrollbar {
-	display: none;
-}
-.hideScroll {
-	overflow: hidden;
-	-ms-overflow-style: none; /* IE and Edge */
-	scrollbar-width: none; /* Firefox */
-}
+	.hideScroll::-webkit-scrollbar {
+		display: none;
+	}
+	.hideScroll {
+		overflow: hidden;
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
 
-.s-ripple-container {
-	position: relative;
-	overflow: hidden;
-}
+	.s-ripple-container {
+		position: relative;
+		overflow: hidden;
+	}
 
-svg:not([fill]) {
-	fill: currentColor;
+	svg:not([fill]) {
+		fill: currentColor;
+	}
+
 }
