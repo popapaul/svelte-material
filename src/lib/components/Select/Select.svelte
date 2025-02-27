@@ -97,7 +97,8 @@
 
 
 	let TextFieldInstance: TextField<string>;
-	
+	let inputValue = $state("");
+	let placeholderValue = $state(null);
 	type DiscriminatedProps = { multiple:true, value:T[], onchange?:(value:T[])=>void } | { multiple?:false, value:T, onchange?:(value:T)=>void} ;
 	const internal = $derived({
 		multiple,
@@ -135,6 +136,7 @@
 	};
 	
 	const appendValue = (newValue:any)=>{
+		if(!newValue) return;
 		items.push(newValue);
 		if(internal.multiple == true)
 			internal.value.push(newValue)
@@ -146,21 +148,45 @@
 		const input = event.currentTarget as HTMLInputElement;
 		if (event.key === 'Enter') {
 			appendValue(input.value);
+			placeholderValue = null;
 			input.value = "";
+			handleChange(event);
 		}
-
-		if(event.key === "Backspace")
+		else if (event.key === "Backspace" && inputValue.trim() === "" && internal.value?.length) {
+			if(internal.multiple === true)
+			{
+				placeholderValue = internal.value.pop();
+			}
+			else
+			{
+				placeholderValue = internal.value;
+				internal.value = null;
+			}
+			inputValue = getSelectString(placeholderValue);
+		}
+		else if(internal.multiple != true && internal.value)
 		{
-			if(input.value?.length) return
-			if(internal.multiple)
-				internal.value.pop();
+			placeholderValue = internal.value;
+			internal.value = null;
 		}
 	}
-	const handleChange = (event)=>{
-		onchange?.(event);
+	const handleChange = ()=>{
+		onchange?.(value);
 		TextFieldInstance?.validate();
 		if(!multiple)
 			active = false;
+	}
+
+	const handleBlur = ()=>{
+		//appendValue(inputValue); 
+		inputValue = "";
+		if(!placeholderValue) return;
+
+		if(internal.multiple == true)
+			internal.value.push(placeholderValue);
+		else
+			internal.value = placeholderValue;
+		
 	}
 </script>
 
@@ -181,13 +207,13 @@
 			labelActive={active || !!value}
 			value={format(value)}
 			onclear={() => (value = null)}
-			bind:inputElement
+			
 			readonly
 			{disabled}
 			{hint}
 		>	
 			{#snippet content()}
-				{#if internal.value || internal.value ===0 }
+				{#if internal.value || internal.value === 0 }
 					{#each (Array.isArray(internal.value) ? internal.value : [internal.value]) as val}
 						{#if chips}
 							{#if chip}
@@ -196,22 +222,26 @@
 								<Chip size="small" close onclose={() => removeItem(val)}>{getSelectString(val)}</Chip>
 							{/if}
 						{:else}
-							<span style="margin-right:4px;">{getSelectString(val)}</span>
+							<span onclick={()=>inputElement?.focus()} style="margin-right:4px;">{getSelectString(val)}</span>
 						{/if}
 					{/each}
 				{/if}
 				{#if acceptValue}
-					<input onkeydown={handleKeypress} onblur={(event)=>{appendValue(event.currentTarget.value); event.currentTarget.value = ""}} />
+					<input 
+						bind:this={inputElement}
+						bind:value={inputValue} 
+						onkeydown={handleKeypress}
+						onblur={handleBlur} 
+						/>
 				{/if}
 			{/snippet}
-			
-			 {#snippet append()}
+			{#snippet append()}
 				<Icon
 					onclick={() => active && setTimeout(() => (active = false), 2)}
 					path={DOWN_ICON}
 					rotate={active ? 180 : 0}
 				/>
-			 {/snippet}
+			{/snippet}
 		</TextField>
 	{/snippet}
 	{#if filterable}

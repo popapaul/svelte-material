@@ -4,7 +4,7 @@
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
      let { column, grid }: { grid:DatagridCore<T>, column: LeafColumn<T>} = $props();
-     import {ArrowDropUp, Sort} from "@paulpopa/icons/md/outlined"   
+     import { ArrowDropUp } from "@paulpopa/icons/md/outlined"   
     
     const toggleSort = () => grid.handlers.sorting.toggleColumnSorting(column, false);
  

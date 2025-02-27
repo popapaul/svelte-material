@@ -74,7 +74,9 @@
 
 <!-- svelte-ignore a11y_missing_attribute -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
+
 <svelte:element
+	{...rest}
 	this={tag}
 	bind:this={button}
 	{href}
@@ -92,8 +94,6 @@
 	{onclick}
 	{style}
 	aria-disabled={disabled}
-	
-	{...rest}
 >
 	{@render children?.()}
 </svelte:element>

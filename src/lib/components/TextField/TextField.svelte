@@ -188,23 +188,23 @@
 				
 			<!-- <slot name="content" /> -->
 			<!-- keypress Event is deprecated. Use keydown or keyup instead -->
-				{#if content}
-					{@render content()}
-				{:else}
-			<input
-				bind:this={inputElement}
-				bind:value
-				{type}
-				{placeholder}
-				{id}
-				{readonly}
-				{disabled}
-				aria-invalid={error}
-				onfocus={onFocus}
-				onblur={onBlur}
-				onchange={handleChange}
-				{...rest}
-			/>
+			{#if content}
+				{@render content()}
+			{:else}
+				<input
+					bind:this={inputElement}
+					bind:value
+					{type}
+					{placeholder}
+					{id}
+					{readonly}
+					{disabled}
+					aria-invalid={error}
+					onfocus={onFocus}
+					onblur={onBlur}
+					onchange={handleChange}
+					{...rest}
+				/>
 			{/if}
 		</div>
 
