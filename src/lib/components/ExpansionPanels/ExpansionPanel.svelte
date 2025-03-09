@@ -21,6 +21,7 @@
 		// Styles to add to the panel.
 		style?: string;
 		title?: string;
+		value?: any;
 		header?: import('svelte').Snippet;
 		icon?: import('svelte').Snippet<[any]>;
 		children?: import('svelte').Snippet;
@@ -34,12 +35,13 @@
 		disabled = $bindable(false),
 		style = null,
 		title,
+		value = context.index(),
 		header,
 		icon,
 		children
 	}: Props = $props();
 
-	const value = context.index();
+	
 	const active = $derived(context.values.includes(value));
 
 	function toggle() {

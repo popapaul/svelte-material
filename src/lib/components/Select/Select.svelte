@@ -150,7 +150,7 @@
 			appendValue(input.value);
 			placeholderValue = null;
 			input.value = "";
-			handleChange(event);
+			handleChange();
 		}
 		else if (event.key === "Backspace" && inputValue.trim() === "" && internal.value?.length) {
 			if(internal.multiple === true)
