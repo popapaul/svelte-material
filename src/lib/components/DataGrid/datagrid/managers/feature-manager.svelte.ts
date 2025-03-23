@@ -41,6 +41,7 @@ export class FeatureManager<TOriginalRow = any> {
             manual: config?.features?.globalSearch?.manual,
             delay: config?.features?.globalSearch?.delay,
             fuzzy: config?.features?.globalSearch?.fuzzy,
+            onGlobalSearchChange: config?.features?.globalSearch?.onGlobalSearchChange,
             fuseInstance: config?.features?.globalSearch?.fuseInstance || initializeFuseInstance(this.datagrid.initial.data || [], flattenColumnStructureAndClearGroups(this.datagrid.columns).map(col => col.columnId as string)),
             value: config?.features?.globalSearch?.value
         });

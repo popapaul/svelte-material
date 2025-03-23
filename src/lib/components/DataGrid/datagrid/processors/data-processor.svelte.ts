@@ -49,7 +49,6 @@ export class DataProcessor<TOriginalRow> {
 
     applyGlobalSearch(data: TOriginalRow[]): TOriginalRow[] {
         data = this.datagrid.lifecycleHooks.executePreGlobalSearch(data);
-        console.log("search ", this.datagrid.features.globalSearch.value)
         const isManualSortingEnabled = this.datagrid.features.globalSearch.manual
         const valueIsEmpty = this.datagrid.features.globalSearch.value === ''
        

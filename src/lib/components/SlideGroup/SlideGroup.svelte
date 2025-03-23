@@ -45,23 +45,24 @@
 	setContext<SlideGroupContext>(SLIDE_GROUP, (item) => {
 		const left = item.offsetLeft;
 		const width = item.offsetWidth;
-
+		
 		if (centerActive) x = left + (width - wrapperWidth) / 2;
-		else if (left + 1.25 * width > wrapperWidth + x) {
-			x = left + 1.25 * width - wrapperWidth;
-		} else if (left < x + width / 4) {
-			x = left - width / 4;
-		}
+			//todo
+		// else if (left + 1.25 * width > wrapperWidth + x) {
+		// 	x = left + 1.25 * width - wrapperWidth;
+		// } else if (left < x + width / 4) {
+		// 	x = left - width / 4;
+		// }
 	});
 
 	$effect(() => {
-		
+		wrapperWidth;
+		contentWidth;
 		untrack(()=>{
 			if (x + wrapperWidth > contentWidth)
 			 x = contentWidth - wrapperWidth;
 			else if (x < 0) x = 0;
 		})
-	
 	});
 
 	function nextItem() {

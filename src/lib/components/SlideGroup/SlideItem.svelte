@@ -49,6 +49,6 @@
 <style>
 	.s-slide-item {
 		display: inline-flex;
-		flex: 0 1 auto;
+		flex: 0 1 0px;
 	}
 </style>

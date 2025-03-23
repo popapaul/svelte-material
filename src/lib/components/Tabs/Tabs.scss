@@ -8,7 +8,7 @@
 	display: flex;
 	background-color: var(--theme-cards);
 
-	[slot='tabs'] {
+	.s-slide-group {
 		display: flex;
 		flex: 1 0 auto;
 		position: relative;
@@ -21,7 +21,7 @@
 
 	&.grow {
 		.s-tab {
-			flex: 1 0 auto;
+			flex: 1 0 0;
 			max-width: none;
 		}
 	}

@@ -81,7 +81,7 @@
       disabled = false,
       placeholder = null,
       required = false,
-      value = $bindable(null),
+      value = $bindable(),
       isRange = false,
       startDate = null,
       endDate = null,

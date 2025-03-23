@@ -52,8 +52,9 @@ export class GlobalSearchFeature<TOriginalRow = any> {
         this.delay = config?.delay ?? this.delay;
         this.fuzzy = config?.fuzzy ?? this.fuzzy;
         this.fuseInstance = config?.fuseInstance ?? this.fuseInstance;
+        console.log("onGlobalSearchChange", config?.onGlobalSearchChange)
         this.onGlobalSearchChange = config?.onGlobalSearchChange ?? this.onGlobalSearchChange;
-        this.handleSearch = debounce(()=>this.applySearch(), 1)//this.delay);
+        this.handleSearch = debounce(()=>this.applySearch(), 100)//this.delay);
     }
 
     /**
