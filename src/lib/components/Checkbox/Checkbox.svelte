@@ -12,6 +12,7 @@
 	import { getContext } from 'svelte';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
 	import type {  HTMLInputAttributes } from 'svelte/elements';
+	import Input from '../Input/Input.svelte';
 
 	const context = getContext<FormContext>(FORM_FIELDS);
 
@@ -121,12 +122,10 @@
 	}
 </script>
 
-<div class="s-checkbox {klass}" {style}>
+<Input class="s-checkbox {klass}" {color} {disabled} {error}  {style}>
 	<div
 		class="s-checkbox__wrapper"
 		class:disabled
-		
-
 	>
 		<input
 			{...rest}
@@ -135,6 +134,7 @@
 			aria-checked={checked}
 			bind:checked
 			bind:indeterminate
+			aria-invalid={error}
 			{id}
 			{disabled}
 			{value}
@@ -159,4 +159,4 @@
 			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
 		</div>
 	</div>
-</div>
+</Input>

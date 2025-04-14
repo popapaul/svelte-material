@@ -80,6 +80,7 @@
 	this={tag}
 	bind:this={button}
 	{href}
+	{type}
 	class="s-btn size-{size} {active ? activeClass : ''} {klass}"
 	class:s-btn--fab={fab}
 	class:icon

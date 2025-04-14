@@ -111,10 +111,10 @@
 	}
 
 	label {
-		height: variables.$input-label-height;
-		line-height: variables.$input-label-letter-spacing;
+		// --height: variables.$input-label-height;
+		// --line-height: variables.$input-label-letter-spacing;
 		color: var(--theme-text-secondary);
-		white-space: nowrap;
+		// --white-space: nowrap;
 		transition: styles-variables.$primary-transition;
 	}
 
