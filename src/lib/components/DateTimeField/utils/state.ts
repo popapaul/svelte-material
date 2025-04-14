@@ -1,4 +1,4 @@
-import { formatDate, parseDate } from "./dateUtils";
+import { formatDate } from "./dateUtils";
 
 /**
  * @typedef {object} ValueInit
@@ -10,7 +10,7 @@ import { formatDate, parseDate } from "./dateUtils";
 /**
  * Init internal props
  */
-export function initProps(value:Date|Date[], format:string, i18n:any, formatType: string) {
+export function initProps(value:Date|Date[], format:string, i18n:any, formatType: "php" | "standard") {
   const iDates = (Array.isArray(value) ? value : [value] ).filter(Boolean);
   let valueArray = iDates.map(val=> formatDate(val, format, i18n, formatType));  // for range we can get combined string 
 

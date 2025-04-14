@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { SvelteDate } from 'svelte/reactivity';
     import { fade } from 'svelte/transition';
   

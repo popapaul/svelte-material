@@ -4,12 +4,16 @@
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	font-size: variables.$card-title-font-size;
-	font-weight: variables.$card-title-font-weight;
-	letter-spacing: variables.$card-title-letter-spacing;
-	line-height: variables.$card-title-line-height;
-	word-break: variables.$card-title-word-break;
 	padding: variables.$card-subtitle-padding;
+	> :not([class^="s-"]) {
+		font-size: variables.$card-title-font-size;
+		font-weight: variables.$card-title-font-weight;
+		letter-spacing: variables.$card-title-letter-spacing;
+		line-height: variables.$card-title-line-height;
+		word-break: variables.$card-title-word-break;
+		
+	}
+	
 
 	+ .s-card-subtitle,
 	+ .s-card-title {

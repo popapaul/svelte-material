@@ -1,7 +1,7 @@
 <script lang="ts" generics="T">
-	import { getContext, type Snippet } from "svelte";
+	import type { Snippet } from "svelte";
 	import CellData from "./CellData.svelte";
-	import type { DatagridCore, GridBasicRow } from "./datagrid/index.svelte";
+	import type { DatagridCore, GridBasicRow } from "./datagrid/core/index.svelte";
 
     type Props = {
         expand?:Snippet<[GridBasicRow<T>, DatagridCore<T>]>,
@@ -9,12 +9,12 @@
         grid:DatagridCore<T>,
         hovered:'top' | 'middle' | 'bottom';
     }
-    let { expand, row, hovered, grid }: Props = $props();
+    let { row, hovered, grid }: Props = $props();
 </script>
 
-<div class="flex {hovered.position}" class:hovered>    
-    {#each grid.columnManager.getLeafColumnsInOrder() as column}
-        <CellData {grid} {row} {column} />
+<div class="flex {hovered}" class:hovered>    
+    {#each grid.columns.getLeafColumnsInOrder() as column}
+        <CellData datagrid={grid} {row} {column} />
     {/each}
 </div>
 

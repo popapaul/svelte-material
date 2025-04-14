@@ -7,6 +7,7 @@
 	import { clickOutside } from '../../actions/ClickOutside';
 	import { portal } from '../../actions/Portal';
 	import { fade } from 'svelte/transition';
+	import uid from '$lib/internal/uid';
 
 	/** Classes to add to menu. */
 	
@@ -60,6 +61,7 @@
 		activator
 	}: Props = $props();
 	
+	const id =  `s-menu-${uid(5)}`;
 	let activatorWidth = $state(0);
 	let activatorElem: HTMLDivElement = $state();
 	let menu: HTMLElement = $state();
@@ -116,11 +118,20 @@
 		hovered = true;
 	}
 	
+	const shouldClose = ({detail:event}: CustomEvent<Event & {target:HTMLElement}>) => {
+		const childrenMenus = menu.querySelectorAll('.s-menu__activator');
+		const include = [...childrenMenus].map(element => `#${element.id}.s-menu`);
+		if(include.some(element=> event.target.closest(element)))
+		return;
+		active = false ;
+		hovered = false;
+	};
 </script>
 
 	<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div
+	<div class="s-menu__activator"
+		{id}
 		bind:this={activatorElem}
 		onpointerenter={handleMouseEnter}
 		onpointerleave={handleMouseLeave}
@@ -136,9 +147,10 @@
 		<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
+			{id}
 			use:portal={activatorElem.closest("dialog") ??  ".s-app"}
-			use:clickOutside={{include:[activatorElem, ".s-menu"]}}
-			onclickOutside={()=>(active = false) && (hovered = false)}
+			use:clickOutside={{include:[activatorElem]}}
+			onclickOutside={shouldClose}
 			transition:fade|global={{ duration: 300 }}
 			bind:this={menu}
 			onpointerenter={handleMouseEnter}

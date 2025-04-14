@@ -24,6 +24,8 @@
 		outlined?: boolean;
 		/** Whether text field do not have elevation. */
 		flat?: boolean;
+
+		title?: string;
 		/** Whether text field height is reduced. */
 		dense?: boolean;
 		/** Whether text field has rounded corners. */
@@ -99,6 +101,7 @@
 		success = false,
 		id = `s-input-${uid(5)}`,
 		style = null,
+		title,
 		inputElement = $bindable(),
 		underline = true,
 		type = 'text',
@@ -173,7 +176,7 @@
 		{/if}
 
 		<div class="s-text-field__input">
-			{#if children}
+			{#if children || title}
 				<label
 					for={id}
 					class:active={labelActive ||
@@ -181,8 +184,12 @@
 						value?.toString?.() ||
 						focused ||
 						['date', 'time', 'datetime-local'].includes(type)}
-				>
-					{@render children()}
+				>	
+					{#if title}
+						{title}
+					{:else if children}
+						{@render children()}
+					{/if}
 				</label>
 			{/if}
 				

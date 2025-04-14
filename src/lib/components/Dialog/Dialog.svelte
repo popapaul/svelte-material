@@ -18,6 +18,7 @@
 		/** sets the height for the dialog */
 		height?: number | string;
 		onclose?: () => void;
+		onOpen?: () => void;
 		activator?: import('svelte').Snippet;
 		children?: import('svelte').Snippet<[any]>;
 	}
@@ -31,6 +32,7 @@
 		width = fullscreen ? '100%' : '500px',
 		height = fullscreen ? '100%' : '',
 		onclose,
+		onOpen,
 		activator,
 		children
 	}: Props = $props();
@@ -40,9 +42,10 @@
 	async function open() {
 		if (disabled) return;
 		
+
 		document.querySelector("body").style.overflow = "hidden";
-		
 		dialog?.showModal();
+		onOpen?.();
 	}
 
 	function close(event?:Event) {

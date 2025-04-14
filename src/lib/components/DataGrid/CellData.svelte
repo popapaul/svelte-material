@@ -1,7 +1,7 @@
 <script lang="ts" generics="T">
-	import type { LeafColumn, DatagridCore, GridBasicRow } from "./datagrid/index.svelte";
+	import type { LeafColumn, DatagridCore, GridBasicRow } from "./datagrid/core/index.svelte";
+    import { getCellContent } from './datagrid/core/utils.svelte';
     let { column, row, datagrid }: { row:GridBasicRow<T>; datagrid:DatagridCore<T>, column: LeafColumn<T> } = $props();
-      
 </script>
 
 {#if column.isVisible()}
@@ -10,17 +10,15 @@
         class:justify-end={column.align === 'right'}
         class:justify-center={column.align === 'center'}
         class:justify-start={column.align === 'left'}
-        class:offset-left={column.state.pinning.position === 'left'}
-        class:offset-right={column.state.pinning.position === 'right'}
-        style:--offset="{column.state.pinning.offset}px"
-        style={`${['left', 'right'].includes(column.state.pinning.position) && `background-color: black;`}`}
+        class:offset-left={column.pinning.position === 'left'}
+        class:offset-right={column.pinning.position === 'right'}
+        style:--offset="{column.pinning.offset}px"
+        style={`${['left', 'right'].includes(column.pinning.position) && `background-color: black;`}`}
     >
         {#if column.cell}
-            {@render column.cell({row, original:row.original, datagrid, column})}
-        {:else if column.formatterFn}
-            {column.formatterFn(row.original)}
+             {@render column.cell({ column, row, original:row.original, datagrid })}
         {:else}
-            {column.accessorFn(row.original)}
+            {@html getCellContent(column, row.original)}
         {/if}
     </div>
 {/if}

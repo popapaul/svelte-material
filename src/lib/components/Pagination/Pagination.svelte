@@ -15,7 +15,8 @@
 		pageSelect?: boolean;
 		type?: string;
 		style?: string;
-		onchange?:(page:number)=>void
+		onchange?:(page:number)=>void,
+		onSizeChange?:(size:number)=>void
 	}
 
 	let {
@@ -26,6 +27,7 @@
 		pageSizes = Array.from(new Set([pageSize, 10, 25, 50, 75, 100, 150].filter(Boolean))).sort((a, b) => a - b),
 		page = $bindable(),
 		pageSelect = true,
+		onSizeChange,
 		onchange,
 		type = 'buttons',
 		style = ''
@@ -52,14 +54,14 @@
 
 <div class="s-pagination {klass}">
 	
-	<span style="width:120px; {style}">{Math.min(page * pageSize + 1, count)}-{Math.min((Number(page) + 1) * pageSize, count)} din {count}</span>
+	<span style="width:120px; {style}">{Math.min((page -1) * pageSize + 1, count)}-{Math.min((Number(page)) * pageSize, count)} din {count}</span>
 	{#if pageSelect}
 		<Select
 			style="max-width:120px;"
 			mandatory
 			items={pageSizes.map((size) => ({ name: size?.toString(), value: size }))}
 			value={size}
-			onchange={(detail)=> pageSize = detail}
+			onchange={(detail)=> {pageSize = detail; onSizeChange?.(detail)}}
 		>
 			Randuri
 		</Select>
@@ -79,7 +81,6 @@
 						fab
 						size="x-small"
 						class={index + button == index ? 'secondary-color' : 'primary-color'}
-						variant={index == index + button ? 'raised' : 'text'}
 						onclick={(e) => onChange(index + button)}
 					>
 						<span class="s-number">{index + button + 1}</span>
@@ -96,7 +97,7 @@
 					value: size + 1
 				}))}
 				value={index}
-				onchange={(val) => onChange(val)}
+				onchange={(val) => onSizeChange?.(val)}
 			></Select>
 		{/if}
 

@@ -4,6 +4,7 @@
     import { scale } from './utils/transitions'
     import { MODE_MONTH, MODE_YEAR, MODE_DECADE, type UpdateProp } from './utils/constants';
     import { SvelteDate } from 'svelte/reactivity';
+	  import type { i18nType } from './utils/dateUtils';
   
     type Props = {
       wid?: number;

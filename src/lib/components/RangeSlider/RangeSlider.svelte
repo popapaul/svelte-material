@@ -2,7 +2,7 @@
 	import { run, preventDefault } from 'svelte/legacy';
 
 	import './RangeSlider.css';
-	import { spring } from 'svelte/motion';
+	import { Spring, spring } from 'svelte/motion';
 	import RangePips from './RangePips.svelte';
 
 
@@ -108,7 +108,7 @@
 	// copy the initial values in to a spring function which
 	// will update every time the values array is modified
 
-	let springPositions = $state();
+	let springPositions:Spring<number[]>;
 
 	const fixFloat = (v) => parseFloat(v.toFixed(precision));
 

@@ -8,8 +8,7 @@
 <script lang="ts" generics="T">
 	import './Checkbox.scss';
 	import { ripple as Ripple } from '../../actions/Ripple';
-	import TextColor from '../../internal/TextColor';
-	import { getContext } from 'svelte';
+	import { getContext, type Snippet } from 'svelte';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
 	import type {  HTMLInputAttributes } from 'svelte/elements';
 	import Input from '../Input/Input.svelte';
@@ -36,7 +35,7 @@
 
 	// The <input/> element of the checkbox.
 
-	interface Props extends HTMLInputAttributes{
+	interface Props extends Omit<HTMLInputAttributes, "checked">{
 		class?: string;
 		color?: string;
 		checked?: boolean;
@@ -57,7 +56,7 @@
 		inputElement?: HTMLInputElement;
 		messages?: string[];
 		error?: boolean;
-		children?: import('svelte').Snippet;
+		children?: Snippet;
 		ongroup?:(group:T[])=>void;
 	}
 

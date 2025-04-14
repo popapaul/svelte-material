@@ -1,4 +1,4 @@
-import { ClickOutsideParameter } from "./public";
+import type { ClickOutsideParameter } from "./public";
 
 /**
  * Dispatch a `clickOutside` {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent | CustomEvent } on click outside of node
@@ -61,7 +61,7 @@ export function clickOutside(node: Element, param: ClickOutsideParameter = { ena
 
 		if(node.contains((event.target as any)))
 			return;
-		
+	
 		if(include.some(element=>{
 			return typeof element === "string" ? event.target.closest(element) : element.contains(event.target)
 		}))

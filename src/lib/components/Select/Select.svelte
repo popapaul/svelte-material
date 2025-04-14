@@ -172,6 +172,7 @@
 	}
 	const handleChange = ()=>{
 		onchange?.(value);
+
 		TextFieldInstance?.validate();
 		if(!multiple)
 			active = false;
@@ -222,7 +223,7 @@
 								<Chip size="small" close onclose={() => removeItem(val)}>{getSelectString(val)}</Chip>
 							{/if}
 						{:else}
-							<span onclick={()=>inputElement?.focus()} style="margin-right:4px;">{getSelectString(val)}</span>
+							<button type="button" onclick={()=>inputElement?.focus()} style="margin-right:4px;">{getSelectString(val)}</button>
 						{/if}
 					{/each}
 				{/if}

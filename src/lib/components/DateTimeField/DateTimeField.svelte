@@ -1,21 +1,4 @@
-<script module>
-    export const config = {
-        theme: 'sdt-calendar-colors',
-        format: 'yyyy-mm-dd',
-        formatType: 'standard',
-        displayFormat: null,
-        displayFormatType: null,
-        minuteIncrement: 1,
-        weekStart: 1,
-        hourOnly: false,
-        todayBtn: true,
-        clearBtn: true,
-        clearToggle: true,
-        autocommit: true,
-        i18n: getLocalizedData("ro")
-    };
-  </script>
-  
+
   <script lang="ts">
     import { Cancel, CalendarToday, Clear, Check } from "@paulpopa/icons/md/outlined"
     import type {  ComponentProps } from "svelte";
@@ -23,61 +6,75 @@
     import { SvelteDate } from "svelte/reactivity";
     import Calendar from "./Calendar.svelte";
     import Time from "./Time.svelte";
-    import { formatDate, getLocalizedData, parseDate } from "./utils/dateUtils";
+    import { formatDate, getLocaleDateFormat, getLocalizedData, type i18nType, parseDate } from "./utils/dateUtils";
     import { computeResolvedMode, initProps } from "./utils/state";
-    import { MODE_MONTH, type UpdateProp } from "./utils/constants";
+    import { MODE_MONTH, type UpdateProp, type DateChange } from "./utils/constants";
     import TextField from "../TextField/TextField.svelte";
     import Menu from "../Menu/Menu.svelte";
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
   
-    type Props = Omit<ComponentProps<TextField<string>>, "value"> & {
-        disabled?: boolean;
-        placeholder?: string;
-        required?: boolean;
-        value?: Date | Date[];
-        isRange?: boolean;
-        startDate?: Date | string;
-        endDate?: Date | string;
-        pickerOnly?: boolean;
-        startView?: number;
-        mode?: 'auto' | 'date' | 'datetime' | 'time';
-        disableDatesFn?: ((currentDate: Date) => boolean);
-        manualInput?: boolean;
-        theme?: string;
-        format?: string;
-        formatType?: string;
-        displayFormat?: string;
-        displayFormatType?: string;
-        minuteIncrement?: number;
-        weekStart?: number;
-        todayBtn?: boolean;
-        clearBtn?: boolean;
-        clearToggle?: boolean;
-        autocommit?: boolean;
-        hourOnly?: boolean;
-        i18n?: import('$lib/i18n/index.js').i18nType;
-        onChange?: (value: Date | Date[]) => void;
-        onDateChange?: (prop: import('$lib/types/internal.js').DateChange) => void;
-        onCancel?: () => void;
-        onBlur?: () => void;
-        onInput?: (currentValue: string) => void;
-        actionRow?: import('svelte').Snippet<[
-            {
-            autocloseSupported: boolean;
-            onCancel: Function;
-            onConfirm: Function;
-            onClear: Function;
-            onToday: Function;
-            isTodayDisabled: boolean;
-            i18n: import('$lib/i18n/index.js').i18nType;
-            currentMode: string;
-            }
-        ]>;
-        children?: import('svelte').Snippet;
+
+
+    type PropsBase = Omit<ComponentProps<TextField<string>>, "value"> & {
+      locale?: string;
+      disabled?: boolean;
+      placeholder?: string;
+      required?: boolean;
+      startDate?: Date | string;
+      endDate?: Date | string;
+      pickerOnly?: boolean;
+      startView?: number;
+      mode?: 'auto' | 'date' | 'datetime' | 'time';
+      disableDatesFn?: (currentDate: Date) => boolean;
+      manualInput?: boolean;
+      theme?: string;
+      format?: string;
+      formatType?: "php" | "standard";
+      displayFormat?: string;
+      displayFormatType?: "php" | "standard";
+      minuteIncrement?: number;
+      weekStart?: number;
+      todayBtn?: boolean;
+      clearBtn?: boolean;
+      clearToggle?: boolean;
+      autocommit?: boolean;
+      hourOnly?: boolean;
+      i18n? : i18nType;
+      onDateChange?: (prop: DateChange) => void;
+      onCancel?: () => void;
+      onBlur?: () => void;
+      onInput?: (currentValue: string) => void;
+      actionRow?: import('svelte').Snippet<[
+        {
+          autocloseSupported: boolean;
+          onCancel: Function;
+          onConfirm: Function;
+          onClear: Function;
+          onToday: Function;
+          isTodayDisabled: boolean;
+          currentMode: string;
+        }
+      ]>;
+      children?: import('svelte').Snippet;
     };
 
+    type SingleDateProps =  {
+      isRange?: false;
+      value?: Date;
+      onChange?: (value: Date) => void;
+    };
+
+    type RangeDateProps =  {
+      isRange: true;
+      value?: Date[];
+      onChange?: (value: Date[]) => void;
+    };
+
+    type Props = (PropsBase & SingleDateProps) | (PropsBase & RangeDateProps);
+
     let {
+      locale = navigator.language || 'en-US',
       disabled = false,
       placeholder = null,
       required = false,
@@ -90,19 +87,19 @@
       mode = 'auto',
       disableDatesFn = null,
       manualInput = false,
-      theme = config.theme,
-      format = config.format,
-      formatType = config.formatType,
-      displayFormat = config.displayFormat,
-      displayFormatType = config.displayFormatType,
-      minuteIncrement = config.minuteIncrement,
-      weekStart = config.weekStart,
-      todayBtn = config.todayBtn,
-      clearBtn = config.clearBtn,
-      clearToggle = config.clearToggle,
-      autocommit = config.autocommit,
-      hourOnly = config.hourOnly,
-      i18n = config.i18n,
+      theme = 'sdt-calendar-colors',
+      format = getLocaleDateFormat(mode, locale),
+      formatType = "standard",
+      minuteIncrement = 1,
+      weekStart = 1,
+      displayFormat = null,
+      todayBtn = true,
+      clearBtn = true,
+      clearToggle = true,
+      autocommit = true,
+      displayFormatType = null,
+      hourOnly = false,
+      i18n = getLocalizedData(locale),
       onChange,
       onDateChange,
       onCancel,
@@ -112,9 +109,13 @@
       children,
       ...rest
     }:Props = $props();
-  
-    if (isRange && Array.isArray(value) === false) console.warn('[svelty-picker] value property must be an array for range picker');
-  
+    
+    const internal= $derived({
+      value,
+      isRange,
+      onChange
+    }) as SingleDateProps | RangeDateProps;
+
     const { iDates, iValues, iValueCombined} = initProps(value, format, i18n, formatType);
     /** @type {string|null} concated by `join()` */
     let prev_value = iValueCombined;
@@ -241,10 +242,10 @@
       value_display = computeDisplayValue();
       value = computeValue();
       // events
-      onChange?.(isRange ? innerDates : (innerDates[0] || null));    // change is dispatched on user interaction
+      onChange?.(isRange ? innerDates : (innerDates[0]));    // change is dispatched on user interaction
       onDateChange?.({
-        value: isRange ? value_array : (value_array[0] || null),
-        dateValue: isRange ? innerDates : (innerDates[0] || null),
+        value: isRange ? value_array : (value_array[0]),
+        dateValue: isRange ? innerDates : (innerDates[0]),
         displayValue: value_display,
         valueFormat: format,
         displayFormat: displayFormat,

@@ -277,7 +277,6 @@
 	</div>
 	<div style="margin:0 10px;">
 		<RangeSlider
-		
 			values={[internal.h * 100]}
 			onchange={(event) => internal.h = event.value / 100}
 			--range-slider="linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)"

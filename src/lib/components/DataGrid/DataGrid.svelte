@@ -1,12 +1,12 @@
 <script lang="ts" generics="T">
-	import { setContext, untrack , type Snippet, type Component } from "svelte";
-	import { DatagridCore, type LeafColumn, type GridBasicRow, type DatagridCoreConfig, type ColumnSizeState } from "./datagrid/index.svelte";
+	import { setContext, untrack , type Component, type ComponentProps, type Snippet } from "svelte";
+	import { DatagridCore,  type GridBasicRow, type ColumnSizeState, type DatagridCoreConfig, type GridRow } from "./datagrid/core/index.svelte";
 	import CellHeader  from "./CellHeader.svelte";
 	import Column from "./Column.svelte";
     import Button from "../Button/Button.svelte";
     import TextField from "../TextField/TextField.svelte";
     import Pagination from "../Pagination/Pagination.svelte";
-    
+    import "./datagrid/style.css";
     import Icon from "../Icon/Icon.svelte";
     import {flip} from "svelte/animate"
 	import { debounce } from "../../internal/Debounce";
@@ -14,43 +14,89 @@
     import CellData from "./CellData.svelte";
     import { slide } from "svelte/transition"
     import { Search } from '@paulpopa/icons/md/outlined';
+	import { VirtualList } from "./datagrid/virtualization";
 
     type Props = {
         data:T[]; 
-        columns?: DatagridCoreConfig<T>["columns"]; 
         class?:string, 
+        virtualization?:boolean,
+        children?: Snippet<[ { Column: Component<ComponentProps<Column<T>>> } ]>;
         createBasicRowIdentifier?: (row:T) => string,
-        footer?:Snippet<[DatagridCore<T>]>, 
-        expand?:Snippet<[GridBasicRow<T>,  DatagridCore<T>]>, 
-        children:Snippet<[Component<LeafColumn<T>>]>; 
-        header?:Snippet<[DatagridCore<T>]>,
-        onSwitch?: (event:{dragged:GridBasicRow<T>, target:GridBasicRow<T>}) => void
-    } & DatagridCoreConfig<T>["features"]
+        footer?: Snippet<[ { grid: DatagridCore<T> } ]>;
+        header?: Snippet<[ { grid: DatagridCore<T> } ]>;
+        expand?: Snippet<[ { row: GridRow<T>; original:T, grid: DatagridCore<T> } ]>;
+        onSwitch?: (event:{dragged:GridRow<T>, target:GridRow<T>}) => void,
+        count?: number;
+        globalSearchEnabled?:boolean;
+        serverSide?:boolean,
+        state?:{
+            page?: number;
+            size?: number;
+            search?: string;
+            sortBy?: string;
+            order?: string,
+        },
+
+    } & DatagridCoreConfig<T>["initialState"]
     let { 
-        data = $bindable(), 
-        columns = $bindable([]), 
-        footer, class:klass, 
+        data = $bindable<T[]>(), 
+        footer, 
+        class:klass, 
         header, 
         createBasicRowIdentifier,
         expand, 
         onSwitch,
         children,
-        ...features
+        virtualization,
+        state:context = $bindable(),
+        serverSide = false,
+        count = 0,
+        globalSearchEnabled = true,
+        ...restState
      }:Props  = $props();
+  
+    const initialState:DatagridCoreConfig<T>["initialState"] = {...restState};
+    Object.assign(initialState, {
+        pagination: { manual: serverSide, page: context?.page?? 1, pageSize: context?.size??25, totalCount: count },
+        sorting: {
+            isManual: serverSide,
+            allowMultiSort:false,
+            sortConfigs: context?.sortBy ? [{ columnId: context.sortBy, direction: context.order === "asc" ? "ascending" : "descending" }] : [],
+        },
+        globalSearch: { isManual: serverSide, searchQuery: context?.search ?? "" }
+    } satisfies DatagridCoreConfig<T>["initialState"]);
 
-
-	export const grid = new DatagridCore({data, columns:[], createBasicRowIdentifier, features}, false);
+	const grid = new DatagridCore({data, columns:[], rowIdGetter:createBasicRowIdentifier, initialState}, false);
     setContext("datagrid", grid);
- 
+    if (context) {
+        
+        grid.events.on("onPageSizeChange", console.log);
+        grid.events.on("onPageChange", ({ newPage }) => context.page = newPage);
+        grid.events.on("onPageSizeChange", ({ pageSize }) => context.size = pageSize);
+        grid.events.on("onSearchQueryChange", ({ newQuery }) => context.search = newQuery);
+        grid.events.on("onColumnSort", () => {
+            const sort = grid.features.sorting.sortConfigs?.[0];
+            context.sortBy = sort?.columnId ?? "";
+            context.order = sort?.direction === "descending" ? "desc" : sort?.direction === "ascending" ? "asc" : null;
+        });
+    }
+
+    $effect(()=>{
+        grid.features.pagination.totalCount = Number(count);
+    })
      $effect(()=>{
-        if(grid.initial.data == data) return;
-       
+        data;
         untrack(()=>{
-            grid.initial.data = data;
-            grid.processors.data.executeFullDataTransformation();
+            grid.originalState.data = data;
+            grid.cacheManager.invalidate('everything');
+		    grid.refresh(() => {}, { recalculateAll: true });
         })
-     })
-    type Position = 'top' | 'middle' | 'bottom';
+     });
+
+
+
+
+type Position = 'top' | 'middle' | 'bottom';
 
  
 function getMouseVerticalPosition(event: DragEvent): Position {
@@ -79,10 +125,9 @@ function getMouseVerticalPosition(event: DragEvent): Position {
         return 'bottom'; // Mouse is in the bottom third
     }
 }
-
     let _el =$state<HTMLElement>();
-	let draggedItem: GridBasicRow<T>;
-    let hovered: { row?: GridBasicRow<T>; position?: Position } = $state({});
+	let draggedItem: GridRow<T>;
+    let hovered: { row?: GridRow<T>; position?: Position } = $state({});
 
    function isBefore(el1, el2) {
     if (el2.parentNode === el1.parentNode)
@@ -95,11 +140,11 @@ function getMouseVerticalPosition(event: DragEvent): Position {
     return false;
   }
 
-  function dragStart(e:DragEvent, row: GridBasicRow<T>) {
+  function dragStart(e:DragEvent, row: GridRow<T>) {
     draggedItem = row
   }
 
-  function dragOver(e:DragEvent, row: GridBasicRow<T>) {
+  function dragOver(e:DragEvent, row: GridRow<T>) {
     if (row == draggedItem) return;
 
     const position = getMouseVerticalPosition(e);
@@ -107,18 +152,18 @@ function getMouseVerticalPosition(event: DragEvent): Position {
     hovered.position = position;
   }
 
-  function dragEnd(e, row: GridBasicRow<T>) {
+  function dragEnd(e, row: GridRow<T>) {
     if (row == draggedItem) return;
 	e.preventDefault();	
    
-	const index = grid.cache.paginatedRows.indexOf(row);
-    grid.cache.paginatedRows =  grid.cache.paginatedRows.filter(x=> x!= draggedItem)
+	const index = grid.cacheManager.paginatedRows.indexOf(row);
+    grid.cacheManager.paginatedRows =  grid.cacheManager.paginatedRows.filter(x=> x!= draggedItem)
 
     const position = getMouseVerticalPosition(e);
    
     const offset = position == 'bottom' ? 0 : 0;
 
-    grid.cache.paginatedRows.splice(index + offset, 0, draggedItem);
+    grid.cacheManager.paginatedRows.splice(index + offset, 0, draggedItem);
     onSwitch?.({dragged:draggedItem, target: row});
 
     handleDrag.clear();
@@ -146,8 +191,9 @@ function getMouseVerticalPosition(event: DragEvent): Position {
   function generateGridTemplate(columns: ColumnSizeState[]): string {
     return columns
         .map(col => {
-            if(col.width) 
-                return typeof col.width === "number" ? `${col.width}px` : col.width;
+            
+             if(col.width) 
+                 return typeof col.width === "number" ? `${col.width}px` : col.width;
 
             const min = (col.minWidth ?? col.width ?? 100) + "px";
             const max = (col.maxWidth ?? col.width ?? 100) + "px"; 
@@ -161,74 +207,108 @@ function getMouseVerticalPosition(event: DragEvent): Position {
     console.log("touchEnd()");
   }
     const handleDrag = debounce((e, row)=>dragOver(e, row),1);
+    const touchMoveDebounce = debounce((e)=>touchMove(e),1);
 
+
+    const leafColumns = $derived(grid.columns.getLeafColumnsInOrder);
+
+  const hasExpand = expand || grid.features.hierarchy.enabled;
 </script>
-{@render children(Column)}
-<div class="grid-wrapper rounded-md overflow-hidden {klass}" style="--cols-count:{grid.columns.length+1};">
-    <header class="px-4 py-1 flex bg-white">
-        {@render header?.(grid)}
-        <TextField clearable class="ml-auto max-w-[250px]" bind:value={grid.features.globalSearch.value}  onclear={() => (grid.features.globalSearch.value = '')}>
-			{#snippet prepend()}
-				<Icon path={Search} size="22" />
-			{/snippet}
-            Search
-        </TextField>
-    </header>
-	<div class="grid-content" style="grid-template-columns: {expand ? "50px" :""} {generateGridTemplate(grid.columnManager.getLeafColumns().map(y=>y.state.size))}">
-		<div class="grid-header">
-			<div class="grid-header-row">
-                {#if expand}
-                    <div></div>
-                {/if}
-				{#each grid.columnManager.getLeafColumns() as column}
-					<CellHeader {grid} {column}/>
-				{/each}
-			</div>
-		</div>
-		<div class="grid-body">
-			{#each grid.rows.getBasicRows() as row(row.identifier)}
-                <!-- svelte-ignore a11y_no_static_element_interactions -->
-                <div class="grid-row {hovered.position}" class:hovered={hovered.row == row} animate:flip={{duration:300}}
-                    draggable="true"
-                    ondragstart={() => (draggedItem = row)}
-                    ondragover={(e)=> {e.preventDefault();  dragOver(e, row)}}
-                    ondrop={(e)=>dragEnd(e,row)}
-                    ondragend={()=>hovered = {row:null, position:null}}
-                    ontouchstart={touchStart}
-                    ontouchmove={touchMove}
-                    ontouchend={touchEnd}>
-                    {#if expand}
-                            <Button
-                                depressed
-                                icon
-                                class="m-auto"
-                                size="small"
-                                onclick={() => grid.handlers.rowExpanding.toggleRowExpansion(row.identifier)}>
-                                <Icon path={ArrowDropUp} rotate={row.isExpanded() ? 180 : 90} />
-                            </Button>
-                        {/if}
-                        {#each grid.columnManager.getLeafColumnsInOrder() as column}
-                            <CellData datagrid={grid} {row} {column} />
-                        {/each}
-                    {#if expand && row.isExpanded()}
-                        <div class="row-expand" transition:slide={{axis:"y"}}>
-                            {@render expand(row, grid)}
-                        </div>
-                    {/if}
-                </div>
-               
-			{/each}
 
-		</div>
+{#snippet rowSnippet({item:row}:{item:GridRow<T>})}
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div class="grid-row {hovered.position}" class:hovered={hovered.row == row} 
+      draggable="true"
+      ondragstart={() => (draggedItem = row)}
+      ondragover={(e)=> {e.preventDefault();  dragOver(e, row)}}
+      ondrop={(e)=>dragEnd(e,row)}
+      ondragend={()=>hovered = {row:null, position:null}}
+      ontouchstart={touchStart}
+      ontouchmove={touchMove}
+      ontouchend={touchEnd}>
+      {#if grid.features.hierarchy.enabled && grid.features.hierarchy.hasChildren?.(row)}
+              <Button
+                  depressed
+                  icon
+                  class="m-auto"
+                  style="margin-left:{(row.depth ?? 0) * 20}px;"
+                  size="small"
+                  onclick={() => grid.features.hierarchy.toggleRowExpansion(row.identifier)}>
+                  <Icon path={ArrowDropUp} rotate={row.isExpanded() ? 180 : 90} />
+              </Button>
+          {/if}
+
+          {#if expand}
+              <Button
+                  depressed
+                  icon
+                  class="m-auto"
+                  size="small"
+                  onclick={() => grid.features.rowExpanding.toggleRowExpansion(row.identifier)}>
+                  <Icon path={ArrowDropUp} rotate={row.isExpanded() ? 180 : 90} />
+              </Button>
+          {/if}
+
+          {#each leafColumns as column}
+              <CellData datagrid={grid} {row} {column} />
+          {/each}
+      {#if expand && row.isExpanded()}
+          <div class="row-expand" transition:slide={{axis:"y"}}>
+              {@render expand({row, original:row.original, grid})}
+          </div>
+      {/if}
+  </div>
+{/snippet}
+
+{#snippet headerSnippet()}
+    <div class="grid-header">
+        <div class="grid-header-row">
+            {#if hasExpand}
+                <div></div>
+            {/if}
+            {#each leafColumns as column}
+                <CellHeader {grid} {column}/>
+            {/each}
+        </div>
+    </div>
+{/snippet}
+
+{@render children({Column})}
+<div class="grid-wrapper rounded-md overflow-hidden {klass}" style="--cols-count:{grid._columns.length+1};">
+    
+    <header class="px-4 py-1 flex bg-white">
+        {@render header?.({ grid})}
+
+        {#if globalSearchEnabled}
+            <TextField clearable class="ml-auto max-w-[250px]" value={grid.features.globalSearch.searchQuery} oninput={({target})=>grid.features.globalSearch.updateSearchQuery(target.value)}  onclear={() => grid.features.globalSearch.updateSearchQuery("")}>
+                {#snippet prepend()}
+                    <Icon path={Search} size="22" />
+                {/snippet}
+                Search
+            </TextField>
+        {/if}
+    </header>
+	<div class="grid-content overflow-auto"  style="height:{virtualization ? 0 : "auto"}; grid-template-columns: {hasExpand ? "50px" :""} {generateGridTemplate(grid.columns.getLeafColumns())}">
+        {#if virtualization}
+            <VirtualList header={headerSnippet} v1_slot={rowSnippet} class="grid-body" items={grid.rows.getVisibleRows()}/>
+        {:else}
+            <div class="grid-body  auto-rows-[min-content]">
+                {@render headerSnippet()}
+                {#each grid.rows.getVisibleRows() as item}
+                    {@render rowSnippet({ item })}
+                {/each}
+            </div>
+        {/if}
 	</div>
     <footer class="px-4 py-1">
-        {@render footer?.(grid)}
-        
+        {@render footer?.({grid})}
         <Pagination
             type="select"
-            bind:page={grid.features.pagination.page}
-            bind:pageSize={grid.features.pagination.pageSize}
-            count={grid.features.pagination.count} />
+            page={grid.features.pagination.page}
+            pageSize={grid.features.pagination.pageSize}
+            onchange={(page)=>grid.features.pagination.goToPage(page)}
+            onSizeChange={(size)=>grid.features.pagination.setPageSize(size)}
+            count={grid.features.pagination.totalCount} />
     </footer>
 </div>
 
@@ -270,29 +350,30 @@ function getMouseVerticalPosition(event: DragEvent): Position {
     }
     /* Grid Content and Header */
         .grid-content {
+            grid-template-rows: max-content 1fr;
             background-color: hsl(var(--grid-row-even-background));
             flex-grow: 1;
             max-height: 100%;
             display: grid;
-            overflow: auto;
+            height:0;
             position: relative;
-            grid-auto-rows: max-content;
         }
         .row-expand{
             border-top: 1px solid hsl(var(--grid-border));
             grid-column: span var(--cols-count);
         }
-        .grid-body{
+        :global(.grid-body){
             grid-column: span var(--cols-count);
             grid-template-columns: subgrid;
             display:grid;
-            grid-auto-rows: max-content;
+
         }
 
         footer{
             border-top: 1px solid hsl(var(--grid-border));
         }
-        header{
+        :global(.grid-wrapper header){
+            grid-column: span var(--cols-count);
             border-bottom: 1px solid hsl(var(--grid-border));
         }
       

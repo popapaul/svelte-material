@@ -8,6 +8,7 @@
 		theme?: 'light' | 'dark';
 		style?: string;
 		children?: import('svelte').Snippet;
+		[index:string]: any
 	}
 
 	let {

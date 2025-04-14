@@ -3,14 +3,14 @@
 	import { getContext } from 'svelte';
 	import { ripple as Ripple, type RippleOptions } from '../../actions/Ripple';
 	import { type ItemGroupContext, DEFAULTS } from '../ItemGroup/ItemGroup.svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
+	import type { HTMLAnchorAttributes } from 'svelte/elements';
 
 	const role = getContext<string>('S_ListItemRole');
 	const ITEM_GROUP = getContext('S_ListItemGroup');
 
 	const ITEM = ITEM_GROUP ? getContext<ItemGroupContext<T>>(ITEM_GROUP) : DEFAULTS;
 
-	interface Props extends HTMLAttributes<HTMLAnchorElement> {
+	interface Props extends HTMLAnchorAttributes {
 		/** classes added to the listitem */
 		class?: string;
 		/** classes added when active */
@@ -38,7 +38,7 @@
 		prepend?: import('svelte').Snippet;
 		children?: import('svelte').Snippet;
 		subtitle?: import('svelte').Snippet;
-		append?: import('svelte').Snippet;
+		append?: import('svelte').Snippet<[{active:boolean}]>;
 	}
 
 	let {
@@ -102,5 +102,5 @@
 			{@render subtitle?.()}
 		</div>
 	</div>
-	{@render append?.()}
+	{@render append?.({active})}
 </svelte:element>
