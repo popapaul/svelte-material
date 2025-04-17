@@ -69,7 +69,7 @@
 		min-width: variables.$list-item-child-min-width;
 	}
 
-	[slot='prepend'] {
+	
 		&.s-avatar,
 		.s-avatar {
 			margin-right: variables.$list-item-avatar-first-child-margin;
@@ -82,7 +82,7 @@
 		&.s-radio,
 		.s-radio {
 			margin-right: variables.$list-item-action-icon-margin;
-		}
+		
 	}
 
 	&.link {
