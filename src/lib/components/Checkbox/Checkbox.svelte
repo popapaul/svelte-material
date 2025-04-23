@@ -54,9 +54,12 @@
 		id?: string;
 		style?: string;
 		inputElement?: HTMLInputElement;
-		messages?: string[];
+		messages?: string | string[];
 		error?: boolean;
 		children?: Snippet;
+		prependOuter?: Snippet;
+		appendOuter?: Snippet;
+		info?: Snippet;
 		ongroup?:(group:T[])=>void;
 	}
 
@@ -79,6 +82,9 @@
 		children,
 		onchange,
 		ongroup,
+		prependOuter,
+		appendOuter,
+		info,
 		...rest
 	}: Props = $props();
 
@@ -121,7 +127,7 @@
 	}
 </script>
 
-<Input class="s-checkbox {klass}" {color} {disabled} {error}  {style}>
+<Input class="s-checkbox {klass}" {color} {disabled} {error}  {style} {prependOuter} {appendOuter} {info}>
 	<div
 		class="s-checkbox__wrapper"
 		class:disabled
@@ -154,7 +160,7 @@
 		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<div style="padding-left:12px">
 			<span>{hint ?? ''}</span>
-			{#each messages ?? [] as message}<span style="margin-right:8px;">{message}</span>{/each}
+			{#each Array.isArray(messages) ? messages : messages ? [messages] : [] as message}<span style="margin-right:8px;">{message}</span>{/each}
 			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
 		</div>
 	</div>

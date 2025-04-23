@@ -226,16 +226,21 @@ function getMouseVerticalPosition(event: DragEvent): Position {
       ontouchstart={touchStart}
       ontouchmove={touchMove}
       ontouchend={touchEnd}>
-      {#if grid.features.hierarchy.enabled && grid.features.hierarchy.hasChildren?.(row)}
-              <Button
-                  depressed
-                  icon
-                  class="m-auto"
-                  style="margin-left:{(row.depth ?? 0) * 20}px;"
-                  size="small"
-                  onclick={() => grid.features.hierarchy.toggleRowExpansion(row.identifier)}>
-                  <Icon path={ArrowDropUp} rotate={row.isExpanded() ? 180 : 90} />
-              </Button>
+      {#if grid.features.hierarchy.enabled}
+        {#if grid.features.hierarchy.hasChildren?.(row)}
+            <Button
+                depressed
+                icon
+                class="m-auto"
+                style="margin-left:{(row.depth ?? 0) * 20}px;"
+                size="small"
+                onclick={() => grid.features.hierarchy.toggleRowExpansion(row.identifier)}>
+                <Icon path={ArrowDropUp} rotate={row.isExpanded() ? 180 : 90} />
+            </Button>
+            {:else}
+            <div></div>
+        {/if}
+             
           {/if}
 
           {#if expand}
@@ -300,7 +305,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
             </div>
         {/if}
 	</div>
-    <footer class="px-4 py-1">
+    <footer class="px-4 py-1 bg-white">
         {@render footer?.({grid})}
         <Pagination
             type="select"

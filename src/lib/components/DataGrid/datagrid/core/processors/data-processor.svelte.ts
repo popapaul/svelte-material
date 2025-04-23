@@ -232,7 +232,7 @@ export class DataDataProcessor<TOriginalRow> {
     processHiearchyData(): void {
         // Get only visible rows based on expansion state
         const visibleRows = this.getVisibleRows();
-        console.log(visibleRows)
+       
         // Update cache and pagination
         this.metrics.measure('Cache Update', () => {
             this.datagrid.cacheManager.rows = visibleRows;
@@ -459,7 +459,7 @@ export class DataDataProcessor<TOriginalRow> {
             flattened.push(row);
 
             if (row.isHierarchyRow() && row.isExpanded()) {
-                flattened.push(...this.flattenExpandedGroups(row.children));
+                flattened.push(...this.flattenHierarchy(row.children));
             }
         }
 

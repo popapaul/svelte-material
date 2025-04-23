@@ -124,7 +124,7 @@
 		}
 	}
 
-	&.disabled {
+	&.disabled .s-input__control {
 		pointer-events: none;
 		color: var(--theme-text-disabled);
 

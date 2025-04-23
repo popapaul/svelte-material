@@ -4,9 +4,8 @@
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
     let { column, grid }: { grid:DatagridCore<T>, column: LeafColumn<T>} = $props();
-    import { ArrowDropUp, Filter } from "@paulpopa/icons/md/outlined"   
+    import { ArrowDropUp } from "@paulpopa/icons/md/outlined"   
 	import { Menu } from "../Menu";
-	import { List, ListItem } from "../List";
 	import { Select } from "../Select";
 	import { TextField } from "../TextField";
 	import { DateTimeField } from "../DateTimeField";
@@ -15,14 +14,7 @@
     
     const cellType = $derived("getValueFn" in column ?  column.getValueFn(grid.originalState.data[0]) : null);
 
-    const FilterField = $derived.by(() => {
-        if (cellType === "string") return TextField;
-        if (cellType === "number") return TextField;
-        if (cellType === "boolean") return TextField;
-        if (cellType === "date") return DateTimeField;
-        if (cellType === "array") return TextField;
-        return TextField;
-    });
+
 
     function getAvailableOperators(value: any): FilterOperator[] {
         if (value === null || value === undefined) 
@@ -184,6 +176,8 @@
             {#if column.headerCell}
                 {@render column.headerCell({ column, datagrid:grid })}
             {:else}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div onclick={toggleSort} class="overflow-hidden inline-flex items-center text-ellipsis" style="height:35px;">{column.header}</div>
                 {@render sorter()}
                 {@render filter()}
