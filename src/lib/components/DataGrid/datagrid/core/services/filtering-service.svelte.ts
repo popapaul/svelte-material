@@ -42,9 +42,8 @@ export class FilteringService extends BaseService {
         operator: FilterOperator, // Add operator to the props
     }) {
         this.datagrid.events.emit('onFilterChange', { column: props.column });
-    
+ 
         const { value, operator, valueTo } = props;
-        console.log(value)
         let column = props.column;
     
         if (column === null || !column.isFilterable()) return;
@@ -60,16 +59,16 @@ export class FilteringService extends BaseService {
             this.datagrid.features.filtering.filterConditions.push({
                 columnId: String(column.columnId),
                 operator, // Set the operator here
-                getValueFn: column.getValueFn,
                 value,
                 valueTo // Add the second value for 'between' filter
             });
         } else {
             // Update existing condition with the new value and operator
-            this.datagrid.features.filtering.filterConditions[conditionIndex].value = value;
-            this.datagrid.features.filtering.filterConditions[conditionIndex].operator = operator;
-            if (valueTo !== undefined) {
-                this.datagrid.features.filtering.filterConditions[conditionIndex].valueTo = valueTo;
+            this.datagrid.features.filtering.filterConditions[conditionIndex] = {
+                columnId: String(column.columnId),
+                operator, // Set the operator here
+                value,
+                valueTo // Add the second value for 'between' filter
             }
         }
 

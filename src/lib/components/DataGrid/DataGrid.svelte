@@ -281,7 +281,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
 {@render children({Column})}
 <div class="grid-wrapper rounded-md overflow-hidden {klass}" style="--cols-count:{grid._columns.length+1};">
     
-    <header class="px-4 py-1 flex bg-white">
+    <header class="px-4 py-1 relative flex bg-white">
         {@render header?.({ grid})}
 
         {#if globalSearchEnabled}

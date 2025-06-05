@@ -1,6 +1,6 @@
 <script lang="ts" generics="T">
     import type { LeafColumn, DatagridCore, FilterOperator, FilterCondition } from "./datagrid/core/index.svelte";
-    import { Settings } from '@paulpopa/icons/md/outlined';
+    import { Info, Settings } from '@paulpopa/icons/md/outlined';
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
     let { column, grid }: { grid:DatagridCore<T>, column: LeafColumn<T>} = $props();
@@ -92,60 +92,189 @@
     }
 
     
-    const filterCondition = $derived(grid.features.filtering.filterConditions.find(c => c.columnId === column.columnId)?? { columnId: column.columnId, operator: "equals", value: null, valueTo: null } as FilterCondition<T>  );
+    const filterCondition = $derived(grid.features.filtering.filterConditions.find(c => c.columnId === column.columnId) ?? { columnId: column.columnId, operator: "equals", value: null, valueTo: null } as FilterCondition  );
     const cellValues = $derived(Array.from(new Set(grid.originalState.data.map(row => column.getValueFn(row)))));
 </script>
 
 
 {#snippet filter()}
-    {#if column.isFilterable() || true}
-    <Menu class="w-[400px]" closeOnClick={false}>
-        {#snippet activator()}
-            <Button fab depressed class="w-5 h-5">
-                <Icon size={20} path={Settings}  />
-            </Button>
-        {/snippet}
+    {#if column.filterable}
+        <Menu class="w-[420px] max-h-[500px] overflow-y-auto" closeOnClick={false}>
+            {#snippet activator()}
+                <Button 
+                    fab 
+                    depressed 
+                    class="w-5 h-5 {filterCondition.value || filterCondition.valueTo ? '!bg-blue-500 !text-white' : ''}"
+                    title="Filter column">
+                    <Icon size={16} path={Settings} />
+                </Button>
+            {/snippet}
 
-        <div class="flex gap-2 p-2">
- 
-            <Select 
-                title="Operator"
-                fullWidth={false}
-                class="w-[140px] !grow-0"
-                onchange={(op)=>grid.handlers.filtering.changeFilterOperator(column.columnId, op)} 
-                value={grid.features.filtering.getConditionOperator(column.columnId)} 
-                items={getAvailableOperators(cellType)} mandatory />
-            {#if ["contains", "notContains", "startsWith", "endsWith"].includes(filterCondition.operator)}
-                <TextField title="Valoare" value={filterCondition.value} />
-            {:else if ["equals", "notEquals", "greaterThan", "lessThan", "greaterThanOrEqual", "lessThanOrEqual"].includes(filterCondition.operator)}
-                {#if typeof cellType == "number"}
-                    <TextField title="Valoare" type="number" value={filterCondition.value} />
-                {:else if cellType instanceof Date}
-                    <DateTimeField value={filterCondition.value} title="Data" />
-                {:else if typeof cellType == "string" && ["equals", "notEquals"].includes(filterCondition.operator)}
-                    <TextField  value={filterCondition.value} title="Valoare" />
-                {/if}
-            {:else if filterCondition.operator === "between"}
-                    {#if typeof cellType == "number"}
-                        <div class="flex gap-2">
-                            <TextField type="number" value={filterCondition.value} title="Min" />
-                            <TextField type="number" value={filterCondition.valueTo} title="Max" />
-                        </div>
-                    {:else if cellType instanceof Date}
-                        <DateTimeField isRange={true} value={[filterCondition.value, filterCondition.valueTo]} />
+            <div class="p-4 space-y-4">
+                <!-- Header -->
+                <div class="flex items-center justify-between border-b border-slate-400 dark:border-slate-700 pb-1">
+                    <h3 class="text-sm font-semibold">
+                        Filter: {column.header}
+                    </h3>
+                    {#if filterCondition.value || filterCondition.valueTo}
+                        <Button 
+                            size="small" 
+                            text 
+                            class="text-red-500 hover:text-red-700"
+                            onclick={() => grid.handlers.filtering.clearFilter(column.columnId)}>
+                            Clear
+                        </Button>
                     {/if}
-            {:else if filterCondition.operator === "inList" || filterCondition.operator === "notInList"}
-                <Select 
-                    multiple
-                    onchange={(value)=>grid.handlers.filtering.updateFilterCondition({column, value, operator: filterCondition.operator})} 
-                    value={filterCondition.value} 
-                    items={cellValues} />
-            {/if}
-            
-        </div>
-        
-    </Menu>
-       
+                </div>
+
+                <!-- Operator Selection -->
+                <div class="space-y-2">
+                    <Select 
+                        title="Condition"
+                        fullWidth={true}
+                        class="w-full"
+                        onchange={(op) => grid.handlers.filtering.changeFilterOperator(column.columnId, op)} 
+                        value={grid.features.filtering.getConditionOperator(column.columnId)} 
+                        items={getAvailableOperators(cellType)} 
+                        mandatory />
+                </div>
+
+                <!-- Value Input Section -->
+                <div class="space-y-2">
+                    {#if ["contains", "notContains", "startsWith", "endsWith"].includes(filterCondition.operator)}
+                        <TextField 
+                            title="Filter value"
+                            value={filterCondition.value}
+                            onchange={(value) => grid.handlers.filtering.updateFilterCondition({column, value, operator: filterCondition.operator})}
+                            class="w-full" />
+                            
+                    {:else if ["equals", "notEquals", "greaterThan", "lessThan", "greaterThanOrEqual", "lessThanOrEqual"].includes(filterCondition.operator)}
+                        {#if typeof cellType == "number"}
+                            <TextField 
+                                title="Filter value"
+                                type="number" 
+
+                                value={filterCondition.value}
+                                onchange={(value) => grid.handlers.filtering.updateFilterCondition({column, value, operator: filterCondition.operator})}
+                                class="w-full" />
+                        {:else if cellType instanceof Date}
+                            <DateTimeField 
+                                title="Filter value"
+                                value={filterCondition.value} 
+                                onchange={(value) => grid.handlers.filtering.updateFilterCondition({column, value, operator: filterCondition.operator})}
+                                class="w-full" />
+                        {:else if typeof cellType == "string" && ["equals", "notEquals"].includes(filterCondition.operator)}
+                            <TextField  
+                                title="Filter value"
+                                value={filterCondition.value}
+                                onchange={(value) => grid.handlers.filtering.updateFilterCondition({column, value, operator: filterCondition.operator})}
+                                class="w-full" />
+                        {/if}
+                        
+                    {:else if filterCondition.operator === "between"}
+                        {#if typeof cellType == "number"}
+                            <div class="space-y-3">
+                                <TextField 
+                                    title="Filter value"
+                                    type="number" 
+                                    value={filterCondition.value}
+                                    onchange={(value) => grid.handlers.filtering.updateFilterCondition({column, value, valueTo: filterCondition.valueTo,  operator: filterCondition.operator})}
+                                    class="w-full">
+                                    {#snippet prepend()}
+                                        <span class="text-xs text-slate-500">Min</span>
+                                    {/snippet}
+                                </TextField>
+                                <TextField 
+                                    type="number" 
+                                    title="Filter value"
+                                    value={filterCondition.valueTo}
+                                    onchange={(valueTo) => grid.handlers.filtering.updateFilterCondition({column, value: filterCondition.value, valueTo, operator: filterCondition.operator})}
+                                    class="w-full">
+                                    {#snippet prepend()}
+                                        <span class="text-xs text-slate-500">Max</span>
+                                    {/snippet}
+                                </TextField>
+                            </div>
+                        {:else if cellType instanceof Date}
+                            <DateTimeField 
+                                title="Filter value"
+                                isRange={true} 
+                                value={[filterCondition.value, filterCondition.valueTo]}
+                                onChange={(values) => grid.handlers.filtering.updateFilterCondition({
+                                    column, 
+                                    value: values[0],
+                                    valueTo: values[1], 
+                                    operator: filterCondition.operator
+                                })}
+                                class="w-full" />
+                        {/if}
+                        
+                    {:else if filterCondition.operator === "inList" || filterCondition.operator === "notInList"}
+                        <div class="space-y-3">
+                            <Select 
+                                title="Filter value"
+                                multiple
+                                onchange={(value) => grid.handlers.filtering.updateFilterCondition({column, value, operator: filterCondition.operator})} 
+                                value={filterCondition.value} 
+                                items={cellValues}
+                                class="w-full" />
+                            
+                            {#if cellValues.length > 10}
+                                <div class="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded p-2">
+                                    <Icon size={14} path={Info} class="inline mr-1" />
+                                    Showing {Math.min(10, cellValues.length)} of {cellValues.length} unique values
+                                </div>
+                            {/if}
+                        </div>
+                        
+                    {:else if ["empty", "notEmpty"].includes(filterCondition.operator)}
+                        <div class="text-sm text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-center">
+                            <Icon size={20} path={Info} class="mx-auto mb-2 text-slate-400" />
+                            No additional configuration needed for this filter type
+                        </div>
+                    {/if}
+                </div>
+
+                <!-- Active Filter Preview -->
+                {#if filterCondition.value || filterCondition.valueTo}
+                    <div class="border-t border-slate-200 dark:border-slate-700 pt-3">
+                        <div class="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-2">
+                            Active Filter
+                        </div>
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                            <div class="text-sm font-medium text-blue-700 dark:text-blue-300">
+                                {column.header} {filterCondition.operator}
+                                {#if filterCondition.operator === "between"}
+                                    {filterCondition.value} and {filterCondition.valueTo}
+                                {:else if Array.isArray(filterCondition.value)}
+                                    [{filterCondition.value.join(", ")}]
+                                {:else}
+                                    "{filterCondition.value}"
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+
+                <!-- Action Buttons -->
+                <div class="flex gap-2 pt-2 ">
+                    <Button 
+                        size="small" 
+                        text
+                        class="flex-1 success-color"
+                        onclick={() => grid.features}>
+                        Apply Filter
+                    </Button>
+                    <Button 
+                        size="small" 
+                          text
+                        class="px-4 error-color"
+                        onclick={() => grid.features.sorting.removeSortConfig(column.columnId)}>
+                        Clear
+                    </Button>
+                </div>
+            </div>
+        </Menu>
     {/if}
 {/snippet}
 
@@ -180,7 +309,9 @@
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div onclick={toggleSort} class="overflow-hidden inline-flex items-center text-ellipsis" style="height:35px;">{column.header}</div>
                 {@render sorter()}
-                {@render filter()}
+
+                {@render (column.filter ?? filter)()}
+
             {/if}
            
         </div>

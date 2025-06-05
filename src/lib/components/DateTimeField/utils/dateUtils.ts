@@ -100,7 +100,7 @@ export function parseDate(
   } else {
     parsedFormat = formatHelper.parseFormat(format, type);
   }
-
+  if(!date) return null;
   const parts = useParsedTime ?? date.toString().match(formatHelper.nonpunctuation) ?? [];
   date = new Date();
   date.setHours(0, 0, 0, 0);

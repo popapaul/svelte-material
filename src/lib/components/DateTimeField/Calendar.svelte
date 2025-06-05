@@ -151,7 +151,7 @@
     );
   
     let times = $derived(dates.map(date => { date = new Date(date); date.setHours(0,0); return date.getTime() }));
-    let dataset = $derived(compute(activeDate, dates, currentView, i18n, weekStart));
+    let dataset = $derived(compute(activeDate, [...dates], currentView, i18n, weekStart));
     let dayLabels = $derived(i18n.daysMin.concat(...i18n.daysMin.slice(1)).slice(weekStart, 7 + weekStart));
     let tableCaption = $derived(i18n && showCaption(currentView, activeDate));
   
@@ -219,11 +219,7 @@
         ? 12
         : 1
       )
-      // NOTE: since `immutable` settings is ignored in rune mode, this is obsolete
-      // const newActiveDate = new Date(activeDate); // to keep it working with immutable setting, ref #20
-      // newActiveDate.getDate() > 28 ? newActiveDate.setDate(newActiveDate.getDate() - 3) : newActiveDate;
-      // newActiveDate.setMonth(activeDate.getMonth() + (val*multiplier));
-      // activeDate = new SvelteDate(newActiveDate);
+ 
       if (activeDate.getDate() > 28) {
         activeDate.setDate(activeDate.getDate() - 3)
       };
@@ -240,7 +236,7 @@
         return onChangeMonth(val);
       }
       onMonthTransitionTrigger = () => {
-        onChangeMonth(val)
+        //onChangeMonth(val)
       };
       if (currentView === MODE_DECADE) {
         transform = transform === TRANSFORM_DECADE_UNEVEN
@@ -404,7 +400,7 @@
       <tbody in:swapTransition={{duration: duration, start: start, opacity: 1}} class="sdt-tbody-lg" out:swapTransition={{duration, end, start: 1}} onoutroend={onTransitionOut}
         style={`transform: translateY(-${transform}px); color: red`}
         class:animate-transition={onMonthTransitionTrigger ? true : false}
-        ontransitionend={() => onMonthTransitionTrigger && onMonthTransitionTrigger()}
+        ontransitionend={() => onMonthTransitionTrigger?.()}
       >
         {#each dataset.years as row, i}
         <tr class="sdt-cal-td">
@@ -414,7 +410,7 @@
             <button type="button"
               class="std-btn"
               class:not-current={!isBetween(idx)}
-              onclick={() => { onClick(year)}}
+              onclick={() =>  onClick(year)}
               disabled={isDisabledDate(new Date(year, activeDate.getMonth(), activeDate.getDate()))}
             >{year}</button>
           </td>

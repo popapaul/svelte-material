@@ -3,12 +3,12 @@ import type { DatagridCore } from "../index.svelte";
 import type { FilterCondition, FilterOperator } from "../types";
 import { findColumnById, flattenColumnStructureAndClearGroups } from "../utils.svelte";
 
-export type ColumnFilteringState = {
-    conditions: FilterCondition<any>[]; // List of filter conditions for columns
+export type ColumnFilteringState<TOriginalRow> = {
+    conditions: FilterCondition<TOriginalRow>[]; // List of filter conditions for columns
     isManual: boolean; // Indicates if filters are applied manually
 }
 
-export type ColumnFilteringFeatureConfig = Partial<ColumnFilteringState>;
+export type ColumnFilteringFeatureConfig<TOriginalRow> = Partial<ColumnFilteringState<TOriginalRow>>;
 export type IColumnFilteringFeature = ColumnFilteringFeature;
 
 /**
@@ -19,17 +19,18 @@ export class ColumnFilteringFeature<TOriginalRow = any> implements IColumnFilter
     datagrid: DatagridCore; // Reference to the parent DataGrid
 
     // Stores all filter conditions for the columns
-    filterConditions: FilterCondition<TOriginalRow>[] = $state([]);
-    isManual: boolean = $state(false);
+    filterConditions: FilterCondition[];
+    isManual: boolean;
 
     /**
      * Creates an instance of ColumnFilteringFeature.
      * @param datagrid - The DataGrid instance to manage filters for.
      * @param config - Optional configuration to initialize the feature with.
      */
-    constructor(datagrid: DatagridCore, config: ColumnFilteringFeatureConfig) {
+    constructor(datagrid: DatagridCore, config: ColumnFilteringFeatureConfig<TOriginalRow>) {
         this.datagrid = datagrid;
-        Object.assign(this, config);
+        this.filterConditions = $derived(config.conditions || []);
+        this.isManual = $derived(config.isManual || false);
     }
 
     /**
@@ -77,16 +78,14 @@ export class ColumnFilteringFeature<TOriginalRow = any> implements IColumnFilter
             if (isGroupColumn(column)) throw new Error(`Cannot filter group column: ${columnId}`);
             if (column.type === 'display') throw new Error(`Cannot filter display column: ${columnId}`);
 
-            this.filterConditions.push({
+            condition = {
                 columnId,
                 operator,
                 value: null,
-                valueTo: undefined,
-                getValueFn: column.getValueFn
-            });
+                valueTo: undefined
+            }
+            this.filterConditions.push(condition);
         }
-        condition = this.filterConditions.find(c => c.columnId === columnId);
-        if (!condition) throw new Error(`Condition for column ${columnId} not found`);
         condition.operator = operator;
     }
 
@@ -96,9 +95,11 @@ export class ColumnFilteringFeature<TOriginalRow = any> implements IColumnFilter
      * @param condition - The filter condition to evaluate against.
      * @returns `true` if the cell value satisfies the condition, otherwise `false`.
      */
-    evaluateCondition(cellValue: any, condition: FilterCondition<TOriginalRow>): boolean {
+    evaluateCondition(row: TOriginalRow, condition: FilterCondition): boolean {
         const { value, valueTo, operator } = condition;
+        const column = findColumnById(this.datagrid._columns, condition.columnId);
 
+        const cellValue = column && "getValueFn" in column ? column.getValueFn(row) : null;
         // Handle null/undefined cell values
         if (cellValue === null || cellValue === undefined) {
             return operator === 'empty';

@@ -158,10 +158,12 @@
 			{@render children?.()}
 		</label>
 		<!-- svelte-ignore a11y_label_has_associated_control -->
+		 {#if hint || messages?.length || errorMessages?.length}
 		<div style="padding-left:12px">
 			<span>{hint ?? ''}</span>
 			{#each Array.isArray(messages) ? messages : messages ? [messages] : [] as message}<span style="margin-right:8px;">{message}</span>{/each}
 			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
 		</div>
+		{/if}
 	</div>
 </Input>

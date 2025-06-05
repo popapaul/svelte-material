@@ -220,16 +220,15 @@ export type FilterOperator =
     | "empty"
     | "notEmpty";
 
-export interface FilterCondition<TOriginalRow> {
+export interface FilterCondition {
     columnId: ColumnId;
-    getValueFn: GetValueFn<TOriginalRow>;
     operator: FilterOperator;
     value: any;
     valueTo?: number; // For 'between' operator
 }
 
-export type FilteringState<TOriginalRow> = {
-    conditions: FilterCondition<TOriginalRow>[];
+export type FilteringState = {
+    conditions: FilterCondition[];
 };
 
 /**
@@ -299,6 +298,7 @@ export interface AccessorColumn<TOriginalRow, TMeta = any> extends CommonColumnC
     aggregatedCell?: AggregatedCell<TOriginalRow>;
     groupedCell?: GroupedCell<TOriginalRow>;
     headerCell?: HeaderCell<TOriginalRow>;
+    filter?: Snippet;
 
     isVisible(): boolean;
     isSortable(): boolean;
@@ -315,7 +315,8 @@ export interface ComputedColumn<TOriginalRow, TMeta = any> extends CommonColumnC
     headerCell?: HeaderCell<TOriginalRow>;
     formatterFn?: FormatterFn<TOriginalRow>;
     aggregate?: AggregationConfig;
-   
+    filter?: Snippet;
+    
     isVisible(): boolean;
     isSortable(): boolean;
     isFilterable(): boolean
@@ -327,7 +328,8 @@ export interface DisplayColumn<TOriginalRow, TMeta = any> extends CommonColumnCr
     aggregatedCell?: AggregatedCell<TOriginalRow>;
     groupedCell?: GroupedCell<TOriginalRow>;
     headerCell?: HeaderCell<TOriginalRow>;
-  
+    filter?: Snippet;
+
     isVisible(): boolean;
     isSortable(): boolean;
     isFilterable(): boolean

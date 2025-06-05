@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-    --color-muted: 0 0% 96.1%;
-    --color-muted-foreground: 0 0% 45.1%;
-    --color-border: 0 0% 89.8%;
-    --color-primary: 0 0% 9%;
-    --color-primary-foreground: 0 0% 98%;
-    --color-secondary: 0 0% 96.1%;
-    --color-secondary-foreground: 0 0% 9%;
-    --color-accent: 0 0% 96.1%;
-    --color-accent-foreground: 0 0% 9%;
+	--color-muted: 0 0% 96.1%;
+	--color-muted-foreground: 0 0% 45.1%;
+	--color-border: 0 0% 89.8%;
+	--color-primary: 0 0% 9%;
+	--color-primary-foreground: 0 0% 98%;
+	--color-secondary: 0 0% 96.1%;
+	--color-secondary-foreground: 0 0% 9%;
+	--color-accent: 0 0% 96.1%;
+	--color-accent-foreground: 0 0% 9%;
 
-    --color-grid-background: 0 0% 100%;
-    --color-grid-accent: 200 50% 80%;
-    --color-grid-border: 0 0% 70%;
-    --color-grid-overlay: 0 0% 70%;
-    --color-grid-primary: 0 0% 70%;
+	--color-grid-background: 0 0% 100%;
+	--color-grid-accent: 200 50% 80%;
+	--color-grid-border: 0 0% 70%;
+	--color-grid-overlay: 0 0% 70%;
+	--color-grid-primary: 0 0% 70%;
   }
 @layer base {
-	:root {
+	.grid-wrapper {
 		--muted: 0 0% 96.1%;
 		--muted-foreground: 0 0% 45.1%;
 		--border: 0 0% 89.8%;
@@ -32,21 +32,21 @@
 		--grid-background: 0 0% 100%;
 		--grid-accent: 200 50% 80%;
 		--grid-border: 0 0% 70%;
-	}
 
-	.dark {
-		--muted: 0 0% 14.9%;
-		--muted-foreground: 0 0% 63.9%;
-		--primary: 0 0% 98%;
-		--primary-foreground: 0 0% 9%;
-		--secondary: 0 0% 14.9%;
-		--secondary-foreground: 0 0% 98%;
-		--accent: 0 0% 14.9%;
-		--accent-foreground: 0 0% 98%;
-
-		--grid-background: 0 0% 4%;
-		--grid-accent: 200 50% 50%;
-		--grid-border: 0 0% 14.9%;
+		@variant dark {
+			--muted: 0 0% 14.9%;
+			--muted-foreground: 0 0% 63.9%;
+			--primary: 0 0% 98%;
+			--primary-foreground: 0 0% 9%;
+			--secondary: 0 0% 14.9%;
+			--secondary-foreground: 0 0% 98%;
+			--accent: 0 0% 14.9%;
+			--accent-foreground: 0 0% 98%;
+	
+			--grid-background: 0 0% 4%;
+			--grid-accent: 200 50% 50%;
+			--grid-border: 0 0% 14.9%;
+		}
 	}
 }
 

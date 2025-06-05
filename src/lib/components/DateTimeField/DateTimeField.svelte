@@ -541,7 +541,7 @@
     currentMode
   })}
       <div class="sdt-btn-row">
-        <span>
+        <!-- <span>
           <Button 
             class="error-color"
             depressed
@@ -558,7 +558,7 @@
           >
             <Icon path={Check}/>
           </Button>
-        </span>
+        </span> -->
         <span>
           {#if currentMode === 'date'}
             <Button  

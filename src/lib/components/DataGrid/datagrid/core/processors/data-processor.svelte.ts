@@ -172,15 +172,8 @@ export class DataDataProcessor<TOriginalRow> {
 
         if (isMnualSortingEnabled || noFilters) return data
 
-        const filterData = (data: TOriginalRow[], activeFilters: FilterCondition<any>[]) => {
-            return data.filter(row =>
-                activeFilters.every(filter =>
-                    this.datagrid.features.filtering.evaluateCondition(
-                        filter.getValueFn(row),
-                        filter
-                    )
-                )
-            );
+        const filterData = (data: TOriginalRow[], activeFilters: FilterCondition[]) => {
+            return data.filter(row => activeFilters.every(filter => this.datagrid.features.filtering.evaluateCondition(row, filter)));
         }
 
         const getActiveFilters = () => {

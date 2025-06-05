@@ -119,6 +119,7 @@
 	}
 	
 	const shouldClose = ({detail:event}: CustomEvent<Event & {target:HTMLElement}>) => {
+		if(!menu) return;
 		const childrenMenus = menu.querySelectorAll('.s-menu__activator');
 		const include = [...childrenMenus].map(element => `#${element.id}.s-menu`);
 		if(include.some(element=> event.target.closest(element)))
