@@ -2,19 +2,8 @@
 	import './Card.scss';
 	import ProgressLinear from '../ProgressLinear/ProgressLinear.svelte';
 
-	/** classes added to the card */
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	interface Props {
+		/** classes added to the card */
 		class?: string;
 		/** remove box shadow from card */
 		flat?: boolean;
@@ -53,11 +42,13 @@
 		disabled = false,
 		style = null,
 		progress,
-		children
+		children,
+		...rest
 	}: Props = $props();
 </script>
 
 <div
+	{...rest}
 	class="s-card {klass}"
 	class:flat
 	class:tile
