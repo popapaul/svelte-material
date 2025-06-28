@@ -354,7 +354,11 @@ export type ColumnDef<TOriginalRow, TMeta = any> =
 
 export type ParentColumnId = string | null;
 
-
+export type  ColumnsStorage = {
+    visible: boolean;
+    width: string;
+    order: number;
+};
 
 export type FeatureConstructor<T> = {
     new(datagrid: DatagridCore<any>, config?: any): T;  // Class signature

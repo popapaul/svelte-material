@@ -54,6 +54,7 @@ export function createComputedColumn<TOriginalRow extends Record<string, any>, T
     columnId: computedColumnId, // The unique column ID
     parentColumnId: rest.parentColumnId || null, // Optional parent column ID for nested columns
     getValueFn, // The function used to compute the column value
+    visible: true, // Default visibility of the column
     ...DEFAULT_COLUMN_SIZE,
     ...DEFAULT_COLUMN_OPTIONS, 
     _meta: _meta as TMeta ?? {} as TMeta, // Metadata for the computed column

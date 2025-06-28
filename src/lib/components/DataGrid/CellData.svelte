@@ -27,7 +27,7 @@
     /* Grid Cells */
     .grid-cell {
         display: flex;
-        padding: 0.5rem;
+        padding: 0.2rem;
         border-right: 1px solid (var(--grid-border));
         cursor: pointer;
         margin-top:auto;

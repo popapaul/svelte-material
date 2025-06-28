@@ -1,5 +1,5 @@
 <script lang="ts" generics="T">
-	import { setContext, untrack , type Component, type ComponentProps, type Snippet } from "svelte";
+	import { onMount, setContext, untrack , type Component, type ComponentProps, type Snippet } from "svelte";
 	import { DatagridCore,  type GridBasicRow, type ColumnSizeState, type DatagridCoreConfig, type GridRow } from "./datagrid/core/index.svelte";
 	import CellHeader  from "./CellHeader.svelte";
 	import Column from "./Column.svelte";
@@ -15,6 +15,8 @@
     import { slide } from "svelte/transition"
     import { Search } from '@paulpopa/icons/md/outlined';
 	import { VirtualList } from "./datagrid/virtualization";
+	import Header from "./Header.svelte";
+	import { PersistentState } from "../../actions/localStorage/index.svelte";
 
     type Props = {
         data:T[]; 
@@ -26,6 +28,7 @@
         header?: Snippet<[ { grid: DatagridCore<T> } ]>;
         expand?: Snippet<[ { row: GridRow<T>; original:T, grid: DatagridCore<T> } ]>;
         onSwitch?: (event:{dragged:GridRow<T>, target:GridRow<T>}) => void,
+        expandable?: (row:GridRow<T>)=>{ isExpanded:boolean } | false,
         count?: number;
         globalSearchEnabled?:boolean;
         serverSide?:boolean,
@@ -47,6 +50,7 @@
         expand, 
         onSwitch,
         children,
+        expandable,
         virtualization,
         state:context = $bindable(),
         serverSide = false,
@@ -209,10 +213,20 @@ function getMouseVerticalPosition(event: DragEvent): Position {
     const handleDrag = debounce((e, row)=>dragOver(e, row),1);
     const touchMoveDebounce = debounce((e)=>touchMove(e),1);
 
+    const storage = new PersistentState("datagrid-columns", { });
+    setContext("datagrid-columns", storage);
 
-    const leafColumns = $derived(grid.columns.getLeafColumnsInOrder);
+    const leafColumns = $derived(grid.columns.getLeafColumnsInOrder.filter(c => c.visible));
 
   const hasExpand = expand || grid.features.hierarchy.enabled;
+  onMount(() => {
+    // Initialize the grid after the component is mounted
+    const rows = grid.rows.getVisibleRows();
+    rows.forEach(row => {
+      if (expandable?.(row)) 
+        grid.features.rowExpanding.toggleRowExpansion(row.identifier);
+    });
+  });
 </script>
 
 {#snippet rowSnippet({item:row}:{item:GridRow<T>})}
@@ -244,6 +258,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
           {/if}
 
           {#if expand}
+            {#if !expandable || expandable(row)}
               <Button
                   depressed
                   icon
@@ -252,6 +267,9 @@ function getMouseVerticalPosition(event: DragEvent): Position {
                   onclick={() => grid.features.rowExpanding.toggleRowExpansion(row.identifier)}>
                   <Icon path={ArrowDropUp} rotate={row.isExpanded() ? 180 : 90} />
               </Button>
+              {:else}
+              <div></div>
+              {/if}
           {/if}
 
           {#each leafColumns as column}
@@ -266,16 +284,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
 {/snippet}
 
 {#snippet headerSnippet()}
-    <div class="grid-header">
-        <div class="grid-header-row">
-            {#if hasExpand}
-                <div></div>
-            {/if}
-            {#each leafColumns as column}
-                <CellHeader {grid} {column}/>
-            {/each}
-        </div>
-    </div>
+    <Header {grid} {leafColumns} {hasExpand}  />
 {/snippet}
 
 {@render children({Column})}
@@ -293,7 +302,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
             </TextField>
         {/if}
     </header>
-	<div class="grid-content overflow-auto"  style="height:{virtualization ? 0 : "auto"}; grid-template-columns: {hasExpand ? "50px" :""} {generateGridTemplate(grid.columns.getLeafColumns())}">
+	<div class="grid-content overflow-auto"  style="height:{virtualization ? 0 : "auto"}; grid-template-columns: {hasExpand ? "30px" :""} {generateGridTemplate(leafColumns)}">
         {#if virtualization}
             <VirtualList header={headerSnippet} v1_slot={rowSnippet} class="grid-body" items={grid.rows.getVisibleRows()}/>
         {:else}
@@ -383,26 +392,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
         }
       
 
-        .grid-header {
-            top: 0;
-            z-index: 11;
-            background-color: hsl(var(--grid-header-row-background));
-            position: sticky;
-            grid-column: span var(--cols-count);
-            grid-template-columns: subgrid;
-            display:grid;
-        }
-        :global(.grid-content .grid-content .grid-header){
-            z-index: 10;
-        }
-        .grid-header-row {
-            background-color: hsl(var(--grid-header-row-background));
-            display: grid;
-            grid-column: span var(--cols-count);
-            grid-template-columns: subgrid;
-            border-bottom: 1px solid hsl(var(--grid-border));
-            min-width: fit-content;
-        }
+       
 
 
 /* Sticky Offsets */

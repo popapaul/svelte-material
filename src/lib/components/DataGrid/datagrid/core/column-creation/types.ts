@@ -70,10 +70,12 @@ export type ColumnOptions = {
   pinning?: Partial<ColumnPinningState>;
 }
 
+
 export type CommonColumnCreationProps<TMeta> = ColumnOptions & ColumnSizeState &{
   _meta?: TMeta;
   parentColumnId?: ParentColumnId
   columnId?: ColumnId;
   header?: string;
+
   align?: ColumnAlign;
 }

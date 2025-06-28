@@ -3,18 +3,56 @@
     import { Info, Settings } from '@paulpopa/icons/md/outlined';
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
-    let { column, grid }: { grid:DatagridCore<T>, column: LeafColumn<T>} = $props();
+    let { column, grid, onColumnResize }: { grid:DatagridCore<T>, column: LeafColumn<T>, onColumnResize?: (columnId: string, newWidth: number) => void } = $props();
     import { ArrowDropUp } from "@paulpopa/icons/md/outlined"   
 	import { Menu } from "../Menu";
 	import { Select } from "../Select";
 	import { TextField } from "../TextField";
 	import { DateTimeField } from "../DateTimeField";
     
-    const toggleSort = () => grid.handlers.sorting.toggleColumnSort(column, false);
+    const toggleSort = () => column.sortable && grid.handlers.sorting.toggleColumnSort(column, false);
     
     const cellType = $derived("getValueFn" in column ?  column.getValueFn(grid.originalState.data[0]) : null);
 
+    // Resize functionality
+    let isResizing = $state(false);
+    let startX = $state(0);
+    let startWidth = $state(0);
+    let currentWidth = $state(column.width || 150); // Default width if not set
 
+    function startResize(event: MouseEvent) {
+        isResizing = true;
+        startX = event.clientX;
+        startWidth = currentWidth;
+        
+        // Prevent text selection during resize
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'col-resize';
+        
+        document.addEventListener('mousemove', handleResize);
+        document.addEventListener('mouseup', stopResize);
+    }
+
+    function handleResize(event: MouseEvent) {
+        if (!isResizing) return;
+        
+        const deltaX = event.clientX - startX;
+        const newWidth = Math.max(50, startWidth + deltaX); // Minimum width of 50px
+        currentWidth = newWidth;
+        
+        column.width = newWidth; // Update the column width
+        // Call the resize callback if provided
+        onColumnResize?.(column.columnId, newWidth);
+    }
+
+    function stopResize() {
+        isResizing = false;
+        document.body.style.userSelect = '';
+        document.body.style.cursor = '';
+        
+        document.removeEventListener('mousemove', handleResize);
+        document.removeEventListener('mouseup', stopResize);
+    }
 
     function getAvailableOperators(value: any): FilterOperator[] {
         if (value === null || value === undefined) 
@@ -279,10 +317,10 @@
 {/snippet}
 
 {#snippet sorter()}
-    {#if column.isSortable()}
+    {#if column.sortable}
         {@const direction = grid.features.sorting.getSortConfigByColumnId(column.columnId)}
-        <Button onclick={toggleSort} fab depressed class="w-5 h-5">
-            <Icon path={ArrowDropUp} rotate={direction?.direction == "descending" ? 180 : 0} />
+        <Button onclick={toggleSort} fab depressed class="w-3 h-3 mr-1 {direction ? "" : "opacity-0"}" title="Sort column">
+            <Icon size={20} path={ArrowDropUp} rotate={direction?.direction == "descending" ? 180 : 0} />
         </Button>
     {/if}
 {/snippet}
@@ -297,7 +335,7 @@
             aria-label="Click to sort column"
             role="button"
             tabindex="0"
-            class="flex w-full items-center  gap-1 overflow-hidden"
+            class="flex w-full items-center  overflow-hidden"
             class:justify-end={column.align === 'right'}
             class:justify-center={column.align === 'center'}
             class:justify-start={column.align === 'left'}
@@ -305,16 +343,23 @@
             {#if column.headerCell}
                 {@render column.headerCell({ column, datagrid:grid })}
             {:else}
+                  {@render sorter()}
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div onclick={toggleSort} class="overflow-hidden inline-flex items-center text-ellipsis" style="height:35px;">{column.header}</div>
-                {@render sorter()}
-
                 {@render (column.filter ?? filter)()}
-
             {/if}
-           
         </div>
+        
+        <!-- Resize Handle -->
+        <div 
+            class="resize-handle"
+            class:resizing={isResizing}
+            role="button"
+            tabindex="0"
+            title="Drag to resize column"
+            onmousedown={startResize}
+        ></div>
 </div>
 
 <style>
@@ -323,15 +368,45 @@
         flex-direction: column;
         padding: 0.5rem;
         --border-right: 1px solid hsl(var(--grid-border));
-
+        position: relative;
         min-width: 0;
         max-width: 100%;
         align-items: center;
         justify-content: center;
-        gap: 0.25rem;
+        gap: 0.1rem;
     }
 
     .grid-header-cell:last-child {
         border-right: none;
+    }
+
+    .resize-handle {
+        --primary: 210 40% 50%;
+        position: absolute;
+        right: -2px;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        cursor: col-resize;
+        background: transparent;
+        border-right: 2px solid transparent;
+        transition: border-color 0.2s ease;
+        z-index: 10;
+    }
+
+    .grid-header-cell:hover .resize-handle,
+    .resize-handle.resizing {
+        border-right-color: hsl(var(--primary, 210 40% 50%));
+        background: radial-gradient(black, transparent);
+    }
+
+    .resize-handle:active {
+        border-right-color: hsl(var(--primary, 210 40% 40%));
+        background: radial-gradient(black, transparent);
+    }
+
+    /* Add visual feedback when resizing */
+    .grid-header-cell:has(.resize-handle.resizing) {
+        background: hsla(var(--primary, 210 40% 50%), 0.05);
     }
 </style>

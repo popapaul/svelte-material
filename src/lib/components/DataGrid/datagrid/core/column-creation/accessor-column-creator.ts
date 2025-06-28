@@ -87,7 +87,7 @@ function createColumnHeader({
  * createColumnId({ columnId: "email" }); // "email"
  * createColumnId({ header: "User Email" }); // "user_email"
  */
-function createColumnId({
+export function createColumnId({
   columnId,
   accessorKey,
   header,
@@ -160,6 +160,7 @@ export function createAccessorColumn<
     header: computedHeader,
     accessorKey,
     getValueFn,
+    visible: true,
     ...DEFAULT_COLUMN_SIZE,
     ...DEFAULT_COLUMN_OPTIONS, 
     _meta: _meta as TMeta ?? {} as TMeta,
