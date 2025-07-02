@@ -8,6 +8,7 @@
 	import { portal } from '../../actions/Portal';
 	import { fade } from 'svelte/transition';
 	import uid from '$lib/internal/uid';
+	import type { KeyboardEventHandler } from 'svelte/elements';
 
 	/** Classes to add to menu. */
 	
@@ -127,6 +128,15 @@
 		active = false ;
 		hovered = false;
 	};
+
+	const handleClick = (event:Event)=>{
+		openOnClick && (active = true);
+	}
+	const handleRightClick = (event:Event)=>{
+		event.preventDefault();
+		event.stopPropagation();
+		rightClick && (active = true)  && (hovered=false)
+	}
 </script>
 
 	<!-- svelte-ignore a11y_mouse_events_have_key_events -->
@@ -136,9 +146,9 @@
 		bind:this={activatorElem}
 		onpointerenter={handleMouseEnter}
 		onpointerleave={handleMouseLeave}
-		onclick={() => openOnClick && (active = true)}
-		onkeypress={() => openOnClick && (active = true)}
-		oncontextmenu={preventDefault(() => rightClick && (active = true)  && (hovered=false))}
+		onclick={handleClick}
+		onkeypress={handleClick}
+		oncontextmenu={handleRightClick}
 		style="display:contents;"
 	>
 		{@render activator?.()}

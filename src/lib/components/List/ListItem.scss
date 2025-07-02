@@ -52,6 +52,10 @@
 	text-decoration: none;
 	overflow: hidden;
 
+	.s-checkbox{
+		flex:0 0 auto;
+	}
+
 	.s-avatar {
 		align-self: center;
 		margin-top: variables.$list-item-avatar-margin-y;

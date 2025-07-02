@@ -80,7 +80,7 @@ export function parseDate(
   if (date instanceof Date) {
     return date;
   }
-
+  date ??= "";
   const commonFormats = type === 'php'
     ? { date: 'Y-m-d', datetime: 'Y-m-d H:i', datetime_s: 'Y-m-d H:i:s' }
     : { date: 'yyyy-mm-dd', datetime: 'yyyy-mm-dd hh:ii', datetime_s: 'yyyy-mm-dd hh:ii:ss' };

@@ -3,7 +3,7 @@
 	import Icon from '../Icon/Icon.svelte';
 	import uid from '../../internal/uid';
 	import clearIcon from '../../internal/Icons/close';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { FORM_FIELDS, type FormContext } from '../Form/Form.svelte';
 	import { Input } from '../Input';
 	import type { HTMLInputAttributes } from 'svelte/elements';
@@ -66,6 +66,7 @@
 		underline?: boolean;
 		type?: string;
 		labelActive?: boolean;
+		autoFocus?: boolean;
 		onclear?: () => void;
 		children?: import('svelte').Snippet;
 		append?: import('svelte').Snippet;
@@ -91,6 +92,7 @@
 		readonly = null,
 		disabled = false,
 		placeholder = null,
+		autoFocus,
 		hint = '',
 		counter = false,
 		messages = [],
@@ -131,6 +133,11 @@
 		error = !!errorMessages.length;
 		return errorMessages;
 	}
+
+	$effect(()=>{
+		if(autoFocus && inputElement)
+			setTimeout(()=>inputElement.focus(),50)
+	})
 
 	function onFocus(event) {
 		focused = true;
@@ -196,7 +203,7 @@
 			<!-- <slot name="content" /> -->
 			<!-- keypress Event is deprecated. Use keydown or keyup instead -->
 			{#if content}
-				{@render content()}
+				{@render content({id})}
 			{:else}
 				<input
 					bind:this={inputElement}

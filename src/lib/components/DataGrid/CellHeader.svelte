@@ -1,6 +1,6 @@
 <script lang="ts" generics="T">
     import type { LeafColumn, DatagridCore, FilterOperator, FilterCondition } from "./datagrid/core/index.svelte";
-    import { Info, Settings } from '@paulpopa/icons/md/outlined';
+    import { Close, Info, Settings } from '@paulpopa/icons/md/outlined';
     import Button from "../Button/Button.svelte";
     import Icon from "../Icon/Icon.svelte";
     let { column, grid, onColumnResize }: { grid:DatagridCore<T>, column: LeafColumn<T>, onColumnResize?: (columnId: string, newWidth: number) => void } = $props();
@@ -11,8 +11,7 @@
 	import { DateTimeField } from "../DateTimeField";
     
     const toggleSort = () => column.sortable && grid.handlers.sorting.toggleColumnSort(column, false);
-    
-    const cellType = $derived("getValueFn" in column ?  column.getValueFn(grid.originalState.data[0]) : null);
+    const filterable = typeof column.filterable === "object" ? column.filterable : null;
 
     // Resize functionality
     let isResizing = $state(false);
@@ -54,11 +53,37 @@
         document.removeEventListener('mouseup', stopResize);
     }
 
-    function getAvailableOperators(value: any): FilterOperator[] {
-        if (value === null || value === undefined) 
-            return ["empty", "notEmpty"];
+
+    const getType = ()=>{
+        try{
+            if(typeof column.filterable === "object" && "type" in column.filterable)
+                return column.filterable.type;
+
+            if(!("getValueFn" in column)) return "string";
+
+            const cellValue = column.getValueFn(grid.originalState.data?.[0]);
+        
+            if(cellValue instanceof Date)
+                return "date";
             
-        const type = typeof value;
+            const type  = typeof cellValue;
+            if(type === "string")
+                return "string";
+
+            if(type === "number")
+                return "number";
+
+            return "string";
+        }
+        catch
+        {
+            return "string";
+        }
+    }
+
+    function getAvailableOperators(type: any): FilterOperator[] {
+      
+            console.log({type})
 
         if (type === "string") {
             return [
@@ -70,8 +95,8 @@
                 "endsWith",
                 "inList",
                 "notInList",
-                "empty",
-                "notEmpty",
+                // "empty",
+                // "notEmpty",
             ];
         }
 
@@ -84,8 +109,8 @@
                 "greaterThanOrEqual",
                 "lessThanOrEqual",
                 "between",
-                "empty",
-                "notEmpty",
+                // "empty",
+                // "notEmpty",
             ];
         }
 
@@ -100,8 +125,8 @@
                 "between",
                 "inList",
                 "notInList",
-                "empty",
-                "notEmpty",
+                // "empty",
+                // "notEmpty",
             ];
         }
 
@@ -109,8 +134,8 @@
             return [
                 "equals",
                 "notEquals",
-                "empty",
-                "notEmpty",
+                // "empty",
+                // "notEmpty",
             ];
         }
 
@@ -128,10 +153,38 @@
         // Default fallback
         return ["equals", "notEquals", "empty", "notEmpty"];
     }
+    const cellType = getType();
 
+    const getGridValues = ()=>{
+        if(typeof column.filterable === "object" && "options" in column.filterable)
+            return column.filterable.options;
+
+        const gridValues = Array.from(new Set(grid.originalState.data.map(row => "getValueFn" in column ? column.getValueFn(row) : null))).filter(Boolean);
+        return gridValues.map(value=>({ name: value?.toString(), value }));
+    }
+ 
+    const filterCondition = $derived(grid.features.filtering.filterConditions.find(c => c.columnId === column.columnId));
+   
+    let value = $derived(filterCondition?.value);
+    let valueTo = $derived(filterCondition?.valueTo);
+    const cellValues = getGridValues();
+    let operator = $state(filterCondition?.operator ?? filterable?.operators[0]);
     
     const filterCondition = $derived(grid.features.filtering.filterConditions.find(c => c.columnId === column.columnId) ?? { columnId: column.columnId, operator: "equals", value: null, valueTo: null } as FilterCondition  );
     const cellValues = $derived(Array.from(new Set(grid.originalState.data.map(row => column.getValueFn(row)))));
+    const handleFilter= ()=>{
+        if(value === null || value === undefined)
+            return grid.handlers.filtering.removeFilterCondition(column);
+        if(operator === "between")
+            grid.handlers.filtering.updateFilterCondition({column, value, valueTo, operator: operator});
+        else
+            grid.handlers.filtering.updateFilterCondition({column, value, operator: operator});
+    }
+    const handleClear = ()=>{
+        grid.handlers.filtering.removeFilterCondition(column);
+        value = null;
+        valueTo = null;
+    }
 </script>
 
 
@@ -319,53 +372,37 @@
 {#snippet sorter()}
     {#if column.sortable}
         {@const direction = grid.features.sorting.getSortConfigByColumnId(column.columnId)}
-        <Button onclick={toggleSort} fab depressed class="w-3 h-3 mr-1 {direction ? "" : "opacity-0"}" title="Sort column">
-            <Icon size={20} path={ArrowDropUp} rotate={direction?.direction == "descending" ? 180 : 0} />
-        </Button>
+        {#if direction}
+            <Button fab depressed class="w-5 h-5 z-10 absolute -left-2">
+                <Icon path={ArrowDropUp} rotate={direction?.direction == "descending" ? 180 : 0} />
+            </Button>
+        {/if}
     {/if}
 {/snippet}
 <div
-    class="grid-header-cell cursor-pointer"
+    onclick={toggleSort}
+    aria-label="Click to sort column"
+    role="button"
+    tabindex="0"
+    class="grid-header-cell flex cursor-pointer relative"
     style="{['left', 'right'].includes(column.pinning.position) && `background-color: black;`}"
     class:offset-left={column.pinning.position === 'left'}
     class:offset-right={column.pinning.position === 'right'}
     style:--offset={`${column.pinning.offset}px`}
     >
-        <div
-            aria-label="Click to sort column"
-            role="button"
-            tabindex="0"
-            class="flex w-full items-center  overflow-hidden"
-            class:justify-end={column.align === 'right'}
-            class:justify-center={column.align === 'center'}
-            class:justify-start={column.align === 'left'}
-        >   
-            {#if column.headerCell}
-                {@render column.headerCell({ column, datagrid:grid })}
-            {:else}
-                  {@render sorter()}
-                <!-- svelte-ignore a11y_click_events_have_key_events -->
-                <!-- svelte-ignore a11y_no_static_element_interactions -->
-                <div onclick={toggleSort} class="overflow-hidden inline-flex items-center text-ellipsis" style="height:35px;">{column.header}</div>
-                {@render (column.filter ?? filter)()}
-            {/if}
-        </div>
-        
-        <!-- Resize Handle -->
-        <div 
-            class="resize-handle"
-            class:resizing={isResizing}
-            role="button"
-            tabindex="0"
-            title="Drag to resize column"
-            onmousedown={startResize}
-        ></div>
+        {@render sorter()}
+        {#if column.headerCell}
+            {@render column.headerCell({ column, datagrid:grid })}
+        {:else}
+            <div class="overflow-hidden inline-flex items-center text-ellipsis" style="height:35px;">{column.header}</div>
+        {/if}
+        {@render filter()}
 </div>
 
 <style>
     .grid-header-cell {
         display: flex;
-        flex-direction: column;
+
         padding: 0.5rem;
         --border-right: 1px solid hsl(var(--grid-border));
         position: relative;

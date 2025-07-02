@@ -10,6 +10,7 @@ export const isColumnSortable = (column: ColumnDef<any>): boolean => {
 }
 
 export const isColumnFilterable = (column: ColumnDef<any>): boolean => {
+    
     if (column.filterable !== null || column.filterable !== false) {
         return true
     }

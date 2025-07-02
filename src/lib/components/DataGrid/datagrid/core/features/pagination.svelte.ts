@@ -175,7 +175,7 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      * @param {number} newSize The new page size to set.
      */
     setPageSize(newSize: number): void {
-        console.log(newSize)
+     
         this.datagrid.events.emit('onPageSizeChange', { prevSize: this.pageSize, pageSize: newSize });
         if (newSize === this.pageSize) return; // No action if the page size is the same
         this.pageSize = newSize;

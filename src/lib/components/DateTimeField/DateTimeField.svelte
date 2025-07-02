@@ -110,22 +110,18 @@
       ...rest
     }:Props = $props();
     
-    const internal= $derived({
-      value,
-      isRange,
-      onChange
-    }) as SingleDateProps | RangeDateProps;
 
-    const { iDates, iValues, iValueCombined} = initProps(value, format, i18n, formatType);
+    const { iDates, iValues, iValueCombined} = $derived(initProps(value, format, i18n, formatType));
     /** @type {string|null} concated by `join()` */
     let prev_value = iValueCombined;
     let value_array = $state(iValues);
-    let innerDates = $state<SvelteDate[]>(iDates.map(date => new SvelteDate(date)));
+    let innerDates = $derived<SvelteDate[]>(iDates.map(date => new SvelteDate(date)));
     // svelte-ignore state_referenced_locally
     let undoHistory = $state(iValues);
     /** @type {string|null} @computed */
 
-    let value_display = $state(computeDisplayValue());
+    let value_display = $derived(computeDisplayValue());
+   
     // svelte-ignore state_referenced_locally
     let currentFormat = format;
     let currentDisplayFormat = displayFormat;
@@ -148,8 +144,8 @@
         ? [{ref: null}, {ref: null}]
         : [{ref: null}]
     );
-    /** @type {'date'|'datetime'|'hour'|'minute'}*/
-    let lastEventType = $state('date');
+
+    let lastEventType = $state<"date" | "datetime" | "hour" | "minute">('date');
     let autocloseSupported = $derived(autocommit && ((isRange && resolvedMode === 'date') || !isRange));
     /** popup visibility state */
     let isFocused = $state(pickerOnly);
@@ -164,7 +160,7 @@
   
 
     function computeDisplayValue() {
-      return innerDates
+      return [...innerDates]
         .sort((date1, date2) => date1.getTime() - date2.getTime())
         .map(innerDate => formatDate(innerDate, displayFormat || format, i18n, displayFormatType || formatType))
         .join(' - ');
@@ -239,10 +235,9 @@
     function setValueAndEmitEvents() {
       prev_value = value_array.join();
       undoHistory = [...value_array];
-      value_display = computeDisplayValue();
       value = computeValue();
       // events
-      onChange?.(isRange ? innerDates : (innerDates[0]));    // change is dispatched on user interaction
+      onChange?.(isRange ? innerDates : innerDates[0]);    // change is dispatched on user interaction
       onDateChange?.({
         value: isRange ? value_array : (value_array[0]),
         dateValue: isRange ? innerDates : (innerDates[0]),
@@ -298,6 +293,7 @@
     // TODO: check the 'datetime' type for 'datetime' range
     function onToday() {
       const now = new Date();
+      value = isRange ? [now,now] : now;
       onDate({
         type: isRange ? 'datetime' : 'date',
         dateIndex: 0,
@@ -318,8 +314,8 @@
           date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999),
           isKeyboard: false
         });
-          }
-      shouldEmitChange('date') === false && setValueAndEmitEvents();
+      }
+      setValueAndEmitEvents();
       resolvedMode === 'date' && resetView();
     }
   
@@ -504,15 +500,11 @@
     function watch_formats(format, displayFormat) {
       if (currentDisplayFormat !== displayFormat) {
         currentDisplayFormat = displayFormat;
-        value_display = computeDisplayValue();
       }
       if (currentFormat !== format && innerDates.length) {
         currentFormat = format;
         value_array = innerDates.map(date => formatDate(date, format, i18n, formatType));
         prev_value = value_array.join();
-        if (currentDisplayFormat === null && currentDisplayFormat === displayFormat) {
-          value_display = computeDisplayValue();
-        }
         if (mode === "auto") {
           resolvedMode =
             format.match(/g|hh?|ii?/i) && format.match(/y|m|d/i)
@@ -528,7 +520,7 @@
       }
     }
   
-    $effect(() => watch_value(value));
+    // $effect(() => watch_value(value));
     $effect(() => watch_formats(format, displayFormat));
   </script>
   
@@ -547,7 +539,7 @@
             depressed
             onclick={onCancel}
             size="small"
-          >
+          >1
             <Icon path={Cancel}/>
           </Button>
           <Button
@@ -555,7 +547,7 @@
             depressed
             size="small"
             onclick={onConfirm}
-          >
+          >2
             <Icon path={Check}/>
           </Button>
         </span> -->

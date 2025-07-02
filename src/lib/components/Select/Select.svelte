@@ -1,4 +1,3 @@
-
 <script lang="ts" generics="T, D extends boolean = false">
     import './Select.scss';
     import type { ComponentProps, Snippet } from 'svelte';
@@ -12,6 +11,7 @@
     import Icon from '../Icon/Icon.svelte';
     
     import DOWN_ICON from '../../internal/Icons/down';
+	import ADD_ICON from '../../internal/Icons/add';
    
     type TItem = { value: T, name: string } & Record<string, unknown>;
     type SelectValue<Multiple extends boolean> = Multiple extends true ? T[] : T | null;
@@ -36,6 +36,7 @@
         emptyString?: string;
         menuClass?: string;
         filterValue?: string;
+        acceptValue?: boolean;
         onchange?: (value: SelectValue<D>) => void;
         loadItems?: (filterValue?: string) => Promise<(TItem|T)[]>;
         children?: Snippet;
@@ -60,8 +61,9 @@
         fullWidth = true,
         emptyString = '',
         menuClass = '',
-        filterValue = $bindable(),
+      
         items = $bindable([]),
+        acceptValue = false,
         loadItems,
         onchange,
         options,
@@ -69,16 +71,23 @@
         chip,
         ...rest
     }: Props = $props();
-
+	let filterValue = $state("");
     let loading = $state(false);
     let TextFieldInstance: TextField<string>;
-
+  
     const normalizedItems = $derived(items.map(x => typeof x === "object" ? x as TItem : { ...x, value: x, name: x } as TItem));
 
     const filteredItems = $derived.by(() => {
         if (!filterValue) return normalizedItems;
         return normalizedItems.filter((item) => 
             item.name.toLowerCase().includes(filterValue.toLowerCase())
+        );
+    });
+
+    const canAddNewItem = $derived.by(() => {
+        if (!acceptValue || !filterValue) return false;
+        return !normalizedItems.some(item => 
+            item.name.toLowerCase() === filterValue.toLowerCase()
         );
     });
 
@@ -99,12 +108,54 @@
         } else {
             value = null as SelectValue<D>;
         }
+        onchange?.(value);
+        TextFieldInstance?.validate();
+    }
+
+    function addNewItem(): void {
+        if (!filterValue || !canAddNewItem) return;
+        
+        // Create new item
+        const newItem = { value: filterValue as T, name: filterValue };
+        items = [...items, newItem];
+        
+        // Add to selection
+        if (multiple && Array.isArray(value)) {
+            value = [...value, filterValue as T] as SelectValue<D>;
+        } else {
+            value = filterValue as T as SelectValue<D>;
+        }
+        
+        // Clear filter
+        filterValue = '';
+        
+        handleChange();
     }
 
     function handleChange(): void {
         onchange?.(value);
         TextFieldInstance?.validate();
         if (!multiple) active = false;
+    }
+
+    function handleInputKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Enter' && canAddNewItem) {
+            event.preventDefault();
+            addNewItem();
+        } else if (event.key === 'Backspace' && !filterValue) {
+            event.preventDefault();
+            if(multiple)
+				value?.pop?.();
+			else
+				value = null;
+        }
+    }
+
+    function handleInputClick(event: MouseEvent): void {
+        event.stopPropagation();
+        if (!active) {
+            active = true;
+        }
     }
 
     const fetchItems = async (filter?: string) => {
@@ -119,11 +170,10 @@
             loading = false;
         }
     }
-
 </script>
 
 <Menu
-    closeOnClick={!multiple && !filterable}
+    closeOnClick={!multiple && !filterable && !acceptValue}
     {disabled}
     bind:active
     class={menuClass}
@@ -137,14 +187,14 @@
             class="s-select {klass}"
             {style}
             {...rest}
-            labelActive={active || !!value}
-            value={formatValue(value)}
+            labelActive={active || !!value || !!(filterable || acceptValue)}
+            value={(!filterable && !acceptValue) ? formatValue(value) : ''}
             onclear={() => (value = multiple ? [] as SelectValue<D> : null as SelectValue<D>)}
-            readonly
+            readonly={!filterable && !acceptValue}
             {disabled}
             {hint}
         >	
-            {#snippet content()}
+            {#snippet content({id})}
                 {#if value || value === 0}
                     {#each (Array.isArray(value) ? value : [value]) as val}
                         {#if chips}
@@ -160,6 +210,18 @@
                         {/if}
                     {/each}
                 {/if}
+                
+                {#if (filterable || acceptValue) && !disabled}
+                    <input
+						{id}
+                        bind:value={filterValue}
+						aria-invalid="false"
+						type="text"
+                        onkeydown={handleInputKeydown}
+                        onclick={handleInputClick}
+                        oninput={() => fetchItems(filterValue)}
+                    />
+                {/if}
             {/snippet}
             {#snippet append()}
                 <Icon
@@ -171,17 +233,6 @@
         </TextField>
     {/snippet}
     
-    {#if filterable}
-        <TextField 
-            autofocus 
-            bind:value={filterValue} 
-            class="s-select__filter"
-            oninput={() => fetchItems(filterValue)}
-        >
-            Search
-        </TextField>
-    {/if}
-    
     <ListItemGroup bind:value onchange={handleChange} {mandatory} {multiple} {max}>
         {#if options}
             {@render options()}
@@ -189,25 +240,36 @@
             <div class="{itemsPanelClass}">
                 {#if loading}
                     <div>Loading...</div>
-                {:else if filteredItems.length}
-                    {#each filteredItems as item}
-                        {@const isActive = value && Array.isArray(value) ? 
-                            value.includes(item.value) : value == item.value}
-                        {#if option}
-                            {@render option({item, active: isActive})}
-                        {:else}
-                            <ListItem dense={rest.dense} value={item.value} active={isActive}>
-                                {#snippet prepend()}
-                                    {#if multiple}
-                                        <Checkbox checked={isActive} />
-                                    {/if}
-                                {/snippet}
-                                {item.name}
-                            </ListItem>
-                        {/if}
-                    {/each}
                 {:else}
-                    <div>No options found</div>
+                    {#if canAddNewItem}
+                        <ListItem dense={rest.dense} onclick={addNewItem}>
+                            {#snippet prepend()}
+                                <Icon size={16} path={ADD_ICON} />
+                            {/snippet}
+                            Add "{filterValue}"
+                        </ListItem>
+                    {/if}
+                    
+                    {#if filteredItems.length}
+                        {#each filteredItems as item}
+                            {@const isActive = value && Array.isArray(value) ? 
+                                value.includes(item.value) : value == item.value}
+                            {#if option}
+                                {@render option({item, active: isActive})}
+                            {:else}
+                                <ListItem dense={rest.dense} value={item.value} active={isActive}>
+                                    {#snippet prepend()}
+                                        {#if multiple}
+                                            <Checkbox checked={isActive} />
+                                        {/if}
+                                    {/snippet}
+                                    {item.name}
+                                </ListItem>
+                            {/if}
+                        {/each}
+                    {:else if !canAddNewItem}
+                        <div>No options found</div>
+                    {/if}
                 {/if}
             </div>
         {/if}

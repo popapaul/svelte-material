@@ -1,4 +1,4 @@
-import type { FilterableColumn, FilterOperator, LeafColumn } from "../types";
+import type { FilterableColumn, FilterCondition, FilterOperator, LeafColumn } from "../types";
 import { BaseService } from "./base-service";
 
 /**
@@ -72,6 +72,16 @@ export class FilteringService extends BaseService {
             }
         }
 
+        this.datagrid.events.emit('onFilterChange', { column: props.column });
+        this.datagrid.cacheManager.invalidate('filteredData');
+        this.datagrid.features.pagination.goToFirstPage();
+        this.datagrid.processors.data.executeFullDataTransformation();
+    }
+    removeFilterCondition(column: LeafColumn<any>) {
+       
+    
+        this.datagrid.features.filtering.filterConditions = this.datagrid.features.filtering.filterConditions.filter(c => c.columnId != column.columnId);
+        this.datagrid.events.emit('onFilterChange', { column });
         this.datagrid.cacheManager.invalidate('filteredData');
         this.datagrid.features.pagination.goToFirstPage();
         this.datagrid.processors.data.executeFullDataTransformation();

@@ -65,7 +65,7 @@ export class HierarchyFeature<TOriginalRow = any> implements IHierarchyFeature<T
     private async expandRow(identifier: GridRowIdentifier) {
         const row = this.datagrid.rows.findRowById(identifier); // Get the row object by its identifier
         const children = await this.getChildren(row); // Fetch the children of the row
-        console.log(children)
+      
         const hierarchyRow = this.makeHierarchyRow(row, children); // Create a hierarchy row with the fetched children
         Object.assign(row, hierarchyRow); // Update the original row with the hierarchy row properties
         this.expandedRowIds.add(identifier); // Add the identifier to the expanded rows set

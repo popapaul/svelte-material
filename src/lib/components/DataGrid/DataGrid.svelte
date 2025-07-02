@@ -1,6 +1,6 @@
 <script lang="ts" generics="T">
-	import { onMount, setContext, untrack , type Component, type ComponentProps, type Snippet } from "svelte";
-	import { DatagridCore,  type GridBasicRow, type ColumnSizeState, type DatagridCoreConfig, type GridRow } from "./datagrid/core/index.svelte";
+	import { setContext, untrack , type Component, type ComponentProps, type Snippet } from "svelte";
+	import { DatagridCore,  type GridBasicRow, type ColumnSizeState, type DatagridCoreConfig, type GridRow, type FilterCondition } from "./datagrid/core/index.svelte";
 	import CellHeader  from "./CellHeader.svelte";
 	import Column from "./Column.svelte";
     import Button from "../Button/Button.svelte";
@@ -37,7 +37,8 @@
             size?: number;
             search?: string;
             sortBy?: string;
-            order?: string,
+            order?: string;
+            filters?: Omit<FilterCondition<T>, "getValueFn">[]
         },
 
     } & DatagridCoreConfig<T>["initialState"]
@@ -78,6 +79,7 @@
         grid.events.on("onPageChange", ({ newPage }) => context.page = newPage);
         grid.events.on("onPageSizeChange", ({ pageSize }) => context.size = pageSize);
         grid.events.on("onSearchQueryChange", ({ newQuery }) => context.search = newQuery);
+        grid.events.on("onFilterChange", () => context.filters = grid.features.filtering.filterConditions.map(({columnId, value, valueTo, operator})=> ({ columnId, value, valueTo, operator  }))),
         grid.events.on("onColumnSort", () => {
             const sort = grid.features.sorting.sortConfigs?.[0];
             context.sortBy = sort?.columnId ?? "";

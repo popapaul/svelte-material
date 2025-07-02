@@ -1,4 +1,4 @@
-import type { FormatterFn, AggregationConfig, GetGroupValue, CustomCell, HeaderCell, ColumnId, CellValue, ColumnSizeState, ColumnPinningState, ColumnDef, ParentColumnId, AggregatedCell, GroupedCell, ColumnAlign } from "../types";
+import type { FormatterFn, AggregationConfig, GetGroupValue, CustomCell, HeaderCell, ColumnId, CellValue, ColumnSizeState, ColumnPinningState, ColumnDef, ParentColumnId, AggregatedCell, GroupedCell, ColumnAlign, FilterOperator } from "../types";
 
 // Columns
 type DotPrefix<T extends string> = T extends "" ? "" : `.${T}`;
@@ -55,12 +55,30 @@ type SharedDataLogicProps<TOriginalRow> = {
   formatterFn?: FormatterFn<TOriginalRow>;
 };
 
+export type FilterableOptions =
+  | boolean
+  | {
+      operators: FilterOperator[];
+      type: "date";
+      options?: { name: string; value: Date }[];
+    }
+  | {
+      operators: FilterOperator[];
+      type: "number";
+      options?: { name: string; value: number }[];
+    }
+  | {
+      operators: FilterOperator[];
+      type: "string";
+      options?: { name: string; value: string }[];
+    };
+
 export type ColumnOptions = {
   calculateFacets?: boolean;
   searchable?: boolean;
   groupable?: boolean;
   sortable?: boolean;
-  filterable?: boolean;
+  filterable?: FilterableOptions;
   pinnable?: boolean;
   moveable?: boolean;
   hideable?: boolean;

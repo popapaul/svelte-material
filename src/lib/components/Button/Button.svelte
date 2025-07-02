@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import { ripple as Ripple, type RippleOptions } from '../../actions/Ripple';
 	import './Button.scss';
 	import type { HTMLAnchorAttributes, HTMLButtonAttributes } from 'svelte/elements';
@@ -59,6 +60,7 @@
 <svelte:element
 	{...rest}
 	{type}
+	transition:fade
 	this={(rest.href ? 'a' : 'button') as any}
 	class="s-btn size-{size} {active ? activeClass : ''} {klass}"
 	class:fab
