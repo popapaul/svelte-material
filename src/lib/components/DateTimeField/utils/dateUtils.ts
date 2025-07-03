@@ -57,7 +57,7 @@ export function getLocaleDateFormat(mode: Mode = 'auto', locale: string = getCou
         case 'hour':
           return 'HH';
         case 'minute':
-          return 'mm';
+          return 'ii';
         case 'second':
           return 'ss';
         case 'literal':
@@ -67,7 +67,7 @@ export function getLocaleDateFormat(mode: Mode = 'auto', locale: string = getCou
       }
     })
     .join('');
-
+console.log('Locale Date Format:', format);
   return format;
 }
 

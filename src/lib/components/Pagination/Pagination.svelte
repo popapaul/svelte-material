@@ -58,7 +58,9 @@
 	{#if pageSelect}
 		<Select
 			style="max-width:120px;"
+			class="!grow"
 			mandatory
+			acceptValue
 			items={pageSizes.map((size) => ({ name: size?.toString(), value: size }))}
 			value={size}
 			onchange={(detail)=> {pageSize = detail; onSizeChange?.(detail)}}

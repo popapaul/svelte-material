@@ -162,16 +162,14 @@
         const gridValues = Array.from(new Set(grid.originalState.data.map(row => "getValueFn" in column ? column.getValueFn(row) : null))).filter(Boolean);
         return gridValues.map(value=>({ name: value?.toString(), value }));
     }
- 
-    const filterCondition = $derived(grid.features.filtering.filterConditions.find(c => c.columnId === column.columnId));
-   
+  const filterCondition = $derived(grid.features.filtering.filterConditions.find(c => c.columnId === column.columnId) ?? { columnId: column.columnId, operator: "equals", value: null, valueTo: null } as FilterCondition  );
     let value = $derived(filterCondition?.value);
     let valueTo = $derived(filterCondition?.valueTo);
     const cellValues = getGridValues();
     let operator = $state(filterCondition?.operator ?? filterable?.operators[0]);
     
-    const filterCondition = $derived(grid.features.filtering.filterConditions.find(c => c.columnId === column.columnId) ?? { columnId: column.columnId, operator: "equals", value: null, valueTo: null } as FilterCondition  );
-    const cellValues = $derived(Array.from(new Set(grid.originalState.data.map(row => column.getValueFn(row)))));
+   
+
     const handleFilter= ()=>{
         if(value === null || value === undefined)
             return grid.handlers.filtering.removeFilterCondition(column);
