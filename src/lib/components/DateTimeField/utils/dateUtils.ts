@@ -51,7 +51,7 @@ export function getLocaleDateFormat(mode: Mode = 'auto', locale: string = getCou
         case 'year':
           return 'yyyy';
         case 'month':
-          return 'MM';
+          return 'mm';
         case 'day':
           return 'dd';
         case 'hour':

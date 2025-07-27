@@ -1,5 +1,5 @@
 <script lang="ts" generics="T">
-	import { setContext, untrack , type Component, type ComponentProps, type Snippet } from "svelte";
+	import { onMount, setContext, untrack , type Component, type ComponentProps, type Snippet } from "svelte";
 	import { DatagridCore,  type GridBasicRow, type ColumnSizeState, type DatagridCoreConfig, type GridRow, type FilterCondition } from "./datagrid/core/index.svelte";
 	import CellHeader  from "./CellHeader.svelte";
 	import Column from "./Column.svelte";

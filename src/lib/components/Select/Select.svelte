@@ -214,6 +214,7 @@
                 {#if (filterable || acceptValue) && !disabled}
                     <input
 						{id}
+                        class="basis-0 "
                         bind:value={filterValue}
 						aria-invalid="false"
 						type="text"
@@ -246,7 +247,7 @@
                             {#snippet prepend()}
                                 <Icon size={16} path={ADD_ICON} />
                             {/snippet}
-                            Add "{filterValue}"
+                            {filterValue}
                         </ListItem>
                     {/if}
                     

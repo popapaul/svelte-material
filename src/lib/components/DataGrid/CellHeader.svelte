@@ -378,23 +378,41 @@
     {/if}
 {/snippet}
 <div
-    onclick={toggleSort}
-    aria-label="Click to sort column"
-    role="button"
-    tabindex="0"
-    class="grid-header-cell flex cursor-pointer relative"
+    class="grid-header-cell cursor-pointer"        
     style="{['left', 'right'].includes(column.pinning.position) && `background-color: black;`}"
     class:offset-left={column.pinning.position === 'left'}
     class:offset-right={column.pinning.position === 'right'}
     style:--offset={`${column.pinning.offset}px`}
     >
-        {@render sorter()}
-        {#if column.headerCell}
-            {@render column.headerCell({ column, datagrid:grid })}
-        {:else}
-            <div class="overflow-hidden inline-flex items-center text-ellipsis" style="height:35px;">{column.header}</div>
-        {/if}
-        {@render filter()}
+        <div
+            aria-label="Click to sort column"
+            role="button"
+            tabindex="0"
+            class="flex w-full items-center  overflow-hidden"
+            class:justify-end={column.align === 'right'}
+            class:justify-center={column.align === 'center'}
+            class:justify-start={column.align === 'left'}
+        >   
+            {#if column.headerCell}
+                {@render column.headerCell({ column, datagrid:grid })}
+            {:else}
+                  {@render sorter()}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <div onclick={toggleSort} class="overflow-hidden inline-flex items-center text-ellipsis" style="height:35px;">{column.header}</div>
+                {@render (column.filter ?? filter)()}
+            {/if}
+        </div>
+        
+        <!-- Resize Handle -->
+        <div 
+            class="resize-handle"
+            class:resizing={isResizing}
+            role="button"
+            tabindex="0"
+            title="Drag to resize column"
+            onmousedown={startResize}
+        ></div>
 </div>
 
 <style>
