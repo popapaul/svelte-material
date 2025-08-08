@@ -114,14 +114,14 @@ export class DataDataProcessor<TOriginalRow> {
     applyGlobalSearch(data: TOriginalRow[]): TOriginalRow[] {
         data = this.datagrid.lifecycleHooks.executePreGlobalSearch(data);
 
-        const isManualSortingEnabled = this.datagrid.features.globalSearch.isManual
-        const valueIsEmpty = this.datagrid.features.globalSearch.searchQuery === ''
+        const isManualSortingEnabled = this.datagrid.features.globalSearch.state.isManual
+        const valueIsEmpty = !this.datagrid.features.globalSearch.state.searchQuery
 
         if (isManualSortingEnabled || valueIsEmpty) {
             return data
         }
 
-        const searchValue = this.datagrid.features.globalSearch.searchQuery.toLowerCase();
+        const searchValue = this.datagrid.features.globalSearch.state.searchQuery.toLowerCase();
 
 
         const applyFuzzySearch = () => {
@@ -143,7 +143,7 @@ export class DataDataProcessor<TOriginalRow> {
             );
         }
 
-        const isFuzzySearchEnabled = this.datagrid.features.globalSearch.isFuzzySearchEnabled;
+        const isFuzzySearchEnabled = this.datagrid.features.globalSearch.state.isFuzzySearchEnabled;
 
         this.metrics.measure('Global Search', () => {
             if (isFuzzySearchEnabled) {
@@ -167,10 +167,10 @@ export class DataDataProcessor<TOriginalRow> {
     applyColumnFilters(data: TOriginalRow[]): TOriginalRow[] {
         data = this.datagrid.lifecycleHooks.executePreFilter(data);
 
-        const isMnualSortingEnabled = this.datagrid.features.globalSearch.isManual
+        const isManualSortingEnabled = this.datagrid.features.sorting.isManual
         const noFilters = this.datagrid.features.filtering.filterConditions.length === 0
 
-        if (isMnualSortingEnabled || noFilters) return data
+        if (isManualSortingEnabled || noFilters) return data
 
         const filterData = (data: TOriginalRow[], activeFilters: FilterCondition[]) => {
             return data.filter(row => activeFilters.every(filter => this.datagrid.features.filtering.evaluateCondition(row, filter)));
@@ -212,7 +212,7 @@ export class DataDataProcessor<TOriginalRow> {
         // Update cache and pagination
         this.metrics.measure('Cache Update', () => {
             this.datagrid.cacheManager.rows = visibleRows;
-            this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
+            this.datagrid.features.pagination.state.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
             this.datagrid.cacheManager.paginatedRows = this.paginateRows(visibleRows);
         });
 
@@ -229,7 +229,7 @@ export class DataDataProcessor<TOriginalRow> {
         // Update cache and pagination
         this.metrics.measure('Cache Update', () => {
             this.datagrid.cacheManager.rows = visibleRows;
-            this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
+            this.datagrid.features.pagination.state.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
             this.datagrid.cacheManager.paginatedRows = this.paginateRows(visibleRows);
         });
 
@@ -259,14 +259,14 @@ export class DataDataProcessor<TOriginalRow> {
             this.datagrid.features.rowPinning.updatePinnedRows();
         });
 
-        if (this.datagrid.features.pagination.manual) {
+        if (this.datagrid.features.pagination.state.manual) {
             this.datagrid.cacheManager.paginatedRows = basicRows!;
             return
         }
 
-        this.datagrid.features.pagination.totalCount = data!.length;
+        this.datagrid.features.pagination.state.totalCount = data!.length;
 
-        this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(data);
+        this.datagrid.features.pagination.state.pageCount = this.datagrid.features.pagination.getPageCount(data);
         // Apply pagination
         this.datagrid.cacheManager.paginatedRows = this.paginateRows(basicRows!);
     }
@@ -488,7 +488,7 @@ export class DataDataProcessor<TOriginalRow> {
   * @returns {GridRow<TOriginalRow>[]} A subset of rows based on the pagination settings (page and pageSize).
   */
     private paginateRows(rows: GridRow<TOriginalRow>[]): GridRow<TOriginalRow>[] {
-        const { page, pageSize } = this.datagrid.features.pagination;
+        const { page, pageSize } = this.datagrid.features.pagination.state;
         const start = (page - 1) * pageSize;
         return rows.slice(start, start + pageSize);
     }
@@ -509,7 +509,7 @@ export class DataDataProcessor<TOriginalRow> {
         this.metrics.measure('Group Expansion', () => {
             const visibleRows = this.getVisibleRows();
             this.datagrid.cacheManager.rows = visibleRows;
-            this.datagrid.features.pagination.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
+            this.datagrid.features.pagination.state.pageCount = this.datagrid.features.pagination.getPageCount(visibleRows);
             this.datagrid.cacheManager.paginatedRows = this.paginateRows(visibleRows);
         });
     }

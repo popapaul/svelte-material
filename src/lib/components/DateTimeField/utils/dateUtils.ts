@@ -67,7 +67,7 @@ export function getLocaleDateFormat(mode: Mode = 'auto', locale: string = getCou
       }
     })
     .join('');
-console.log('Locale Date Format:', format);
+
   return format;
 }
 

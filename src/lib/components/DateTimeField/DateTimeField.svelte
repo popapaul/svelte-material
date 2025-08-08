@@ -113,11 +113,11 @@
 
     const { iDates, iValues, iValueCombined} = $derived(initProps(value, format, i18n, formatType));
     /** @type {string|null} concated by `join()` */
-    let prev_value = iValueCombined;
-    let value_array = $state(iValues);
+    let prev_value = $derived(iValueCombined);
+    let value_array = $derived(iValues);
     let innerDates = $derived<SvelteDate[]>(iDates.map(date => new SvelteDate(date)));
     // svelte-ignore state_referenced_locally
-    let undoHistory = $state(iValues);
+    let undoHistory = $derived(iValues);
     /** @type {string|null} @computed */
 
     let value_display = $derived(computeDisplayValue());

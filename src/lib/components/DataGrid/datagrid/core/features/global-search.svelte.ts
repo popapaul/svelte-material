@@ -13,11 +13,17 @@ import { flattenColumnStructureAndClearGroups } from "../utils.svelte";
  * @property {Fuse<any> | null} fuseSearchEngine - The instance of Fuse.js used for search.
  */
 export type GlobalSearchState = {
+    /** Whether the search is manual. */
     isManual: boolean;
+    /** The current search query string. */
     searchQuery: string;
+    /** Whether fuzzy search is enabled. */
     isFuzzySearchEnabled: boolean;
+    /** The delay in milliseconds for debouncing search input. */
     debounceDelay: number;
-    fuseSearchEngine: Fuse<any> | null;
+    /** The instance of Fuse.js used for search, or null if not initialized. */
+    fuseSearchEngine: Fuse<any>;
+    /** Callback function triggered when the search query changes. */
     onSearchQueryChange: (value: string) => void;
 }
 
@@ -31,7 +37,7 @@ export type GlobalSearchFeatureConfig = Partial<GlobalSearchState>;
  * Interface representing the global search feature state.
  * @interface IGlobalSearchState
  */
-export type IGlobalSearchState = GlobalSearchState;
+export type IGlobalSearchState = { state: Partial<GlobalSearchState> };
 
 /**
  * The GlobalSearchFeature class provides search capabilities within the datagrid,
@@ -39,19 +45,7 @@ export type IGlobalSearchState = GlobalSearchState;
  */
 export class GlobalSearchFeature implements IGlobalSearchState {
     datagrid: DatagridCore;
-    /** Whether the search is manual. */
-    isManual: boolean = $state(false);
-    /** The current search query string. */
-    searchQuery = $state('');
-    /** The debounce delay in milliseconds for search query input. */
-    debounceDelay = $state(300);
-    /** Whether fuzzy search is enabled. */
-    isFuzzySearchEnabled = $state(true);
-    /** The instance of Fuse.js used for search. */
-    fuseSearchEngine: Fuse<any> | null = $state(null);
-
-    /** Callback function triggered when the search query changes. */
-    onSearchQueryChange: (value: string) => void = () => { };
+    state: Partial<GlobalSearchState>;
 
     /**
      * Creates an instance of the GlobalSearchFeature.
@@ -60,8 +54,7 @@ export class GlobalSearchFeature implements IGlobalSearchState {
      */
     constructor(datagrid: DatagridCore, config: GlobalSearchFeatureConfig) {
         this.datagrid = datagrid;
-        Object.assign(this, config);
-       
+        this.state = $derived(config ?? {});
     }
 
     /**
@@ -70,10 +63,10 @@ export class GlobalSearchFeature implements IGlobalSearchState {
      * @param {string} query - The new search query.
      */
     updateSearchQuery(query: string): void {
-        this.datagrid.events.emit('onSearchQueryChange', { prevQuery: this.searchQuery, newQuery: query });
-        this.searchQuery = query;
-
-        if(!this.isManual)
+        this.datagrid.events.emit('onSearchQueryChange', { prevQuery: this.state.searchQuery, newQuery: query });
+        this.state.searchQuery = query;
+        this.state.onSearchQueryChange?.(query);
+        if(!this.state.isManual)
         {
             this.datagrid.cacheManager.invalidate('filteredData');
             this.datagrid.processors.data.executeFullDataTransformation();
@@ -101,10 +94,10 @@ export class GlobalSearchFeature implements IGlobalSearchState {
      * @returns {Fuse<any> | null} The Fuse.js instance used for search, or null if not initialized.
      */
     getFuseSearchEngine(): Fuse<any> | null {
-        if (!this.fuseSearchEngine) {
+        if (!this.state.fuseSearchEngine) {
             this.setFuseSearchEngine(this.initializeFuseInstance(this.datagrid.originalState.data || [], flattenColumnStructureAndClearGroups(this.datagrid._columns).map(col => col.columnId as string)));
         }
-        return this.fuseSearchEngine;
+        return this.state.fuseSearchEngine;
     }
 
     /**
@@ -112,6 +105,6 @@ export class GlobalSearchFeature implements IGlobalSearchState {
      * @param {Fuse<any> | null} fuseSearchEngine - The Fuse.js instance to set, or null to disable search.
      */
     setFuseSearchEngine(fuseSearchEngine: Fuse<any> | null): void {
-        this.fuseSearchEngine = fuseSearchEngine;
+        this.state.fuseSearchEngine = fuseSearchEngine;
     }
 }

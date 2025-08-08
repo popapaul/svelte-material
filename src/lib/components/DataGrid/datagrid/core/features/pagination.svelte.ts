@@ -37,7 +37,7 @@ export type PaginationFeatureConfig = Partial<PaginationFeatureState>;
 /**
  * Interface for row pinning functionality, extending PaginationFeatureState.
  */
-export type IRowPinningFeature = {} & PaginationFeatureState;
+export type IRowPinningFeature = { state: Partial<PaginationFeatureState> };
 
 /**
  * Manages pagination functionality within the data grid, including page navigation, size adjustments, and event handling.
@@ -46,29 +46,31 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
     /** The instance of the data grid associated with this feature. */
     datagrid: DatagridCore<TOriginalRow>;
 
-    /** Flag indicating whether page resets automatically. */
-    autoResetPage: boolean = $state(false);
+    state: Partial<PaginationFeatureState>;
 
-    /** Callback function to handle changes in pagination state. */
-    onPaginationChange: (config: PaginationFeature<any>) => void = () => { };
+    // /** Flag indicating whether page resets automatically. */
+    // autoResetPage: boolean = $state(false);
 
-    /** Flag indicating whether pagination is manual. */
-    manual: boolean = $state(false);
+    // /** Callback function to handle changes in pagination state. */
+    // onPaginationChange: (config: PaginationFeature<any>) => void = () => { };
 
-    /** The current page number (starts at 1). */
-    page = $state(1);
+    // /** Flag indicating whether pagination is manual. */
+    // manual: boolean = $state(false);
 
-    /** The number of rows per page (default is 10). */
-    pageSize = $state(10);
+    // /** The current page number (starts at 1). */
+    // page = $state(1);
 
-    /** Available options for rows per page (e.g., [10, 20, 50, 100]). */
-    pageSizes = $state([10, 20, 50, 100]);
+    // /** The number of rows per page (default is 10). */
+    // pageSize = $state(10);
 
-    /** Total number of pages available. */
-    pageCount: number = $state(0);
+    // /** Available options for rows per page (e.g., [10, 20, 50, 100]). */
+    // pageSizes = $state([10, 20, 50, 100]);
 
-    /** Total count of rows across all pages. */
-    totalCount: number = $state(0);
+    // /** Total number of pages available. */
+    // pageCount: number = $state(0);
+
+    // /** Total count of rows across all pages. */
+    // totalCount: number = $state(0);
 
     /**
      * Creates an instance of the PaginationFeature class.
@@ -77,9 +79,13 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      */
     constructor(datagrid: DatagridCore<TOriginalRow>, config?: PaginationFeatureConfig) {
         this.datagrid = datagrid;
-        Object.assign(this, config);
-        if(this.manual)
-            this.pageCount = this.getPageCount([]); // Calculate page count based on the current data set
+  
+        this.state = $derived(config);
+        this.state.pageCount ??= this.getPageCount(this.datagrid.cacheManager.rows || []);
+        this.state.totalCount ??= this.datagrid.cacheManager.rows.length;
+        this.state.page ??= 1;
+        this.state.pageSize ??= 25;
+        this.state.pageSizes ??= [10, 20, 50, 100];
     }
 
     /**
@@ -87,7 +93,7 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      * @returns {boolean} `true` if the current page is 1, meaning no previous page exists.
      */
     canGoToPrevPage(): boolean {
-        return this.page === 1;
+        return this.state.page === 1;
     }
 
     /**
@@ -95,7 +101,7 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      * @returns {boolean} `true` if the current page is equal to the last page, meaning no next page exists.
      */
     canGoToNextPage(): boolean {
-        return this.page === this.pageCount;
+        return this.state.page === this.state.pageCount;
     }
 
     /**
@@ -103,13 +109,13 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      * @param {number} newPage The page number to navigate to.
      */
     goToPage(newPage: number): void {
-        if (newPage === this.page) return; // No action if already on the specified page
-        this.datagrid.events.emit('onPageChange', { prevPage: this.page, newPage });
-        this.page = Math.min(
+        if (newPage === this.state.page) return; // No action if already on the specified page
+        this.datagrid.events.emit('onPageChange', { prevPage: this.state.page, newPage });
+        this.state.page = Math.min(
             Math.max(newPage, 1),
-            this.datagrid.features.pagination.pageCount
+            this.datagrid.features.pagination.state.pageCount
         );
-        if(!this.manual)
+        if(!this.state.manual)
         this.datagrid.processors.data.handlePaginationChange()
     }
 
@@ -118,8 +124,8 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      */
     goToNextPage(): void {
         if (this.canGoToNextPage()) return;
-        const newPage = this.page + 1;
-        this.datagrid.events.emit('onPageChange', { prevPage: this.page, newPage });
+        const newPage = this.state.page + 1;
+        this.datagrid.events.emit('onPageChange', { prevPage: this.state.page, newPage });
         this.goToPage(newPage);
       
     }
@@ -129,8 +135,8 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      */
     goToPrevPage(): void {
         if (this.canGoToPrevPage()) return;
-        const newPage = this.page - 1;
-        this.datagrid.events.emit('onPageChange', { prevPage: this.page, newPage });
+        const newPage = this.state.page - 1;
+        this.datagrid.events.emit('onPageChange', { prevPage: this.state.page, newPage });
         this.goToPage(newPage);
     }
 
@@ -139,7 +145,7 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      */
     goToFirstPage(): void {
         const firstPage = 1;
-        this.datagrid.events.emit('onPageChange', { prevPage: this.page, newPage: firstPage });
+        this.datagrid.events.emit('onPageChange', { prevPage: this.state.page, newPage: firstPage });
         this.goToPage(firstPage);
     }
 
@@ -147,8 +153,8 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      * Navigates to the last page.
      */
     goToLastPage(): void {
-        const lastPage = this.pageCount;
-        this.datagrid.events.emit('onPageChange', { prevPage: this.page, newPage: lastPage });
+        const lastPage = this.state.pageCount;
+        this.datagrid.events.emit('onPageChange', { prevPage: this.state.page, newPage: lastPage });
         this.goToPage(lastPage);
     }
 
@@ -156,8 +162,8 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      * Navigates to the closest valid page, ensuring it's within the range of available pages.
      */
     goToClosestPage(): void {
-        const closestPage = Math.min(this.page, this.pageCount); // Ensure the page is within valid bounds
-        this.datagrid.events.emit('onPageChange', { prevPage: this.page, newPage: closestPage });
+        const closestPage = Math.min(this.state.page, this.state.pageCount); // Ensure the page is within valid bounds
+        this.datagrid.events.emit('onPageChange', { prevPage: this.state.page, newPage: closestPage });
         this.goToPage(closestPage);
     }
 
@@ -167,7 +173,7 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      * @returns {number} The total number of pages.
      */
     getPageCount(data: Array<any>): number {
-        return Math.ceil( (this.manual ? this.totalCount : data.length) / this.pageSize);
+        return Math.ceil( (this.state.manual ? this.state.totalCount : data.length) / this.state.pageSize);
     }
 
     /**
@@ -175,12 +181,12 @@ export class PaginationFeature<TOriginalRow = any> implements IRowPinningFeature
      * @param {number} newSize The new page size to set.
      */
     setPageSize(newSize: number): void {
-     
-        this.datagrid.events.emit('onPageSizeChange', { prevSize: this.pageSize, pageSize: newSize });
-        if (newSize === this.pageSize) return; // No action if the page size is the same
-        this.pageSize = newSize;
-       
-        this.pageCount = this.getPageCount(this.datagrid.cacheManager.rows || []);
+
+        this.datagrid.events.emit('onPageSizeChange', { prevSize: this.state.pageSize, pageSize: newSize });
+        if (newSize === this.state.pageSize) return; // No action if the page size is the same
+        this.state.pageSize = newSize;
+
+        this.state.pageCount = this.getPageCount(this.datagrid.cacheManager.rows || []);
         // Recalculate pagination and ensure the page is within the valid range after the page size change
         this.goToClosestPage();
     }

@@ -367,7 +367,7 @@ export type FeatureConstructor<T> = {
 export type InitialState<TOriginalRow> = {
     sorting?: SortingFeatureConfig,
     pagination?: PaginationFeatureConfig,
-    filtering?: ColumnFilteringFeatureConfig,
+    filtering?: ColumnFilteringFeatureConfig<TOriginalRow>,
     faceting?: ColumnFacetingFeatureConfig,
     globalSearch?: GlobalSearchFeatureConfig,
     grouping?: GroupingFeatureConfig,

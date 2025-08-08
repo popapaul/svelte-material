@@ -29,18 +29,7 @@
         expand?: Snippet<[ { row: GridRow<T>; original:T, grid: DatagridCore<T> } ]>;
         onSwitch?: (event:{dragged:GridRow<T>, target:GridRow<T>}) => void,
         expandable?: (row:GridRow<T>)=>{ isExpanded:boolean } | false,
-        count?: number;
         globalSearchEnabled?:boolean;
-        serverSide?:boolean,
-        state?:{
-            page?: number;
-            size?: number;
-            search?: string;
-            sortBy?: string;
-            order?: string;
-            filters?: Omit<FilterCondition<T>, "getValueFn">[]
-        },
-
     } & DatagridCoreConfig<T>["initialState"]
     let { 
         data = $bindable<T[]>(), 
@@ -53,43 +42,13 @@
         children,
         expandable,
         virtualization,
-        state:context = $bindable(),
-        serverSide = false,
-        count = 0,
         globalSearchEnabled = true,
-        ...restState
+        ...initialState
      }:Props  = $props();
-  
-    const initialState:DatagridCoreConfig<T>["initialState"] = {...restState};
-    Object.assign(initialState, {
-        pagination: { manual: serverSide, page: context?.page?? 1, pageSize: context?.size??25, totalCount: count },
-        sorting: {
-            isManual: serverSide,
-            allowMultiSort:false,
-            sortConfigs: context?.sortBy ? [{ columnId: context.sortBy, direction: context.order === "asc" ? "ascending" : "descending" }] : [],
-        },
-        globalSearch: { isManual: serverSide, searchQuery: context?.search ?? "" }
-    } satisfies DatagridCoreConfig<T>["initialState"]);
 
 	const grid = new DatagridCore({data, columns:[], rowIdGetter:createBasicRowIdentifier, initialState}, false);
     setContext("datagrid", grid);
-    if (context) {
-        
-        grid.events.on("onPageSizeChange", console.log);
-        grid.events.on("onPageChange", ({ newPage }) => context.page = newPage);
-        grid.events.on("onPageSizeChange", ({ pageSize }) => context.size = pageSize);
-        grid.events.on("onSearchQueryChange", ({ newQuery }) => context.search = newQuery);
-        grid.events.on("onFilterChange", () => context.filters = grid.features.filtering.filterConditions.map(({columnId, value, valueTo, operator})=> ({ columnId, value, valueTo, operator  }))),
-        grid.events.on("onColumnSort", () => {
-            const sort = grid.features.sorting.sortConfigs?.[0];
-            context.sortBy = sort?.columnId ?? "";
-            context.order = sort?.direction === "descending" ? "desc" : sort?.direction === "ascending" ? "asc" : null;
-        });
-    }
 
-    $effect(()=>{
-        grid.features.pagination.totalCount = Number(count);
-    })
      $effect(()=>{
         data;
         untrack(()=>{
@@ -98,9 +57,6 @@
 		    grid.refresh(() => {}, { recalculateAll: true });
         })
      });
-
-
-
 
 type Position = 'top' | 'middle' | 'bottom';
 
@@ -296,7 +252,7 @@ function getMouseVerticalPosition(event: DragEvent): Position {
         {@render header?.({ grid})}
 
         {#if globalSearchEnabled}
-            <TextField clearable class="ml-auto max-w-[250px]" value={grid.features.globalSearch.searchQuery} oninput={({target})=>grid.features.globalSearch.updateSearchQuery(target.value)}  onclear={() => grid.features.globalSearch.updateSearchQuery("")}>
+            <TextField clearable class="ml-auto max-w-[250px]" value={grid.features.globalSearch.state.searchQuery} oninput={({target})=>grid.features.globalSearch.updateSearchQuery(target.value)}  onclear={() => grid.features.globalSearch.updateSearchQuery("")}>
                 {#snippet prepend()}
                     <Icon path={Search} size="22" />
                 {/snippet}
@@ -320,11 +276,11 @@ function getMouseVerticalPosition(event: DragEvent): Position {
         {@render footer?.({grid})}
         <Pagination
             type="select"
-            page={grid.features.pagination.page}
-            pageSize={grid.features.pagination.pageSize}
+            page={grid.features.pagination.state.page}
+            pageSize={grid.features.pagination.state.pageSize}
             onchange={(page)=>grid.features.pagination.goToPage(page)}
             onSizeChange={(size)=>grid.features.pagination.setPageSize(size)}
-            count={grid.features.pagination.totalCount} />
+            count={grid.features.pagination.state.totalCount} />
     </footer>
 </div>
 
