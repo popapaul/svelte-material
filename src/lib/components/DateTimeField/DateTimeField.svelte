@@ -74,7 +74,7 @@
     type Props = (PropsBase & SingleDateProps) | (PropsBase & RangeDateProps);
 
     let {
-      locale = navigator.language || 'en-US',
+      locale = navigator?.language || 'en-US',
       disabled = false,
       placeholder = null,
       required = false,
