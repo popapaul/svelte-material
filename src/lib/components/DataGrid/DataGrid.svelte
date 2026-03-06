@@ -51,6 +51,7 @@
 
      $effect(()=>{
         data;
+        data.length;
         untrack(()=>{
             grid.originalState.data = data;
             grid.cacheManager.invalidate('everything');
