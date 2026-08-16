@@ -83,7 +83,7 @@
 
     function getAvailableOperators(type: any): FilterOperator[] {
       
-            console.log({type})
+
 
         if (type === "string") {
             return [

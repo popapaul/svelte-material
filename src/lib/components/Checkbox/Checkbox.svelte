@@ -108,6 +108,7 @@
 	});
 	const handleChange = (event)=>{
 		groupUpdate();
+		rest.onchange?.(event);
 		onchange?.(event);
 	}
 
@@ -133,7 +134,6 @@
 		class:disabled
 	>
 		<input
-			{...rest}
 			type="checkbox"
 			bind:this={inputElement}
 			aria-checked={checked}
@@ -144,6 +144,7 @@
 			{disabled}
 			{value}
 			onchange={handleChange}
+			{...rest}
 		/>
 		<div class="s-checkbox__background" aria-hidden="true">
 			{#if checked || indeterminate}

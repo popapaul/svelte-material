@@ -42,7 +42,7 @@ const createDisplayColumnColumnId = ({ columnId, header }: { columnId?: string, 
  * @returns {DisplayColumn<TOriginalRow>} The created display column object.
  */
 export function createDisplayColumn<TOriginalRow extends Record<string, any>, TMeta>(
-  { header, cell, columnId, _meta, align, ...rest }: CreateDisplayColumnProps<TOriginalRow, TMeta>
+  { header, cell, columnId, _meta, ...rest }: CreateDisplayColumnProps<TOriginalRow, TMeta>
 ): DisplayColumn<TOriginalRow> {
   // Generate the column ID for the display column
   const computedColumnId = createDisplayColumnColumnId({ header, columnId });

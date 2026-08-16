@@ -42,7 +42,7 @@ const createComputedColumnColumnId = ({ columnId, header }: { columnId?: string,
  * @returns {ComputedColumn<TOriginalRow>} The created computed column object.
  */
 export function createComputedColumn<TOriginalRow extends Record<string, any>, TMeta>(
-  { header, columnId, getValueFn, _meta , align, ...rest }: CreateComputeColumnProps<TOriginalRow, TMeta>
+  { header, columnId, getValueFn, _meta , ...rest }: CreateComputeColumnProps<TOriginalRow, TMeta>
 ): ComputedColumn<TOriginalRow> {
   // Generate the column ID for the computed column
   const computedColumnId = createComputedColumnColumnId({ header, columnId });
