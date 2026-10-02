@@ -13,7 +13,7 @@
     const createColumn = (config: Props) =>{
         const id = createColumnId(config);
 
-        const options = store.current[id] ? {...config, ...$state.snapshot(store.current[id])} : config
+        const options = store.current[id] ? { ...$state.snapshot(store.current[id]), ...config,} : config
 
         if("accessorKey" in  config)
             return accessorColumn(options);
