@@ -50,7 +50,9 @@
 <svelte:element
 	this={tag}
 	bind:this={button}
-	{...notypecheck({ type, href, disabled })}
+	{type}
+	{href}
+	{disabled}
 	class="s-btn size-{size} {active ? activeClass : ''} {klass}"
 	class:s-btn--fab={fab}
 	class:icon

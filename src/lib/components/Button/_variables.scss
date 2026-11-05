@@ -1,3 +1,4 @@
+@use 'sass:map';
 @import '../../styles/variables';
 
 $btn-border-radius: $border-radius-root !default;
@@ -9,7 +10,7 @@ $btn-icon-padding: 12px !default;
 $btn-outline-border-width: thin !default;
 $btn-rounded-border-radius: 28px !default;
 
-$btn-transition: opacity 0.2s map-get($transitions, 'ease-in-out') !default;
+$btn-transition: opacity 0.2s map.get($transitions, 'ease-in-out') !default;
 $btn-transition-duration: 0.28s !default;
 
 $btn-sizes: () !default;
@@ -17,7 +18,7 @@ $btn-font-sizes: () !default;
 $fab-sizes: () !default;
 $fab-icon-sizes: () !default;
 
-$btn-sizes: map-merge(
+$btn-sizes: map.merge(
 	(
 		'x-small': 20,
 		'small': 28,
@@ -28,7 +29,7 @@ $btn-sizes: map-merge(
 	$btn-sizes
 );
 
-$btn-font-sizes: map-merge(
+$btn-font-sizes: map.merge(
 	(
 		'x-small': 0.625rem,
 		'small': 0.75rem,
@@ -39,7 +40,7 @@ $btn-font-sizes: map-merge(
 	$btn-font-sizes
 );
 
-$fab-sizes: map-merge(
+$fab-sizes: map.merge(
 	(
 		'x-small': 32,
 		'small': 40,
@@ -50,7 +51,7 @@ $fab-sizes: map-merge(
 	$fab-sizes
 );
 
-$fab-icon-sizes: map-merge(
+$fab-icon-sizes: map.merge(
 	(
 		'x-small': 18,
 		'small': 24,

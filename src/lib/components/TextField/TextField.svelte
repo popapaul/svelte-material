@@ -51,7 +51,7 @@
 	/** Display a counter set to a desired input length. */
 	export let counter = false;
 	/** Error messages to display. */
-	export let messages: string[] = [];
+	export let messages: string|string[] = [];
 	/**
 	 * A list of validator functions that take the text field value and return an error
 	 * message, or `true` otherwise.
@@ -185,7 +185,7 @@
 	<div slot="messages">
 		<div>
 			<span>{hint ?? ''}</span>
-			{#each (messages ?? []) as message}<span style="margin-right:8px;">{message}</span>{/each}
+			{#each (Array.isArray(messages) ? messages : messages ? [messages]: []) as message}<span style="margin-right:8px;">{message}</span>{/each}
 			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
 		</div>
 		{#if counter}<span>{value?.toString?.()?.length}</span>{/if}

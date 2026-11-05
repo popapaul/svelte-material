@@ -1,3 +1,4 @@
+@use 'sass:map';
 @import './variables';
 
 .s-radio {
@@ -24,7 +25,7 @@
 	pointer-events: none;
 
 	&::before {
-		transition: 60ms map-get($transitions, 'ease-in-out');
+		transition: 60ms map.get($transitions, 'ease-in-out');
 		width: $radio-size - 8;
 		height: $radio-size - 8;
 		border-radius: 100%;

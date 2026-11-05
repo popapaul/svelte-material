@@ -2,10 +2,11 @@ import type { RippleOptions } from './material-ripple';
 export { type RippleOptions } from './material-ripple';
 
 export const ripple = (node: Element, _options: RippleOptions | boolean = {}) => {
-	let options = _options as RippleOptions;
+	let options = (_options ?? {}) as RippleOptions;
 	let destroyed = false;
 	let ripple: HTMLDivElement;
 	let keyboardActive = false;
+
 	const handleStart = (e) =>
 		import('./material-ripple').then((x) => (ripple = x.RippleStart(e, options)));
 	const handleStop = () => import('./material-ripple').then((x) => x.RippleStop(ripple));

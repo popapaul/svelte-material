@@ -1,3 +1,4 @@
+@use 'sass:map';
 @use 'sass:math';
 
 @import './variables';
@@ -91,7 +92,7 @@
 		@each $name, $size in $btn-sizes {
 			&.size-#{$name} {
 				height: #{$size}px;
-				min-width: #{round($size * 1.777777777777778)}px; // default ratio
+				min-width: #{math.round($size * 1.777777777777778)}px; // default ratio
 				padding: 0 #{math.div($size, 2.25)}px;
 			}
 		}
@@ -126,7 +127,7 @@
 	}
 
 	&.rounded {
-		border-radius: map-get($rounded, 'pill');
+		border-radius: map.get($rounded, 'pill');
 	}
 
 	&.disabled {

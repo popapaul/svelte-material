@@ -1,3 +1,4 @@
+@use 'sass:map';
 @import './variables';
 
 .s-card {
@@ -60,7 +61,7 @@
 			position: absolute;
 			right: 0;
 			top: 0;
-			transition: 0.2s opacity map-get($transitions, 'fast-in-slow-out');
+			transition: 0.2s opacity map.get($transitions, 'fast-in-slow-out');
 		}
 
 		&:focus::before {

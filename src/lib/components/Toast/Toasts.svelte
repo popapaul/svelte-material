@@ -43,7 +43,7 @@
 	class:bottom
 	class:right
 	class:center
-	use:Style={{ 'snackbar-x': offsetX, 'snackbar-y': offsetY }}
+	style="--snackbar-x: {offsetX}; --snackbar-y: {offsetY};"
 >
 	{#each $toast as item (item.id)}
 		<Snackbar {...defaults} {...item} on:close={() => toast.pop(item.id)} let:progress>
