@@ -15,7 +15,7 @@ type ParsedFormat = {
 };
 
 function getCountryLocale(): string {
-  const lang = 'en-US'; // fallback
+  const lang = navigator.language || 'en-US'; // fallback
   try {
     const locale = new Intl.Locale(lang);
     return locale.region ? `${locale.language}-${locale.region}` : locale.baseName;
@@ -345,7 +345,7 @@ const formatHelper = {
   }
 };
 
-export function getLocalizedData(locale = 'en-US') {
+export function getLocalizedData(locale = navigator.language || 'en-US') {
   const result = {
     days: [],
     daysShort: [],

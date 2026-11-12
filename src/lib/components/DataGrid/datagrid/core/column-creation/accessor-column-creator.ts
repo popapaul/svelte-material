@@ -135,6 +135,7 @@ export function createAccessorColumn<
     accessorKey,
     columnId,
     getValueFn: customGetValue,
+    align,
     _meta,
     ...rest
   } = props;

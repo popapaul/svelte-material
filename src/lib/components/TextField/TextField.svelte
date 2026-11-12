@@ -160,7 +160,6 @@
 
 	const handleChange = (e) => {
 		validate();
-		rest.onchange?.(e);
 		onchange?.(e);
 	};
 </script>
@@ -242,11 +241,13 @@
 
 	{#snippet info()}
 		<div>
-			<span>{hint ?? ''}</span>
-			{#each messages ? Array.isArray(messages) ? messages : [messages] :  [] as message}
-				<span style="margin-right:8px;">{message}</span>
-			{/each}
-			{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
+			<div>
+				<span>{hint ?? ''}</span>
+				{#each messages ? Array.isArray(messages) ? messages : [messages] :  [] as message}
+					<span style="margin-right:8px;">{message}</span>
+				{/each}
+				{#each errorMessages.slice(0, errorCount) as message}<span>{message}</span>{/each}
+			</div>
 			{#if counter}<span>{(value as string)?.length??0} / {counter}</span>{/if}
 		</div>
 	{/snippet}

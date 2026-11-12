@@ -132,9 +132,8 @@
         handleChange();
     }
 
-    function handleChange(event?: any): void {
+    function handleChange(): void {
         onchange?.(value);
-        event && rest.onchange?.(event);
         TextFieldInstance?.validate();
         if (!multiple) active = false;
     }

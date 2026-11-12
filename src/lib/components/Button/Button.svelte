@@ -60,7 +60,7 @@
 <svelte:element
 	{...rest}
 	{type}
-	transition:fade
+	in:fade
 	this={(rest.href ? 'a' : 'button') as any}
 	class="s-btn size-{size} {active ? activeClass : ''} {klass}"
 	class:fab
