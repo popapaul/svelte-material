@@ -11,7 +11,6 @@
 	import { DateTimeField } from "../DateTimeField";
     
     const toggleSort = () => column.sortable && grid.handlers.sorting.toggleColumnSort(column, false);
-    const filterable = typeof column.filterable === "object" ? column.filterable : null;
 
     // Resize functionality
     let isResizing = $state(false);
@@ -163,26 +162,7 @@
         return gridValues.map(value=>({ name: value?.toString(), value }));
     }
   const filterCondition = $derived(grid.features.filtering.filterConditions.find(c => c.columnId === column.columnId) ?? { columnId: column.columnId, operator: "equals", value: null, valueTo: null } as FilterCondition  );
-    let value = $derived(filterCondition?.value);
-    let valueTo = $derived(filterCondition?.valueTo);
     const cellValues = getGridValues();
-    let operator = $state(filterCondition?.operator ?? filterable?.operators[0]);
-    
-   
-
-    const handleFilter= ()=>{
-        if(value === null || value === undefined)
-            return grid.handlers.filtering.removeFilterCondition(column);
-        if(operator === "between")
-            grid.handlers.filtering.updateFilterCondition({column, value, valueTo, operator: operator});
-        else
-            grid.handlers.filtering.updateFilterCondition({column, value, operator: operator});
-    }
-    const handleClear = ()=>{
-        grid.handlers.filtering.removeFilterCondition(column);
-        value = null;
-        valueTo = null;
-    }
 </script>
 
 

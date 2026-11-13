@@ -1,5 +1,5 @@
 import type { RippleOptions } from './material-ripple';
-export { type RippleOptions } from './material-ripple';
+export type { RippleOptions } from './material-ripple';
 
 export const ripple = (node: Element, _options: RippleOptions | boolean = {}) => {
 	let options = _options as RippleOptions;
